@@ -1,0 +1,115 @@
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/jido_codemode_web";
+
+@plugin "../vendor/heroicons";
+
+@plugin "../vendor/daisyui" {
+  themes: false;
+}
+
+:root {
+  --brand-ivory: #f7f7f1;
+  --brand-field-mist: #eef1e8;
+  --brand-divider: #d6dfcc;
+  --brand-green: #4ea11f;
+  --brand-canopy: #0e5a31;
+  --brand-forest: #122c16;
+  --brand-ink: #16311b;
+  --brand-neutral: #677661;
+  --brand-sky: #9eb5bc;
+  --brand-harvest: #b7a66a;
+  --brand-clay: #a85b41;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --brand-surface-1: #102114;
+  --brand-surface-2: #0b1a0f;
+  --brand-surface-3: #17321d;
+  --brand-content-1: #edf5e7;
+  --brand-primary-ui: #75c34c;
+  --brand-secondary-ui: #2f6d41;
+  --brand-accent-ui: #c5b57a;
+  --brand-neutral-ui: #2a392d;
+  --brand-info-ui: #8eb5c0;
+  --brand-warning-ui: #d29c48;
+  --brand-error-ui: #c86454;
+  --color-base-100: var(--brand-surface-1);
+  --color-base-200: var(--brand-surface-2);
+  --color-base-300: var(--brand-surface-3);
+  --color-base-content: var(--brand-content-1);
+  --color-primary: var(--brand-primary-ui);
+  --color-primary-content: #0d180a;
+  --color-secondary: var(--brand-secondary-ui);
+  --color-secondary-content: var(--brand-content-1);
+  --color-accent: var(--brand-accent-ui);
+  --color-accent-content: #201a09;
+  --color-neutral: var(--brand-neutral-ui);
+  --color-neutral-content: var(--brand-content-1);
+  --color-info: var(--brand-info-ui);
+  --color-info-content: #0c1a21;
+  --color-success: var(--brand-primary-ui);
+  --color-success-content: var(--brand-surface-1);
+  --color-warning: var(--brand-warning-ui);
+  --color-warning-content: #211706;
+  --color-error: var(--brand-error-ui);
+  --color-error-content: #210e0b;
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: var(--brand-ivory);
+  --color-base-200: var(--brand-field-mist);
+  --color-base-300: var(--brand-divider);
+  --color-base-content: var(--brand-ink);
+  --color-primary: var(--brand-green);
+  --color-primary-content: #f8fbf2;
+  --color-secondary: var(--brand-canopy);
+  --color-secondary-content: #eef6ed;
+  --color-accent: var(--brand-harvest);
+  --color-accent-content: #1f2415;
+  --color-neutral: var(--brand-neutral);
+  --color-neutral-content: var(--brand-ivory);
+  --color-info: var(--brand-sky);
+  --color-info-content: #0e2330;
+  --color-success: var(--brand-green);
+  --color-success-content: #f7fbf2;
+  --color-warning: var(--brand-harvest);
+  --color-warning-content: #23180a;
+  --color-error: var(--brand-clay);
+  --color-error-content: #fff5f1;
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+[data-phx-session],
+[data-phx-teleported-src] {
+  display: contents;
+}
