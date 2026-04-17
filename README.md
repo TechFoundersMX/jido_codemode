@@ -2,6 +2,12 @@
 
 Open source Phoenix demo of a Jido agent that can switch into codemode, write short Lua programs in a sandbox, query SQLite through a guarded interface, and render validated reports in LiveView.
 
+## Background
+
+This repo is inspired by Cloudflare's original codemode article:
+
+- [Code Mode: the better way to use MCP](https://blog.cloudflare.com/code-mode/)
+
 ## What It Shows
 
 - A small tool surface: `describe_schema`, `run_sqlite_query`, and `BuildReport`
