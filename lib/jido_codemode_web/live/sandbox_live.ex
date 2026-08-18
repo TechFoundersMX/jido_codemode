@@ -132,263 +132,276 @@ defmodule JidoCodemodeWeb.SandboxLive do
     <Layouts.app
       flash={@flash}
       full_width={true}
-      main_class="min-h-screen"
-      content_class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
+      main_class="min-h-dvh isolate"
+      content_class="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-6"
     >
-      <section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
-        <div class="space-y-6">
-          <section class="overflow-hidden rounded-[2rem] border border-base-300/60 bg-base-100 shadow-sm">
-            <div class="grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end lg:px-10">
-              <div class="space-y-5">
-                <p class="text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-primary">
-                  Jido Codemode
+      <section class="space-y-5">
+        <header class="grid gap-5 border-b border-base-300/70 pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div class="space-y-2">
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              Jido Codemode
+            </p>
+            <h1 class="max-w-[30ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
+              Build validated reports with Jido Codemode.
+            </h1>
+            <p class="max-w-3xl text-base leading-7 text-base-content/65">
+              Ask the agent to inspect the Northwind schema, run read-only SQL, or build a
+              structured report with sandboxed Lua.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+            <span class="inline-flex items-center gap-2 rounded-full bg-base-200 px-3 py-2 text-sm text-base-content/65 ring-1 ring-base-300/70">
+              <span class="size-2 rounded-full bg-success" aria-hidden="true"></span>
+              <span>Model</span>
+              <span class="font-semibold text-base-content">{@agent_model}</span>
+            </span>
+
+            <details class="group relative">
+              <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content">
+                How it works
+              </summary>
+              <div class="absolute right-0 z-20 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl bg-base-100 p-4 text-sm leading-6 text-base-content/70 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
+                <ol class="list-decimal space-y-2 pl-5">
+                  <li>The agent receives a compact schema digest and bounded tools.</li>
+                  <li>Complex reports run in sandboxed Lua with database and report helpers.</li>
+                  <li>Elixir validates the result before LiveView renders it.</li>
+                </ol>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <section class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem] xl:items-start">
+          <div class="order-2 min-w-0 space-y-5 xl:order-1">
+            <section
+              :if={@agent_report}
+              id="agent-report"
+              class="@container/report space-y-6 rounded-2xl bg-base-100 p-5 ring-1 ring-base-300/70 sm:p-6"
+            >
+              <div class="space-y-2">
+                <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
+                  Agent output
                 </p>
-
-                <div class="space-y-4">
-                  <h1 class="max-w-[14ch] text-4xl font-semibold tracking-tight text-balance text-base-content sm:text-5xl">
-                    Reference implementation for sandboxed report generation.
-                  </h1>
-
-                  <p class="max-w-3xl text-base leading-7 text-base-content/70 sm:text-lg">
-                    A Jido agent can answer directly, inspect schema metadata, run bounded
-                    read-only SQL, or switch into codemode and write Lua that returns validated
-                    report blocks for LiveView.
-                  </p>
-                </div>
-
-                <div class="flex flex-wrap gap-3 text-sm text-base-content/70">
-                  <span class="rounded-full border border-base-300/70 bg-base-200 px-3 py-1.5">
-                    Lua report runtime
-                  </span>
-                  <span class="rounded-full border border-base-300/70 bg-base-200 px-3 py-1.5">
-                    Read-only SQLite tools
-                  </span>
-                  <span class="rounded-full border border-base-300/70 bg-base-200 px-3 py-1.5">
-                    LiveView + Vega rendering
-                  </span>
-                </div>
-              </div>
-
-              <div class="rounded-[1.6rem] border border-base-300/70 bg-base-200/60 p-5">
-                <div class="space-y-4">
-                  <p class="text-xs font-semibold uppercase tracking-[0.22em] text-base-content/45">
-                    Runtime
-                  </p>
-
-                  <div class="space-y-3 text-sm leading-6 text-base-content/70">
-                    <p>
-                      1. The agent gets a compact schema digest and three explicit tools.
-                    </p>
-                    <p>
-                      2. Multi-step reporting uses sandboxed Lua with `db.query(...)` and
-                      `report.*` helpers.
-                    </p>
-                    <p>
-                      3. Elixir validates the payload, stores the report, and LiveView renders the
-                      result.
-                    </p>
-                  </div>
-
-                  <div class="rounded-2xl bg-base-100 px-4 py-3 text-sm text-base-content/65 ring-1 ring-base-300/60">
-                    Model alias: <span class="font-semibold text-base-content">{@agent_model}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section
-            :if={@agent_report}
-            id="agent-report"
-            class="space-y-6 rounded-[1.6rem] border border-base-300/70 bg-base-100 p-6 shadow-sm"
-          >
-            <div class="space-y-2">
-              <p class="text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-secondary">
-                Agent output
-              </p>
-              <h2 class="text-3xl font-semibold tracking-tight text-base-content">
-                {@agent_report.title}
-              </h2>
-              <p :if={@agent_report.summary} class="max-w-3xl text-sm leading-6 text-base-content/65">
-                {@agent_report.summary}
-              </p>
-            </div>
-
-            <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <div :for={block <- @agent_report.blocks} class={report_block_classes(block)}>
-                <%= case block do %>
-                  <% %Report.TextBlock{} -> %>
-                    <div class={assistant_markdown_classes()}>{render_markdown(block.body)}</div>
-                  <% %Report.MetricBlock{} -> %>
-                    <div class="space-y-2">
-                      <p class="text-xs font-semibold uppercase tracking-[0.22em] text-base-content/45">
-                        Metric
-                      </p>
-                      <p class="text-sm text-base-content/60">{block.label}</p>
-                      <p class="text-4xl font-semibold tracking-tight text-base-content">
-                        {format_metric_value(block.value, block.format)}
-                      </p>
-                    </div>
-                  <% %Report.TableBlock{} -> %>
-                    <div class="space-y-4">
-                      <div class="space-y-1">
-                        <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                          {block.title}
-                        </h3>
-                        <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
-                          {block.summary}
-                        </p>
-                      </div>
-
-                      <div :if={Enum.empty?(block.rows)} class="py-8 text-sm text-base-content/45">
-                        No rows to show for this table.
-                      </div>
-
-                      <div :if={not Enum.empty?(block.rows)} class="overflow-x-auto">
-                        <table class="min-w-full border-separate border-spacing-0 text-sm">
-                          <thead>
-                            <tr>
-                              <th
-                                :for={column <- block.columns}
-                                class="border-b border-base-300/70 px-0 py-3 pr-6 text-left text-xs font-semibold uppercase tracking-[0.18em] text-base-content/50"
-                              >
-                                {column}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr :for={row <- block.rows}>
-                              <td
-                                :for={column <- block.columns}
-                                class="border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
-                              >
-                                {format_table_value(Map.get(row, column))}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  <% %Report.ChartBlock{} -> %>
-                    <div class="space-y-4">
-                      <div class="space-y-1">
-                        <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                          {block.title}
-                        </h3>
-                        <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
-                          {block.summary}
-                        </p>
-                      </div>
-
-                      <div
-                        :if={not chart_block_has_rows?(block)}
-                        class="py-8 text-sm text-base-content/45"
-                      >
-                        No rows to show for this chart.
-                      </div>
-
-                      <div :if={chart_block_has_rows?(block)} class="overflow-hidden">
-                        <div
-                          id={"report-chart-#{block.id}"}
-                          phx-hook=".VegaChart"
-                          data-spec={block.spec_json}
-                          class="min-h-72 w-full"
-                        />
-                      </div>
-                    </div>
-                <% end %>
-              </div>
-            </div>
-          </section>
-
-          <section class="space-y-4 rounded-[1.6rem] border border-base-300/70 bg-base-100 p-6 shadow-sm">
-            <div class="flex items-end justify-between gap-4">
-              <div class="space-y-1">
-                <p class="text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-primary">
-                  Reference charts
-                </p>
-                <h2 class="text-2xl font-semibold tracking-tight text-base-content">
-                  Seed charts for quick prompts
+                <h2 class="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
+                  {@agent_report.title}
                 </h2>
-              </div>
-
-              <button
-                type="button"
-                phx-click="reset_chat"
-                class="rounded-full border border-base-300 bg-base-200 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-300"
-              >
-                Restart session
-              </button>
-            </div>
-
-            <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              <article :for={chart <- @charts} id={"chart-card-#{chart.id}"} class="space-y-4">
-                <div class="space-y-1">
-                  <p class="text-xs font-semibold uppercase tracking-[0.24em] text-base-content/40">
-                    {chart.kicker}
-                  </p>
-                  <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                    {chart.title}
-                  </h3>
-                  <p class="text-sm leading-6 text-base-content/55">{chart.description}</p>
-                </div>
-
-                <div class="overflow-hidden rounded-[1.3rem] bg-base-100 ring-1 ring-base-300/55">
-                  <div
-                    id={"sample-chart-#{chart.id}"}
-                    phx-hook=".VegaChart"
-                    data-spec={chart.spec_json}
-                    class="min-h-72 w-full"
-                  />
-                </div>
-              </article>
-            </div>
-          </section>
-        </div>
-
-        <aside class="lg:sticky lg:top-6">
-          <section class="overflow-hidden rounded-[1.6rem] border border-base-300/70 bg-base-100 shadow-sm">
-            <div class="border-b border-base-300/70 px-5 py-4">
-              <p class="text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-secondary">
-                Interactive sandbox
-              </p>
-              <h2 class="mt-2 text-xl font-semibold tracking-tight text-base-content">
-                Request schema details, data previews, or a report
-              </h2>
-              <p class="mt-2 text-sm leading-6 text-base-content/60">
-                The agent can inspect schema metadata, run bounded SQL previews, and switch into
-                codemode when structured output is the right boundary.
-              </p>
-            </div>
-
-            <div class="space-y-4 px-5 py-4">
-              <div class="flex flex-wrap gap-2">
-                <button
-                  :for={suggestion <- suggestion_prompts()}
-                  type="button"
-                  phx-click="use_suggestion"
-                  phx-value-prompt={suggestion.prompt}
-                  class="inline-flex items-center gap-1.5 rounded-full border border-base-300 bg-base-200 px-3 py-1.5 text-xs font-medium text-base-content transition hover:bg-base-300"
+                <p
+                  :if={@agent_report.summary}
+                  class="max-w-3xl text-base leading-7 text-base-content/65"
                 >
-                  <.icon name={suggestion.icon} class="size-3.5 text-primary" />
-                  {suggestion.prompt}
-                </button>
+                  {@agent_report.summary}
+                </p>
               </div>
 
-              <div class="rounded-[1.35rem] bg-base-200/55 p-4 ring-1 ring-base-300/60">
+              <div class="grid grid-cols-1 gap-6 @4xl/report:grid-cols-2">
+                <div :for={block <- @agent_report.blocks} class={report_block_classes(block)}>
+                  <%= case block do %>
+                    <% %Report.TextBlock{} -> %>
+                      <div class={assistant_markdown_classes()}>{render_markdown(block.body)}</div>
+                    <% %Report.MetricBlock{} -> %>
+                      <div class="space-y-2">
+                        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
+                          Metric
+                        </p>
+                        <p class="truncate text-sm text-base-content/60" title={block.label}>
+                          {block.label}
+                        </p>
+                        <p class="text-4xl font-semibold tracking-tight tabular-nums text-base-content">
+                          {format_metric_value(block.value, block.format)}
+                        </p>
+                      </div>
+                    <% %Report.TableBlock{} -> %>
+                      <div class="space-y-4">
+                        <div class="space-y-1">
+                          <h3 class="text-xl font-semibold tracking-tight text-base-content">
+                            {block.title}
+                          </h3>
+                          <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
+                            {block.summary}
+                          </p>
+                        </div>
+
+                        <div :if={Enum.empty?(block.rows)} class="py-8 text-sm text-base-content/45">
+                          No rows to show for this table.
+                        </div>
+
+                        <div :if={not Enum.empty?(block.rows)} class="overflow-x-auto">
+                          <table class="min-w-full border-separate border-spacing-0 text-sm">
+                            <thead>
+                              <tr>
+                                <th
+                                  :for={column <- block.columns}
+                                  class="whitespace-nowrap border-b border-base-300/70 px-0 py-3 pr-6 text-left text-sm font-semibold text-base-content/60"
+                                >
+                                  {column}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr :for={row <- block.rows}>
+                                <td
+                                  :for={column <- block.columns}
+                                  class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
+                                >
+                                  {format_table_value(Map.get(row, column))}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    <% %Report.ChartBlock{} -> %>
+                      <div class="space-y-4">
+                        <div class="space-y-1">
+                          <h3 class="text-xl font-semibold tracking-tight text-base-content">
+                            {block.title}
+                          </h3>
+                          <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
+                            {block.summary}
+                          </p>
+                        </div>
+
+                        <div
+                          :if={not chart_block_has_rows?(block)}
+                          class="py-8 text-sm text-base-content/45"
+                        >
+                          No rows to show for this chart.
+                        </div>
+
+                        <div :if={chart_block_has_rows?(block)} class="overflow-hidden">
+                          <div
+                            id={"report-chart-#{block.id}"}
+                            phx-hook=".VegaChart"
+                            data-spec={block.spec_json}
+                            class="min-h-72 w-full"
+                          />
+                        </div>
+                      </div>
+                  <% end %>
+                </div>
+              </div>
+            </section>
+
+            <section
+              :if={is_nil(@agent_report)}
+              class="flex min-h-72 items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-100/40 px-6 py-12 text-center"
+            >
+              <div class="max-w-md space-y-3">
+                <span class="mx-auto flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <.icon name="hero-chart-bar-square" class="size-5" />
+                </span>
+                <h2 class="text-xl font-semibold tracking-tight text-base-content">
+                  Your report will appear here
+                </h2>
+                <p class="text-base leading-7 text-base-content/60">
+                  Use the assistant to request a chart, table, metric, or complete report.
+                </p>
+              </div>
+            </section>
+
+            <details class="group rounded-2xl bg-base-100 ring-1 ring-base-300/70">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6">
+                <div>
+                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                    Reference examples
+                  </p>
+                  <h2 class="mt-1 text-lg font-semibold tracking-tight text-base-content">
+                    Explore the seed charts
+                  </h2>
+                </div>
+                <.icon
+                  name="hero-chevron-down"
+                  class="size-5 shrink-0 text-base-content/50 group-open:rotate-180"
+                />
+              </summary>
+
+              <div class="space-y-5 border-t border-base-300/70 p-5 sm:p-6">
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    phx-click="reset_chat"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content"
+                  >
+                    Restart session
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                  <article :for={chart <- @charts} id={"chart-card-#{chart.id}"} class="space-y-4">
+                    <div class="space-y-1">
+                      <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
+                        {chart.kicker}
+                      </p>
+                      <h3 class="text-xl font-semibold tracking-tight text-base-content">
+                        {chart.title}
+                      </h3>
+                      <p class="text-sm leading-6 text-base-content/55">{chart.description}</p>
+                    </div>
+
+                    <div class="overflow-hidden border-t border-base-300/70 pt-3">
+                      <div
+                        id={"sample-chart-#{chart.id}"}
+                        phx-hook=".VegaChart"
+                        data-spec={chart.spec_json}
+                        class="min-h-72 w-full"
+                      />
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <aside class="order-1 min-w-0 xl:order-2 xl:sticky xl:top-5">
+            <section class="flex h-[min(44rem,calc(100dvh-8rem))] min-h-[34rem] flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70">
+              <header class="shrink-0 border-b border-base-300/70 px-5 py-4">
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
+                      Assistant
+                    </p>
+                    <h2 class="mt-1 text-xl font-semibold tracking-tight text-base-content">
+                      Explore Northwind
+                    </h2>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
+                    <span class="size-2 rounded-full bg-success" aria-hidden="true"></span> Ready
+                  </span>
+                </div>
+                <p class="mt-2 text-sm leading-6 text-base-content/60">
+                  Ask a question or request a structured report.
+                </p>
+              </header>
+
+              <div class="shrink-0 border-b border-base-300/70 px-5 py-3">
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                  <button
+                    :for={suggestion <- suggestion_prompts()}
+                    type="button"
+                    phx-click="use_suggestion"
+                    phx-value-prompt={suggestion.prompt}
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-base-200 px-3 py-2 text-xs font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300"
+                  >
+                    <.icon name={suggestion.icon} class="size-3.5 text-primary" />
+                    {suggestion.prompt}
+                  </button>
+                </div>
+              </div>
+
+              <div class="min-h-0 flex-1 overflow-y-auto bg-base-200/40 px-4 py-4">
                 <div
                   :if={not show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
-                  class="space-y-3"
+                  class="flex h-full min-h-48 items-center justify-center text-center"
                 >
-                  <p class="text-sm leading-6 text-base-content/60">
-                    Start with a schema question, a query request, or a report prompt.
-                  </p>
-
-                  <div class="rounded-2xl border border-base-300/70 bg-base-100 px-4 py-3 text-sm text-base-content/65">
-                    Example:
-                    <span class="font-medium text-base-content">
-                      Build a report with revenue by category and a top-customer table.
+                  <div class="max-w-xs space-y-2">
+                    <span class="mx-auto flex size-9 items-center justify-center rounded-full bg-base-100 text-primary ring-1 ring-base-300/70">
+                      <.icon name="hero-sparkles" class="size-4" />
                     </span>
+                    <p class="font-medium text-base-content">Start with a prompt</p>
+                    <p class="text-sm leading-6 text-base-content/55">
+                      Select an example above or describe the data you want to explore.
+                    </p>
                   </div>
                 </div>
 
@@ -396,7 +409,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   :if={show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
                   class="space-y-4"
                 >
-                  <div class="max-h-[28rem] space-y-4 overflow-y-auto pr-1">
+                  <div class="space-y-4">
                     <div :for={message <- @chat_messages} class={chat_row_classes(message.role)}>
                       <div class={message_classes(message.role)}>
                         <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
@@ -432,33 +445,38 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 </div>
               </div>
 
-              <.form id="chat-form" for={@chat_form} phx-submit="submit_chat" class="space-y-3">
+              <.form
+                id="chat-form"
+                for={@chat_form}
+                phx-submit="submit_chat"
+                class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
+              >
                 <.input
                   field={@chat_form[:prompt]}
                   type="textarea"
                   placeholder="Ask for schema details, a query, or a report"
-                  rows="4"
+                  rows="3"
                   disabled={@chat_pending}
-                  class="w-full rounded-[1.35rem] border border-base-300 bg-base-100 px-4 py-3 text-sm text-base-content shadow-none outline-none transition focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
+                  class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
                 />
 
                 <div class="flex items-center justify-between gap-3">
                   <p class="text-xs leading-5 text-base-content/50">
-                    Read-only queries, bounded previews, validated report blocks.
+                    Read-only data access
                   </p>
 
                   <button
                     type="submit"
-                    class="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-content transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={@chat_pending}
                   >
                     {if @chat_pending, do: "Working...", else: "Send"}
                   </button>
                 </div>
               </.form>
-            </div>
-          </section>
-        </aside>
+            </section>
+          </aside>
+        </section>
       </section>
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".VegaChart">

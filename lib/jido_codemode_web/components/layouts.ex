@@ -22,15 +22,15 @@ defmodule JidoCodemodeWeb.Layouts do
       :if={@app_chrome}
       class="border-b border-base-300/60 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80"
     >
-      <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <a href={~p"/"} class="flex items-center gap-3">
-          <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-content shadow-sm">
+      <div class="mx-auto flex max-w-[96rem] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <a href={~p"/"} aria-label="Homepage" class="flex items-center gap-3">
+          <span class="inline-flex size-9 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-content">
             JC
           </span>
 
           <div>
-            <p class="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-primary/80">
-              Reference App
+            <p class="text-xs text-base-content/50">
+              Reference application
             </p>
             <p class="text-sm font-semibold tracking-tight text-base-content">Jido Codemode</p>
           </div>
@@ -39,7 +39,7 @@ defmodule JidoCodemodeWeb.Layouts do
         <div class="flex items-center gap-3">
           <a
             href="https://github.com/agentjido/jido"
-            class="hidden text-sm font-medium text-base-content/65 transition hover:text-base-content sm:inline-flex"
+            class="hidden text-sm font-medium text-base-content/65 hover:text-base-content sm:inline-flex"
           >
             Jido
           </a>
@@ -112,31 +112,37 @@ defmodule JidoCodemodeWeb.Layouts do
   """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="relative flex flex-row items-center rounded-full border border-base-300 bg-base-200 p-0.5 shadow-sm">
+    <div class="relative flex flex-row items-center rounded-full bg-base-200 p-0.5 ring-1 ring-base-300">
       <div class="absolute left-0 h-[calc(100%-0.25rem)] w-1/3 rounded-full border border-base-200 bg-base-100 transition-[left] [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3" />
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        type="button"
+        aria-label="Use system theme"
+        class="relative flex w-1/3 cursor-pointer p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
       >
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75" />
       </button>
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        type="button"
+        aria-label="Use light theme"
+        class="relative flex w-1/3 cursor-pointer p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
       >
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-sun-micro" class="size-4 opacity-75" />
       </button>
 
       <button
-        class="flex w-1/3 cursor-pointer p-2"
+        type="button"
+        aria-label="Use dark theme"
+        class="relative flex w-1/3 cursor-pointer p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
       >
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-moon-micro" class="size-4 opacity-75" />
       </button>
     </div>
     """
