@@ -37,6 +37,7 @@ defmodule JidoCodemode.SidebarAgent do
     name: "sandbox_agent",
     description: "Chat agent for the sandbox analytics demo",
     model: :fast,
+    llm_opts: [temperature: 1.0],
     tools: [DescribeSchema, RunSqliteQuery, BuildReport],
     system_prompt: @base_system_prompt
 
