@@ -157,11 +157,11 @@ defmodule JidoCodemodeWeb.SandboxLive do
               <span class="font-semibold text-base-content">{@agent_model}</span>
             </span>
 
-            <details class="group relative">
-              <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content">
+            <details class="group open:w-full sm:relative sm:open:w-auto">
+              <summary class="inline-flex w-fit cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 How it works
               </summary>
-              <div class="absolute right-0 z-20 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl bg-base-100 p-4 text-sm leading-6 text-base-content/70 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
+              <div class="mt-2 w-full rounded-2xl bg-base-100 p-4 text-base leading-7 text-base-content/70 shadow-lg ring-1 ring-base-300 sm:absolute sm:right-0 sm:z-20 sm:w-88 sm:text-sm sm:leading-6 [[data-theme=dark]_&]:shadow-none">
                 <ol class="list-decimal space-y-2 pl-5">
                   <li>The agent receives a compact schema digest and bounded tools.</li>
                   <li>Complex reports run in sandboxed Lua with database and report helpers.</li>
@@ -217,38 +217,49 @@ defmodule JidoCodemodeWeb.SandboxLive do
                           <h3 class="text-xl font-semibold tracking-tight text-base-content">
                             {block.title}
                           </h3>
-                          <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
+                          <p
+                            :if={block.summary}
+                            class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
+                          >
                             {block.summary}
                           </p>
                         </div>
 
-                        <div :if={Enum.empty?(block.rows)} class="py-8 text-sm text-base-content/45">
+                        <div
+                          :if={Enum.empty?(block.rows)}
+                          class="py-8 text-base text-base-content/45 sm:text-sm"
+                        >
                           No rows to show for this table.
                         </div>
 
-                        <div :if={not Enum.empty?(block.rows)} class="overflow-x-auto">
-                          <table class="min-w-full border-separate border-spacing-0 text-sm">
-                            <thead>
-                              <tr>
-                                <th
-                                  :for={column <- block.columns}
-                                  class="whitespace-nowrap border-b border-base-300/70 px-0 py-3 pr-6 text-left text-sm font-semibold text-base-content/60"
-                                >
-                                  {column}
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr :for={row <- block.rows}>
-                                <td
-                                  :for={column <- block.columns}
-                                  class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
-                                >
-                                  {format_table_value(Map.get(row, column))}
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                        <div
+                          :if={not Enum.empty?(block.rows)}
+                          class="-mx-5 -my-2 overflow-x-auto whitespace-nowrap sm:-mx-6"
+                        >
+                          <div class="inline-block min-w-full px-5 py-2 align-middle sm:px-6">
+                            <table class="w-full border-separate border-spacing-0 text-base sm:text-sm">
+                              <thead>
+                                <tr>
+                                  <th
+                                    :for={column <- block.columns}
+                                    class="whitespace-nowrap border-b border-base-300/70 px-0 py-3 pr-6 text-left text-base font-semibold text-base-content/60 sm:text-sm"
+                                  >
+                                    {column}
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr :for={row <- block.rows}>
+                                  <td
+                                    :for={column <- block.columns}
+                                    class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
+                                  >
+                                    {format_table_value(Map.get(row, column))}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     <% %Report.ChartBlock{} -> %>
@@ -257,14 +268,17 @@ defmodule JidoCodemodeWeb.SandboxLive do
                           <h3 class="text-xl font-semibold tracking-tight text-base-content">
                             {block.title}
                           </h3>
-                          <p :if={block.summary} class="text-sm leading-6 text-base-content/60">
+                          <p
+                            :if={block.summary}
+                            class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
+                          >
                             {block.summary}
                           </p>
                         </div>
 
                         <div
                           :if={not chart_block_has_rows?(block)}
-                          class="py-8 text-sm text-base-content/45"
+                          class="py-8 text-base text-base-content/45 sm:text-sm"
                         >
                           No rows to show for this chart.
                         </div>
@@ -288,9 +302,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
               class="flex min-h-72 items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-100/40 px-6 py-12 text-center"
             >
               <div class="max-w-md space-y-3">
-                <span class="mx-auto flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <.icon name="hero-chart-bar-square" class="size-5" />
-                </span>
+                <.icon name="hero-chart-bar-square-micro" class="mx-auto size-4 text-primary" />
                 <h2 class="text-xl font-semibold tracking-tight text-base-content">
                   Your report will appear here
                 </h2>
@@ -312,7 +324,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 </div>
                 <.icon
                   name="hero-chevron-down"
-                  class="size-5 shrink-0 text-base-content/50 group-open:rotate-180"
+                  class="size-4 shrink-0 text-base-content/50 group-open:rotate-180"
                 />
               </summary>
 
@@ -321,7 +333,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   <button
                     type="button"
                     phx-click="reset_chat"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content"
+                    class="rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     Restart session
                   </button>
@@ -336,7 +348,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
                       <h3 class="text-xl font-semibold tracking-tight text-base-content">
                         {chart.title}
                       </h3>
-                      <p class="text-sm leading-6 text-base-content/55">{chart.description}</p>
+                      <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
+                        {chart.description}
+                      </p>
                     </div>
 
                     <div class="overflow-hidden border-t border-base-300/70 pt-3">
@@ -354,7 +368,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
           </div>
 
           <aside class="order-1 min-w-0 xl:order-2 xl:sticky xl:top-5">
-            <section class="flex h-[min(44rem,calc(100dvh-8rem))] min-h-[34rem] flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70">
+            <section class="flex h-120 min-h-120 flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70 xl:h-[min(44rem,calc(100dvh-8rem))] xl:min-h-136">
               <header class="shrink-0 border-b border-base-300/70 px-5 py-4">
                 <div class="flex items-start justify-between gap-4">
                   <div>
@@ -369,23 +383,41 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     <span class="size-2 rounded-full bg-success" aria-hidden="true"></span> Ready
                   </span>
                 </div>
-                <p class="mt-2 text-sm leading-6 text-base-content/60">
+                <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
                   Ask a question or request a structured report.
                 </p>
               </header>
 
               <div class="shrink-0 border-b border-base-300/70 px-5 py-3">
-                <div class="flex gap-2 overflow-x-auto pb-1">
+                <div class="flex items-center gap-2">
                   <button
-                    :for={suggestion <- suggestion_prompts()}
+                    :for={suggestion <- Enum.take(suggestion_prompts(), 2)}
                     type="button"
                     phx-click="use_suggestion"
                     phx-value-prompt={suggestion.prompt}
-                    class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-base-200 px-3 py-2 text-xs font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300"
+                    class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-base-200 py-2 pr-3 pl-2 text-sm font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    <.icon name={suggestion.icon} class="size-3.5 text-primary" />
-                    {suggestion.prompt}
+                    <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
+                    <span class="truncate">{suggestion.label}</span>
                   </button>
+
+                  <details class="group relative shrink-0">
+                    <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                      More
+                    </summary>
+                    <div class="absolute right-0 z-20 mt-2 w-72 space-y-1 rounded-xl bg-base-100 p-2 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
+                      <button
+                        :for={suggestion <- Enum.drop(suggestion_prompts(), 2)}
+                        type="button"
+                        phx-click="use_suggestion"
+                        phx-value-prompt={suggestion.prompt}
+                        class="flex w-full items-center gap-2 rounded-lg py-2 pr-3 pl-2 text-left text-sm font-medium text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-primary"
+                      >
+                        <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
+                        <span class="min-w-0">{suggestion.label}</span>
+                      </button>
+                    </div>
+                  </details>
                 </div>
               </div>
 
@@ -395,11 +427,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   class="flex h-full min-h-48 items-center justify-center text-center"
                 >
                   <div class="max-w-xs space-y-2">
-                    <span class="mx-auto flex size-9 items-center justify-center rounded-full bg-base-100 text-primary ring-1 ring-base-300/70">
-                      <.icon name="hero-sparkles" class="size-4" />
-                    </span>
+                    <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
                     <p class="font-medium text-base-content">Start with a prompt</p>
-                    <p class="text-sm leading-6 text-base-content/55">
+                    <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
                       Select an example above or describe the data you want to explore.
                     </p>
                   </div>
@@ -418,7 +448,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
                         <div :if={message.role == :assistant} class={assistant_markdown_classes()}>
                           {render_markdown(message.content)}
                         </div>
-                        <p :if={message.role == :user} class="text-sm leading-6">{message.content}</p>
+                        <p
+                          :if={message.role == :user}
+                          class="text-base leading-7 sm:text-sm sm:leading-6"
+                        >
+                          {message.content}
+                        </p>
                       </div>
                     </div>
 
@@ -427,7 +462,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                         <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
                           You
                         </p>
-                        <p class="text-sm leading-6">{@pending_prompt}</p>
+                        <p class="text-base leading-7 sm:text-sm sm:leading-6">{@pending_prompt}</p>
                       </div>
                     </div>
 
@@ -455,19 +490,19 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   field={@chat_form[:prompt]}
                   type="textarea"
                   placeholder="Ask for schema details, a query, or a report"
-                  rows="3"
+                  rows="2"
                   disabled={@chat_pending}
                   class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
                 />
 
                 <div class="flex items-center justify-between gap-3">
-                  <p class="text-xs leading-5 text-base-content/50">
+                  <p class="text-sm leading-5 text-base-content/50">
                     Read-only data access
                   </p>
 
                   <button
                     type="submit"
-                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={@chat_pending}
                   >
                     {if @chat_pending, do: "Working...", else: "Send"}
@@ -632,11 +667,31 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   defp suggestion_prompts do
     [
-      %{icon: "hero-chart-bar", prompt: "Show a monthly revenue trend"},
-      %{icon: "hero-squares-2x2", prompt: "Compare the top categories"},
-      %{icon: "hero-users", prompt: "List the top customers by revenue"},
-      %{icon: "hero-circle-stack", prompt: "Describe the most important joins"},
-      %{icon: "hero-sparkles", prompt: "Build a short report with a chart and a table"}
+      %{
+        icon: "hero-chart-bar-micro",
+        label: "Revenue trend",
+        prompt: "Show a monthly revenue trend"
+      },
+      %{
+        icon: "hero-squares-2x2-micro",
+        label: "Top categories",
+        prompt: "Compare the top categories"
+      },
+      %{
+        icon: "hero-users-micro",
+        label: "Top customers",
+        prompt: "List the top customers by revenue"
+      },
+      %{
+        icon: "hero-circle-stack-micro",
+        label: "Important joins",
+        prompt: "Describe the most important joins"
+      },
+      %{
+        icon: "hero-sparkles-micro",
+        label: "Chart and table report",
+        prompt: "Build a short report with a chart and a table"
+      }
     ]
   end
 
@@ -725,7 +780,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   end
 
   defp assistant_markdown_classes do
-    "text-sm leading-6 text-base-content [&_a]:text-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-base-300 [&_blockquote]:pl-4 [&_code]:rounded-md [&_code]:bg-base-200 [&_code]:px-1.5 [&_code]:py-0.5 [&_h1]:text-xl [&_h1]:font-semibold [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:font-semibold [&_li]:mt-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p+*]:mt-4 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:bg-base-200/80 [&_pre]:p-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_strong]:font-semibold [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6"
+    "text-base leading-7 text-base-content sm:text-sm sm:leading-6 [&_a]:text-primary [&_a]:underline [&_blockquote]:border-l-2 [&_blockquote]:border-base-300 [&_blockquote]:pl-4 [&_code]:rounded-md [&_code]:bg-base-200 [&_code]:px-1.5 [&_code]:py-0.5 [&_h1]:text-xl [&_h1]:font-semibold [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:font-semibold [&_li]:mt-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p+*]:mt-4 [&_pre]:my-4 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:bg-base-200/80 [&_pre]:p-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_strong]:font-semibold [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6"
   end
 
   defp report_block_classes(%Report.MetricBlock{}) do

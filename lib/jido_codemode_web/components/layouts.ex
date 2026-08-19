@@ -118,7 +118,7 @@ defmodule JidoCodemodeWeb.Layouts do
       <button
         type="button"
         aria-label="Use system theme"
-        class="relative flex w-1/3 cursor-pointer p-2"
+        class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
       >
@@ -128,7 +128,7 @@ defmodule JidoCodemodeWeb.Layouts do
       <button
         type="button"
         aria-label="Use light theme"
-        class="relative flex w-1/3 cursor-pointer p-2"
+        class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
       >
@@ -138,7 +138,7 @@ defmodule JidoCodemodeWeb.Layouts do
       <button
         type="button"
         aria-label="Use dark theme"
-        class="relative flex w-1/3 cursor-pointer p-2"
+        class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
       >
