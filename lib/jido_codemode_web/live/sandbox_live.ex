@@ -131,31 +131,53 @@ defmodule JidoCodemodeWeb.SandboxLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      app_chrome={false}
       full_width={true}
       main_class="min-h-dvh isolate"
-      content_class="mx-auto max-w-[96rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-6"
+      content_class="mx-auto max-w-[96rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-5"
     >
       <section class="space-y-5">
-        <header class="grid gap-5 border-b border-base-300/70 pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div class="space-y-2">
-            <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              Jido Codemode
-            </p>
-            <h1 class="max-w-[30ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
-              Build validated reports with Jido Codemode.
-            </h1>
-            <p class="max-w-3xl text-base leading-7 text-base-content/65">
-              Ask the agent to inspect the Northwind schema, run read-only SQL, or build a
-              structured report with sandboxed Lua.
-            </p>
+        <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+          <div class="grid min-w-0 gap-4">
+            <a href={~p"/"} aria-label="Homepage" class="flex w-fit items-center gap-3">
+              <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-content">
+                JC
+              </div>
+              <div class="min-w-0">
+                <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                  Reference application
+                </p>
+                <p class="font-semibold tracking-tight text-base-content">Jido Codemode</p>
+              </div>
+            </a>
+
+            <div class="grid gap-2">
+              <h1 class="max-w-[30ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
+                Build validated reports.
+              </h1>
+              <p class="max-w-[72ch] text-base leading-7 text-pretty text-base-content/65">
+                Inspect the Northwind schema, run read-only SQL, or build a structured report
+                with sandboxed Lua.
+              </p>
+            </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2 lg:justify-end">
-            <span class="inline-flex items-center gap-2 rounded-full bg-base-200 px-3 py-2 text-sm text-base-content/65 ring-1 ring-base-300/70">
+          <div class="flex flex-wrap items-center gap-2 md:max-w-lg md:justify-end">
+            <div class="text-sm font-medium text-base-content/65">
+              <a
+                href="https://github.com/agentjido/jido"
+                class="rounded-lg px-2 py-2 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                Jido
+              </a>
+            </div>
+            <Layouts.theme_toggle />
+
+            <div class="flex items-center gap-2 rounded-full bg-base-200 px-3 py-2 text-sm text-base-content/65 ring-1 ring-base-300/70">
               <span class="size-2 rounded-full bg-success" aria-hidden="true"></span>
               <span>Model</span>
               <span class="font-semibold text-base-content">{@agent_model}</span>
-            </span>
+            </div>
 
             <details class="group open:w-full sm:relative sm:open:w-auto">
               <summary class="inline-flex w-fit cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -172,8 +194,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
           </div>
         </header>
 
-        <section class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem] xl:items-start">
-          <div class="order-2 min-w-0 space-y-5 xl:order-1">
+        <section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start 2xl:grid-cols-[minmax(0,1fr)_26rem]">
+          <div class="order-2 min-w-0 space-y-5 lg:order-1">
             <section
               :if={@agent_report}
               id="agent-report"
@@ -367,8 +389,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
             </details>
           </div>
 
-          <aside class="order-1 min-w-0 xl:order-2 xl:sticky xl:top-5">
-            <section class="flex h-120 min-h-120 flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70 xl:h-[min(44rem,calc(100dvh-8rem))] xl:min-h-136">
+          <aside class="order-1 min-w-0 lg:order-2 lg:sticky lg:top-5">
+            <section class="flex h-120 min-h-120 flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70 lg:h-[clamp(34rem,calc(100dvh-14rem),44rem)] lg:min-h-0">
               <header class="shrink-0 border-b border-base-300/70 px-5 py-4">
                 <div class="flex items-start justify-between gap-4">
                   <div>
