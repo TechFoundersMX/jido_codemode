@@ -16,6 +16,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    chat_unlocked = is_nil(demo_password())
+
     socket =
       socket
       |> assign(:page_title, "Agentic BI")
@@ -23,6 +25,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
       |> assign(:agent_id, nil)
       |> assign(:agent_pid, nil)
       |> assign(:chat_form, chat_form())
+      |> assign(:unlock_form, unlock_form())
+      |> assign(:unlock_error, nil)
+      |> assign(:chat_unlocked, chat_unlocked)
       |> assign(:chat_messages, [])
       |> assign(:agent_report, nil)
       |> assign(:chat_pending, false)
@@ -31,7 +36,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       |> assign(:pending_reply_content, nil)
 
     socket =
-      if connected?(socket) do
+      if connected?(socket) and chat_unlocked do
         start_sidebar_agent(socket)
       else
         socket
@@ -52,11 +57,35 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   @impl true
   def handle_event("submit_chat", %{"chat" => %{"prompt" => prompt}}, socket) do
-    submit_prompt(socket, prompt)
+    if socket.assigns.chat_unlocked do
+      submit_prompt(socket, prompt)
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("unlock_chat", %{"unlock" => %{"password" => password}}, socket) do
+    if valid_demo_password?(password) do
+      {:noreply,
+       socket
+       |> assign(:chat_unlocked, true)
+       |> assign(:unlock_form, unlock_form())
+       |> assign(:unlock_error, nil)
+       |> start_sidebar_agent()}
+    else
+      {:noreply,
+       socket
+       |> assign(:unlock_form, unlock_form())
+       |> assign(:unlock_error, "That password is not correct.")}
+    end
   end
 
   def handle_event("use_suggestion", %{"prompt" => prompt}, socket) do
-    submit_prompt(socket, prompt)
+    if socket.assigns.chat_unlocked do
+      submit_prompt(socket, prompt)
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_event("reset_chat", _params, socket) do
@@ -67,7 +96,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
      |> assign(:chat_messages, [])
      |> assign(:agent_report, nil)
      |> clear_pending_chat()
-     |> start_sidebar_agent()}
+     |> maybe_start_sidebar_agent()}
   end
 
   @impl true
@@ -388,7 +417,16 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     </h2>
                   </div>
                   <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
-                    <span class="size-2 rounded-full bg-success" aria-hidden="true"></span> Ready
+                    <span
+                      class={[
+                        "size-2 rounded-full",
+                        @chat_unlocked && "bg-success",
+                        not @chat_unlocked && "bg-warning"
+                      ]}
+                      aria-hidden="true"
+                    >
+                    </span>
+                    {if @chat_unlocked, do: "Ready", else: "Locked"}
                   </span>
                 </div>
                 <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
@@ -403,6 +441,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     type="button"
                     phx-click="use_suggestion"
                     phx-value-prompt={suggestion.prompt}
+                    disabled={not @chat_unlocked}
                     class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-base-200 py-2 pr-3 pl-2 text-sm font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
@@ -419,6 +458,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                         type="button"
                         phx-click="use_suggestion"
                         phx-value-prompt={suggestion.prompt}
+                        disabled={not @chat_unlocked}
                         class="flex w-full items-center gap-2 rounded-lg py-2 pr-3 pl-2 text-left text-sm font-medium text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-primary"
                       >
                         <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
@@ -489,6 +529,49 @@ defmodule JidoCodemodeWeb.SandboxLive do
               </div>
 
               <.form
+                :if={not @chat_unlocked}
+                id="unlock-form"
+                for={@unlock_form}
+                phx-submit="unlock_chat"
+                class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
+              >
+                <div class="space-y-1">
+                  <label
+                    for={@unlock_form[:password].id}
+                    class="text-sm font-medium text-base-content"
+                  >
+                    Demo password
+                  </label>
+                  <p class="text-sm leading-5 text-base-content/55">
+                    Enter the password to unlock the analysis agent.
+                  </p>
+                </div>
+
+                <div class="flex gap-2">
+                  <.input
+                    field={@unlock_form[:password]}
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Password"
+                    aria-invalid={not is_nil(@unlock_error)}
+                    aria-describedby={@unlock_error && "unlock-error"}
+                    class="min-w-0 flex-1 rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0"
+                  />
+                  <button
+                    type="submit"
+                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    Unlock
+                  </button>
+                </div>
+
+                <p :if={@unlock_error} id="unlock-error" class="text-sm text-error" role="alert">
+                  {@unlock_error}
+                </p>
+              </.form>
+
+              <.form
+                :if={@chat_unlocked}
                 id="chat-form"
                 for={@chat_form}
                 phx-submit="submit_chat"
@@ -633,6 +716,29 @@ defmodule JidoCodemodeWeb.SandboxLive do
     to_form(%{"prompt" => prompt}, as: :chat)
   end
 
+  defp unlock_form do
+    to_form(%{"password" => ""}, as: :unlock)
+  end
+
+  defp demo_password do
+    case Application.get_env(:jido_codemode, :demo_password) do
+      password when is_binary(password) and password != "" -> password
+      _ -> nil
+    end
+  end
+
+  defp valid_demo_password?(password) when is_binary(password) do
+    case demo_password() do
+      expected when is_binary(expected) and byte_size(password) == byte_size(expected) ->
+        Plug.Crypto.secure_compare(password, expected)
+
+      _ ->
+        false
+    end
+  end
+
+  defp valid_demo_password?(_password), do: false
+
   defp show_chat_conversation?(chat_messages, pending_prompt, chat_pending) do
     chat_messages != [] or not is_nil(pending_prompt) or chat_pending == true
   end
@@ -651,6 +757,14 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> assign(:agent_pid, agent_pid)
     |> refresh_chat_messages()
     |> refresh_agent_report()
+  end
+
+  defp maybe_start_sidebar_agent(socket) do
+    if socket.assigns.chat_unlocked do
+      start_sidebar_agent(socket)
+    else
+      socket
+    end
   end
 
   defp stop_sidebar_agent(socket) do

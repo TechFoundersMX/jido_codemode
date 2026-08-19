@@ -23,6 +23,9 @@ end
 config :jido_codemode, JidoCodemodeWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+config :jido_codemode,
+  demo_password: System.get_env("DEMO_PASSWORD")
+
 opencode_base_url = System.get_env("OPENCODE_BASE_URL") || "https://opencode.ai/zen/go/v1"
 
 # Kimi K2.7 Code is OpenCode Go's coding-focused Kimi model. It uses the

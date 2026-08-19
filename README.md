@@ -39,6 +39,7 @@ The app runs at `http://localhost:4000`.
 - `OPENCODE_API_KEY` enables live model calls for the chat demo
 - `OPENCODE_BASE_URL` defaults to `https://opencode.ai/zen/v1`
 - `OPENCODE_MODEL` defaults to `gpt-5.4-mini`
+- `DEMO_PASSWORD` locks the analysis agent behind a password while leaving the public page and OG image accessible
 
 If `OPENCODE_API_KEY` is unset, the app still boots and the static demo remains available, but live chat requests will fail.
 
