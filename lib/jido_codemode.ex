@@ -1,5 +1,5 @@
 defmodule JidoCodemode do
   @moduledoc """
-  Public demo application for the sandboxed report-building codemode.
+  Agentic BI demo application for decision-ready data analysis.
   """
 end

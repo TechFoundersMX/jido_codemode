@@ -35,3 +35,7 @@ jido_codemode-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Local Devenv configuration can contain secrets.
+/devenv.local.nix
+/.devenv*
+/.direnv/

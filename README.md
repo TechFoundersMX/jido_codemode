@@ -1,20 +1,21 @@
-# Jido Codemode
+# Agentic BI
 
-Open source Phoenix demo of a Jido agent that can switch into codemode, write short Lua programs in a sandbox, query SQLite through a guarded interface, and render validated reports in LiveView.
-
-## Background
-
-This repo is inspired by Cloudflare's original codemode article:
-
-- [Code Mode: the better way to use MCP](https://blog.cloudflare.com/code-mode/)
+Agentic BI turns business questions into clear, decision-ready analysis. The Phoenix demo can inspect a dataset, run guarded read-only queries, and build validated reports with metrics, tables, and charts.
 
 ## What It Shows
 
-- A small tool surface: `describe_schema`, `run_sqlite_query`, and `BuildReport`
-- A sandboxed Lua runtime for multi-step report generation
+- A focused analysis agent with a small, bounded tool surface
+- A sandboxed runtime for multi-step report generation
 - Read-only SQLite access with bounded previews and hard limits
-- Elixir-side validation of report payloads before rendering
+- Elixir-side validation before results reach the interface
 - LiveView rendering for text, metrics, tables, and Vega charts
+
+## Analysis Workflow
+
+1. Ask a business question.
+2. The agent inspects the available schema and runs bounded queries.
+3. Agentic BI builds and validates the resulting analysis.
+4. LiveView presents the metrics, tables, charts, and explanation.
 
 ## Stack
 

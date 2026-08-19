@@ -44,11 +44,11 @@ The Lua code must return a report payload. Elixir normalizes and validates it in
 - table
 - line / bar / donut / scatter chart
 
-## Why Codemode Exists
+## Why Agentic BI Uses a Sandboxed Analysis Runtime
 
 Simple questions can be answered with normal assistant text.
 
-Codemode is useful when the model needs to:
+The sandboxed runtime is useful when the analysis agent needs to:
 
 - run more than one query
 - derive intermediate values

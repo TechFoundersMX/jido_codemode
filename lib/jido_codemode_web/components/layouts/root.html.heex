@@ -4,13 +4,38 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Jido Codemode" suffix=" · Sandboxed report runtime">
+    <.live_title default="Agentic BI" suffix=" · Decision-ready analysis">
       {assigns[:page_title]}
     </.live_title>
 
     <meta
       name="description"
-      content="Reference Phoenix app for Jido codemode: sandboxed Lua, read-only SQLite queries, and validated report rendering in LiveView."
+      content="Turn business questions into clear, decision-ready analysis with Agentic BI."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Agentic BI" />
+    <meta
+      property="og:description"
+      content="Turn business questions into clear, decision-ready analysis."
+    />
+    <meta property="og:image" content={url(~p"/images/agentic-bi-og.png")} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Agentic BI — data signals converging into action." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agentic BI" />
+    <meta
+      name="twitter:description"
+      content="Turn business questions into clear, decision-ready analysis."
+    />
+    <meta name="twitter:image" content={url(~p"/images/agentic-bi-og.png")} />
+    <link rel="icon" href={~p"/images/agentic-bi-mark.svg"} type="image/svg+xml" />
+    <link rel="icon" href={~p"/favicon.ico"} sizes="64x64" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
     />
 
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
@@ -36,7 +61,7 @@
       })();
     </script>
   </head>
-  <body class="bg-base-100 text-base-content antialiased">
+  <body class="bg-base-100 font-sans text-base-content antialiased">
     {@inner_content}
   </body>
 </html>

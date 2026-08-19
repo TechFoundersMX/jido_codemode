@@ -24,25 +24,21 @@ defmodule JidoCodemodeWeb.Layouts do
     >
       <div class="mx-auto flex max-w-[96rem] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <a href={~p"/"} aria-label="Homepage" class="flex items-center gap-3">
-          <span class="inline-flex size-9 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-content">
-            JC
-          </span>
+          <img
+            src={~p"/images/agentic-bi-mark.svg"}
+            alt=""
+            class="size-9 shrink-0 rounded-xl"
+          />
 
           <div>
             <p class="text-xs text-base-content/50">
-              Reference application
+              Decision intelligence
             </p>
-            <p class="text-sm font-semibold tracking-tight text-base-content">Jido Codemode</p>
+            <p class="text-sm font-semibold tracking-tight text-base-content">Agentic BI</p>
           </div>
         </a>
 
         <div class="flex items-center gap-3">
-          <a
-            href="https://github.com/agentjido/jido"
-            class="hidden text-sm font-medium text-base-content/65 hover:text-base-content sm:inline-flex"
-          >
-            Jido
-          </a>
           <.theme_toggle />
         </div>
       </div>

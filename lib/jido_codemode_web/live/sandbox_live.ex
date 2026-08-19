@@ -3,7 +3,6 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   alias Jido.AI, as: JidoAI
   alias Jido.Thread
-  alias JidoCodemode.AI
   alias JidoCodemode.Agent.Report
   alias JidoCodemode.SidebarAgent
   alias VegaLite, as: Vl
@@ -19,11 +18,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(:page_title, "Jido codemode reference")
+      |> assign(:page_title, "Agentic BI")
       |> assign(:charts, build_charts())
       |> assign(:agent_id, nil)
       |> assign(:agent_pid, nil)
-      |> assign(:agent_model, AI.model())
       |> assign(:chat_form, chat_form())
       |> assign(:chat_messages, [])
       |> assign(:agent_report, nil)
@@ -140,44 +138,32 @@ defmodule JidoCodemodeWeb.SandboxLive do
         <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
           <div class="grid min-w-0 gap-4">
             <a href={~p"/"} aria-label="Homepage" class="flex w-fit items-center gap-3">
-              <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-content">
-                JC
-              </div>
+              <img
+                src={~p"/images/agentic-bi-mark.svg"}
+                alt=""
+                class="size-10 shrink-0 rounded-xl"
+              />
               <div class="min-w-0">
                 <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                  Reference application
+                  Decision intelligence
                 </p>
-                <p class="font-semibold tracking-tight text-base-content">Jido Codemode</p>
+                <p class="font-semibold tracking-tight text-base-content">Agentic BI</p>
               </div>
             </a>
 
             <div class="grid gap-2">
-              <h1 class="max-w-[30ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
-                Build validated reports.
+              <h1 class="max-w-[35ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
+                Turn business questions into clear analysis
               </h1>
-              <p class="max-w-[72ch] text-base leading-7 text-pretty text-base-content/65">
-                Inspect the Northwind schema, run read-only SQL, or build a structured report
-                with sandboxed Lua.
+              <p class="max-w-[56ch] text-base leading-7 text-pretty text-base-content/65">
+                Explore your data with an agent that can query, compare, visualize, and explain
+                its findings.
               </p>
             </div>
           </div>
 
           <div class="flex flex-wrap items-center gap-2 md:max-w-lg md:justify-end">
-            <div class="text-sm font-medium text-base-content/65">
-              <a
-                href="https://github.com/agentjido/jido"
-                class="rounded-lg px-2 py-2 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                Jido
-              </a>
-            </div>
             <Layouts.theme_toggle />
-
-            <div class="flex items-center gap-2 rounded-full bg-base-200 px-3 py-2 text-sm text-base-content/65 ring-1 ring-base-300/70">
-              <span class="size-2 rounded-full bg-success" aria-hidden="true"></span>
-              <span>Model</span>
-              <span class="font-semibold text-base-content">{@agent_model}</span>
-            </div>
 
             <details class="group open:w-full sm:relative sm:open:w-auto">
               <summary class="inline-flex w-fit cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -185,9 +171,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
               </summary>
               <div class="mt-2 w-full rounded-2xl bg-base-100 p-4 text-base leading-7 text-base-content/70 shadow-lg ring-1 ring-base-300 sm:absolute sm:right-0 sm:z-20 sm:w-88 sm:text-sm sm:leading-6 [[data-theme=dark]_&]:shadow-none">
                 <ol class="list-decimal space-y-2 pl-5">
-                  <li>The agent receives a compact schema digest and bounded tools.</li>
-                  <li>Complex reports run in sandboxed Lua with database and report helpers.</li>
-                  <li>Elixir validates the result before LiveView renders it.</li>
+                  <li>The agent reads a compact schema through a read-only connection.</li>
+                  <li>It runs bounded queries and builds the needed metrics and visuals.</li>
+                  <li>Every result is validated before it appears in your analysis.</li>
                 </ol>
               </div>
             </details>
@@ -203,7 +189,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
             >
               <div class="space-y-2">
                 <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                  Agent output
+                  Generated analysis
                 </p>
                 <h2 class="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
                   {@agent_report.title}
@@ -326,10 +312,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
               <div class="max-w-md space-y-3">
                 <.icon name="hero-chart-bar-square-micro" class="mx-auto size-4 text-primary" />
                 <h2 class="text-xl font-semibold tracking-tight text-base-content">
-                  Your report will appear here
+                  Your analysis will appear here
                 </h2>
                 <p class="text-base leading-7 text-base-content/60">
-                  Use the assistant to request a chart, table, metric, or complete report.
+                  Ask the analysis agent for a chart, table, metric, or complete report.
                 </p>
               </div>
             </section>
@@ -338,10 +324,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
               <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6">
                 <div>
                   <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                    Reference examples
+                    Example analyses
                   </p>
                   <h2 class="mt-1 text-lg font-semibold tracking-tight text-base-content">
-                    Explore the seed charts
+                    See what Agentic BI can build
                   </h2>
                 </div>
                 <.icon
@@ -395,10 +381,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 <div class="flex items-start justify-between gap-4">
                   <div>
                     <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                      Assistant
+                      Analysis agent
                     </p>
                     <h2 class="mt-1 text-xl font-semibold tracking-tight text-base-content">
-                      Explore Northwind
+                      Ask about Northwind
                     </h2>
                   </div>
                   <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
@@ -406,7 +392,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   </span>
                 </div>
                 <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
-                  Ask a question or request a structured report.
+                  Ask a business question or request a complete analysis.
                 </p>
               </header>
 
@@ -452,7 +438,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
                     <p class="font-medium text-base-content">Start with a prompt</p>
                     <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
-                      Select an example above or describe the data you want to explore.
+                      Select an example above or describe the decision you want to support.
                     </p>
                   </div>
                 </div>
@@ -511,7 +497,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 <.input
                   field={@chat_form[:prompt]}
                   type="textarea"
-                  placeholder="Ask for schema details, a query, or a report"
+                  placeholder="Ask about revenue, customers, products, or trends"
                   rows="2"
                   disabled={@chat_pending}
                   class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
@@ -519,7 +505,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
                 <div class="flex items-center justify-between gap-3">
                   <p class="text-sm leading-5 text-base-content/50">
-                    Read-only data access
+                    Connected with read-only access
                   </p>
 
                   <button
@@ -527,7 +513,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={@chat_pending}
                   >
-                    {if @chat_pending, do: "Working...", else: "Send"}
+                    {if @chat_pending, do: "Analyzing...", else: "Send"}
                   </button>
                 </div>
               </.form>
@@ -711,8 +697,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
       },
       %{
         icon: "hero-sparkles-micro",
-        label: "Chart and table report",
-        prompt: "Build a short report with a chart and a table"
+        label: "Complete analysis",
+        prompt: "Build a short analysis with a chart and a table"
       }
     ]
   end
@@ -792,7 +778,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   defp chat_row_classes(:assistant), do: "flex justify-start"
 
   defp role_label(:user), do: "You"
-  defp role_label(:assistant), do: "Agent"
+  defp role_label(:assistant), do: "Agentic BI"
 
   defp render_markdown(content) when is_binary(content) do
     MDEx.new(@markdown_options)
@@ -919,9 +905,19 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> Tucan.set_theme(:latimes)
     |> Vl.config(
       background: "transparent",
+      font: "Geist",
+      mark: [color: "#2563EB"],
       view: [stroke: nil],
-      legend: [title: nil, orient: :bottom, label_font_size: 11],
-      axis: [grid_color: "#E5E7EB", domain: false, tick_color: "#CBD5E1", label_color: "#475569"]
+      range: [category: ["#2563EB", "#0F8B8D", "#D97706", "#0891B2", "#71717A"]],
+      legend: [title: nil, orient: :bottom, label_font: "Geist", label_font_size: 11],
+      axis: [
+        grid_color: "#DCE1E8",
+        domain: false,
+        tick_color: "#DCE1E8",
+        label_color: "#52525B",
+        label_font: "Geist",
+        title_font: "Geist"
+      ]
     )
   end
 

@@ -324,9 +324,19 @@ defmodule JidoCodemode.Agent.Report do
     |> Tucan.set_theme(:latimes)
     |> Vl.config(
       background: "transparent",
+      font: "Geist",
+      mark: [color: "#2563EB"],
       view: [stroke: nil],
-      legend: [title: nil, orient: :bottom, label_font_size: 11],
-      axis: [grid_color: "#E5E7EB", domain: false, tick_color: "#CBD5E1", label_color: "#475569"]
+      range: [category: ["#2563EB", "#0F8B8D", "#D97706", "#0891B2", "#71717A"]],
+      legend: [title: nil, orient: :bottom, label_font: "Geist", label_font_size: 11],
+      axis: [
+        grid_color: "#DCE1E8",
+        domain: false,
+        tick_color: "#DCE1E8",
+        label_color: "#52525B",
+        label_font: "Geist",
+        title_font: "Geist"
+      ]
     )
   end
 

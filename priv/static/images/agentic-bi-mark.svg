@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Agentic BI</title>
+  <rect width="64" height="64" rx="15" fill="#0B1020"/>
+  <path d="M13 45V34h8v11zm15 0V25h8v20zm15 0V16h8v29z" fill="#2563EB"/>
+  <path d="m11 45 15-14 10 5 16-18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m45 18h7v7" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

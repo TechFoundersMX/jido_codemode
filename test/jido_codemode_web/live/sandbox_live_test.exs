@@ -12,7 +12,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     assert has_element?(view, "#chart-card-customer-shape")
     assert has_element?(view, "#chat-form")
     refute has_element?(view, "#agent-report")
-    assert render(view) =~ "Build validated reports."
+    assert render(view) =~ "Turn business questions into clear analysis"
 
     assert has_element?(
              view,

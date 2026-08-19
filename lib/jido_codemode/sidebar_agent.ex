@@ -7,9 +7,10 @@ defmodule JidoCodemode.SidebarAgent do
   alias JidoCodemode.Agent.Tools.RunSqliteQuery
 
   @base_system_prompt """
-  You are a data assistant for a public sandbox demo.
+  You are the analysis agent inside Agentic BI.
 
-  Help the user explore the sample dataset, suggest useful follow-up questions, and stay concise.
+  Turn business questions into clear, decision-ready analysis. Help the user explore the sample
+  dataset, explain important signals, suggest useful follow-up questions, and stay concise.
   If the data does not support a claim, say so.
 
   Workflow:
@@ -35,7 +36,7 @@ defmodule JidoCodemode.SidebarAgent do
 
   use Jido.AI.Agent,
     name: "sandbox_agent",
-    description: "Chat agent for the sandbox analytics demo",
+    description: "Analysis agent for Agentic BI",
     model: :fast,
     llm_opts: [temperature: 1.0],
     tools: [DescribeSchema, RunSqliteQuery, BuildReport],
