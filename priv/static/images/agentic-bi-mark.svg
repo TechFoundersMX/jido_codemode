@@ -1,7 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
   <title id="title">Agentic BI</title>
-  <rect width="64" height="64" rx="15" fill="#0B1020"/>
-  <path d="M13 45V34h8v11zm15 0V25h8v20zm15 0V16h8v29z" fill="#2563EB"/>
-  <path d="m11 45 15-14 10 5 16-18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="m45 18h7v7" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="background" x1="8" y1="58" x2="56" y2="6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#155EEF"/>
+      <stop offset="1" stop-color="#2F7BFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#background)"/>
+  <path d="M13 46V35h8v11zm15 0V27h8v19zm15 0V18h8v28z" fill="#fff"/>
+  <path d="m11 44 15-14 10 6 16-18" fill="none" stroke="#079A83" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m44 18h8v8" fill="none" stroke="#079A83" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
