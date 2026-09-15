@@ -28,9 +28,8 @@ config :jido_codemode,
 
 opencode_base_url = System.get_env("OPENCODE_BASE_URL") || "https://opencode.ai/zen/go/v1"
 
-# Kimi K2.7 Code is OpenCode Go's coding-focused Kimi model. It uses the
-# OpenAI-compatible chat-completions API consumed by ReqLLM/Jido AI.
-opencode_model = System.get_env("OPENCODE_MODEL") || "kimi-k2.7-code"
+# ReqLLM routes GPT-5 models through OpenCode Go's Responses API.
+opencode_model = System.get_env("OPENCODE_MODEL") || "gpt-5.6-luna"
 opencode_model_spec = %{provider: :openai, id: opencode_model}
 
 config :jido_ai,

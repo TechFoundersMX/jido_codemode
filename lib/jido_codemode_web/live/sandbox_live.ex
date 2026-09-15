@@ -673,6 +673,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
          |> start_async({:agent_reply, request_id}, fn ->
            SidebarAgent.ask_sync(agent_pid, prompt,
              timeout: 60_000,
+             req_http_options: [headers: [{"x-opencode-session", agent_id}]],
              tool_context: %{session_id: agent_id}
            )
          end)}
@@ -744,7 +745,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   end
 
   defp start_sidebar_agent(socket) do
-    agent_id = "sandbox-" <> Integer.to_string(System.unique_integer([:positive]))
+    agent_id = "sandbox-" <> Base.url_encode64(:crypto.strong_rand_bytes(24), padding: false)
     {:ok, agent_pid} = Jido.start_agent(JidoCodemode.Jido, SidebarAgent, id: agent_id)
 
     _ =
