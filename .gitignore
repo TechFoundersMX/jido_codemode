@@ -39,3 +39,6 @@ npm-debug.log
 /devenv.local.nix
 /.devenv*
 /.direnv/
+
+# Local environment overrides can contain secrets.
+/.env
