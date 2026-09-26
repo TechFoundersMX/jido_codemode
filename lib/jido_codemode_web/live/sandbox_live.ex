@@ -8,7 +8,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   alias VegaLite, as: Vl
 
   @markdown_options [
-    streaming: true,
+    auto_close: true,
     extension: [autolink: true, strikethrough: true, table: true, tasklist: true],
     render: [hardbreaks: true],
     sanitize: MDEx.Document.default_sanitize_options()
