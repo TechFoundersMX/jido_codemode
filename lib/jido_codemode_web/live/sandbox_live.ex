@@ -673,7 +673,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
          |> start_async({:agent_reply, request_id}, fn ->
            SidebarAgent.ask_sync(agent_pid, prompt,
              timeout: 60_000,
-             req_http_options: [headers: [{"x-opencode-session", agent_id}]],
+             req_http_options: [
+               headers: JidoCodemode.AI.request_headers() ++ [{"x-opencode-session", agent_id}]
+             ],
              tool_context: %{session_id: agent_id}
            )
          end)}

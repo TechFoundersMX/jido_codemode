@@ -43,6 +43,26 @@ The app runs at `http://localhost:4000`.
 
 If `OPENCODE_API_KEY` is unset, the app still boots and the static demo remains available, but live chat requests will fail.
 
+### SuperDev AI Gateway mode
+
+Instead of holding an OpenCode key, the app can call OpenCode through the
+SuperDev AI Gateway (`TechFoundersMX/monorepo`, `docs/ai-gateway.md`). The
+gateway injects its stored OpenCode key, so the app must not send one.
+
+- `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` enable gateway mode; set
+  both or neither. Use a Cloudflare Access service token created for this
+  service and environment.
+- `AI_GATEWAY_DOMAIN` defaults to `gateway.superdev.mx`
+- `AI_GATEWAY_KEY_ALIAS` defaults to `production`
+- `OPENCODE_BASE_URL` defaults to `https://<AI_GATEWAY_DOMAIN>/opencode/v1` and
+  must stay on the gateway domain
+
+In gateway mode the app refuses to boot if `OPENCODE_API_KEY` or
+`OPENAI_API_KEY` is also set, because a request-supplied key overrides the
+gateway's stored key. ReqLLM omits the `Authorization` header through the model
+spec's `openai_compatible_backend: :ollama` marker, whose only effect in ReqLLM
+1.10 is to permit a missing API key.
+
 Chat requests send `x-opencode-session` with a random ID for each agent conversation.
 The ID stays the same across turns, tool calls, and retries. Starting a new chat
 agent creates a new ID. This header is passed through Jido's `req_http_options`;

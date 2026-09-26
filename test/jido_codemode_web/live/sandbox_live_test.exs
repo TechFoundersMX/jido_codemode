@@ -56,6 +56,29 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     end
   end
 
+  defmodule GatewayStub do
+    def init(test_pid), do: test_pid
+
+    def call(conn, test_pid) do
+      {:ok, _body, conn} = Plug.Conn.read_body(conn)
+      send(test_pid, {:gateway_request, conn.request_path, conn.req_headers})
+
+      events = [
+        %{type: "response.output_text.delta", delta: "Gateway reply"},
+        %{type: "response.completed", response: %{id: "resp_gw", status: "completed", output: []}}
+      ]
+
+      body =
+        Enum.map_join(events, "", fn event ->
+          "event: #{event.type}\ndata: #{Jason.encode!(event)}\n\n"
+        end)
+
+      conn
+      |> Plug.Conn.put_resp_content_type("text/event-stream")
+      |> Plug.Conn.send_resp(200, body)
+    end
+  end
+
   setup do
     previous_password = Application.get_env(:jido_codemode, :demo_password)
     Application.put_env(:jido_codemode, :demo_password, "test-password")
@@ -159,6 +182,79 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     view |> form("#chat-form", chat: %{prompt: "New conversation"}) |> render_submit()
     assert_receive {:opencode_session, [new_session_id]}, 10_000
     refute new_session_id == session_id
+    render_async(view, 10_000)
+  end
+
+  test "AI Gateway mode sends Access headers and never a provider Authorization header",
+       %{conn: conn} do
+    server =
+      start_supervised!({Bandit, plug: {GatewayStub, self()}, ip: {127, 0, 0, 1}, port: 0})
+
+    {:ok, {_ip, port}} = ThousandIsland.listener_info(server)
+
+    gateway_headers = [
+      {"cf-access-client-id", "test-client-id"},
+      {"cf-access-client-secret", "test-client-secret"},
+      {"cf-aig-byok-alias", "production"}
+    ]
+
+    # Mirror what config/runtime.exs sets in gateway mode: no provider key, the
+    # Access headers, and a model spec that lets ReqLLM omit Authorization.
+    previous = %{
+      openai: Application.get_env(:req_llm, :openai),
+      openai_api_key: Application.get_env(:req_llm, :openai_api_key),
+      ai: Application.get_env(:jido_codemode, JidoCodemode.AI),
+      aliases: Application.get_env(:jido_ai, :model_aliases),
+      env_key: System.get_env("OPENAI_API_KEY")
+    }
+
+    spec = %{
+      provider: :openai,
+      id: "gpt-5.6-luna",
+      extra: %{openai_compatible_backend: :ollama}
+    }
+
+    Application.put_env(:req_llm, :openai, base_url: "http://127.0.0.1:#{port}/v1")
+    Application.delete_env(:req_llm, :openai_api_key)
+    System.delete_env("OPENAI_API_KEY")
+
+    Application.put_env(
+      :jido_codemode,
+      JidoCodemode.AI,
+      Keyword.put(previous.ai, :gateway_headers, gateway_headers)
+    )
+
+    Application.put_env(:jido_ai, :model_aliases, %{fast: spec, capable: spec})
+
+    on_exit(fn ->
+      restore = fn app, key, value ->
+        if is_nil(value),
+          do: Application.delete_env(app, key),
+          else: Application.put_env(app, key, value)
+      end
+
+      restore.(:req_llm, :openai, previous.openai)
+      restore.(:req_llm, :openai_api_key, previous.openai_api_key)
+      restore.(:jido_codemode, JidoCodemode.AI, previous.ai)
+      restore.(:jido_ai, :model_aliases, previous.aliases)
+      if previous.env_key, do: System.put_env("OPENAI_API_KEY", previous.env_key)
+    end)
+
+    {:ok, view, _html} = live(conn, ~p"/")
+    view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
+    view |> form("#chat-form", chat: %{prompt: "Through the gateway"}) |> render_submit()
+
+    assert_receive {:gateway_request, "/v1/responses", headers}, 10_000
+
+    refute List.keymember?(headers, "authorization", 0)
+
+    for {name, value} <- gateway_headers do
+      assert {name, value} in headers
+    end
+
+    assert [{"x-opencode-session", "sandbox-" <> _}] =
+             Enum.filter(headers, fn {name, _} -> name == "x-opencode-session" end)
+
     render_async(view, 10_000)
   end
 end

@@ -26,11 +26,72 @@ config :jido_codemode, JidoCodemodeWeb.Endpoint,
 config :jido_codemode,
   demo_password: System.get_env("DEMO_PASSWORD")
 
-opencode_base_url = System.get_env("OPENCODE_BASE_URL") || "https://opencode.ai/zen/go/v1"
+present_env = fn name ->
+  case System.get_env(name) do
+    value when is_binary(value) and value != "" -> value
+    _other -> nil
+  end
+end
+
+# SuperDev AI Gateway mode. When both Cloudflare Access service-token values
+# are set, OpenCode requests go through gateway.superdev.mx, which injects the
+# stored OpenCode key (BYOK). The app then must not send a provider key: a
+# request-supplied Authorization header overrides the gateway's stored key.
+# Contract: TechFoundersMX/monorepo docs/ai-gateway.md.
+opencode_gateway =
+  case {present_env.("CF_ACCESS_CLIENT_ID"), present_env.("CF_ACCESS_CLIENT_SECRET")} do
+    {nil, nil} ->
+      nil
+
+    {client_id, client_secret} when is_binary(client_id) and is_binary(client_secret) ->
+      if present_env.("OPENCODE_API_KEY") || present_env.("OPENAI_API_KEY") do
+        raise "AI Gateway mode is enabled (CF_ACCESS_CLIENT_ID is set). Unset OPENCODE_API_KEY " <>
+                "and OPENAI_API_KEY: a provider key would override the gateway's stored key."
+      end
+
+      domain = present_env.("AI_GATEWAY_DOMAIN") || "gateway.superdev.mx"
+
+      unless Regex.match?(~r/^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]+$/, domain) do
+        raise "AI_GATEWAY_DOMAIN must be a bare hostname, got: #{inspect(domain)}"
+      end
+
+      %{
+        domain: domain,
+        headers: [
+          {"cf-access-client-id", client_id},
+          {"cf-access-client-secret", client_secret},
+          {"cf-aig-byok-alias", present_env.("AI_GATEWAY_KEY_ALIAS") || "production"}
+        ]
+      }
+
+    _partial ->
+      raise "Set both CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET for AI Gateway mode, or neither."
+  end
+
+opencode_base_url =
+  present_env.("OPENCODE_BASE_URL") ||
+    if(opencode_gateway,
+      do: "https://#{opencode_gateway.domain}/opencode/v1",
+      else: "https://opencode.ai/zen/go/v1"
+    )
+
+# The Access credentials must only ever be sent to the gateway itself.
+if opencode_gateway &&
+     not String.starts_with?(opencode_base_url, "https://#{opencode_gateway.domain}/") do
+  raise "In AI Gateway mode OPENCODE_BASE_URL must point at https://#{opencode_gateway.domain}/, " <>
+          "got: #{opencode_base_url}"
+end
 
 # ReqLLM routes GPT-5 models through OpenCode Go's Responses API.
-opencode_model = System.get_env("OPENCODE_MODEL") || "gpt-5.6-luna"
-opencode_model_spec = %{provider: :openai, id: opencode_model}
+opencode_model = present_env.("OPENCODE_MODEL") || "gpt-5.6-luna"
+
+# In gateway mode, `openai_compatible_backend: :ollama` makes ReqLLM send no
+# Authorization header when no API key is configured. Despite the name, this
+# is its only effect in ReqLLM 1.10: it permits a missing API key.
+opencode_model_spec =
+  if opencode_gateway,
+    do: %{provider: :openai, id: opencode_model, extra: %{openai_compatible_backend: :ollama}},
+    else: %{provider: :openai, id: opencode_model}
 
 config :jido_ai,
   model_aliases: %{
@@ -45,10 +106,16 @@ config :jido_ai,
 
 config :jido_codemode, JidoCodemode.AI,
   base_url: opencode_base_url,
-  model: opencode_model
+  model: opencode_model,
+  gateway_headers: if(opencode_gateway, do: opencode_gateway.headers, else: [])
 
-if opencode_api_key = System.get_env("OPENCODE_API_KEY") do
+opencode_api_key = present_env.("OPENCODE_API_KEY")
+
+if opencode_api_key do
   config :req_llm, :openai_api_key, opencode_api_key
+end
+
+if opencode_api_key || opencode_gateway do
   config :req_llm, :openai, base_url: opencode_base_url
 end
 
