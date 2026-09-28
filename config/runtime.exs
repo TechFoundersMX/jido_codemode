@@ -87,7 +87,7 @@ opencode_model = present_env.("OPENCODE_MODEL") || "gpt-5.6-luna"
 
 # In gateway mode, `openai_compatible_backend: :ollama` makes ReqLLM send no
 # Authorization header when no API key is configured. Despite the name, this
-# is its only effect in ReqLLM 1.10: it permits a missing API key.
+# is its only effect in ReqLLM 1.25: it permits a missing API key.
 opencode_model_spec =
   if opencode_gateway,
     do: %{provider: :openai, id: opencode_model, extra: %{openai_compatible_backend: :ollama}},
