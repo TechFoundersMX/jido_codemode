@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-ARG ELIXIR_VERSION=1.18.4
-ARG OTP_VERSION=27.3.4.9
-ARG BUILDER_DEBIAN_VERSION=bookworm-20260316-slim
+ARG ELIXIR_VERSION=1.20.4
+ARG OTP_VERSION=27.3.4.18
+ARG BUILDER_DEBIAN_VERSION=bookworm-20260918-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${BUILDER_DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:bookworm-slim"
 
@@ -55,6 +55,7 @@ RUN apt-get update -y && apt-get install -y \
     locales \
     openssl \
     ca-certificates \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
