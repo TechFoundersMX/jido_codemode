@@ -61,12 +61,59 @@ In gateway mode the app refuses to boot if `OPENCODE_API_KEY` or
 `OPENAI_API_KEY` is also set, because a request-supplied key overrides the
 gateway's stored key. ReqLLM omits the `Authorization` header through the model
 spec's `openai_compatible_backend: :ollama` marker, whose only effect in ReqLLM
-1.10 is to permit a missing API key.
+1.25 is to permit a missing API key.
 
 Chat requests send `x-opencode-session` with a random ID for each agent conversation.
 The ID stays the same across turns, tool calls, and retries. Starting a new chat
 agent creates a new ID. This header is passed through Jido's `req_http_options`;
 ReqLLM does not add it automatically.
+
+## Operations
+
+### Deployment
+
+- Production runs on Coolify as `jido_codemode:master` at
+  `https://agentic-bi.superdev.mx`. A push to `master` triggers a deploy through
+  the Coolify webhook. An environment variable change alone needs a manual
+  redeploy.
+- `GET /health` returns `ok`. Coolify's container health check calls it through
+  `curl`, which the runtime image installs. `force_ssl` excludes `localhost`,
+  so the in-container check is not redirected to HTTPS.
+- The image builds on Elixir 1.20 / OTP 27, the same toolchain as `devenv.nix`.
+
+### AI Gateway credentials
+
+This service uses one provider through the SuperDev AI Gateway: OpenCode Go at
+`/opencode` (model `gpt-5.6-luna` through the Responses API). Each environment
+has its own Cloudflare Access service token and Service Auth policy on the
+"SuperDev AI Gateway" Access application. Both are listed in
+`cloudflare/ai-gateway/gateway.config.js` in `TechFoundersMX/monorepo`.
+
+| Environment | Token and policy name | Expires | Where the secret is stored |
+| --- | --- | --- | --- |
+| Development | `agentic-bi development` | 2027-09-26 | Developer's local `.env` (gitignored) |
+| Production | `agentic-bi production` | 2027-09-28 | Coolify app env, `CF_ACCESS_CLIENT_SECRET` locked, runtime only |
+
+Owner: SuperDev, Cloudflare Zero Trust (Superdev account). Never commit a token
+value. To rotate, use **Rotate secret** on the token in Zero Trust → Access
+controls → Service credentials. Update the stored secret, redeploy, and verify
+with the command below. The client ID and policy do not change.
+
+Verification: the request below lists models without running inference.
+`HTTP 200` means the domain, Access token, BYOK alias, and upstream provider
+all work. A `302` to a Cloudflare Access login means the token or secret is
+wrong, or the token has no policy on the gateway application.
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" \
+  -H 'cf-aig-byok-alias: production' \
+  https://gateway.superdev.mx/opencode/v1/models
+```
+
+OpenCode Go rejects model requests that have no `x-opencode-session` header
+(`400 MissingSessionID`). The model-list request above does not need it.
 
 ## Tests
 
