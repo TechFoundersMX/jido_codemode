@@ -77,7 +77,7 @@ report code does currency arithmetic on results.
   | --- | --- |
   | `FX_USD_MXN` | `17.8413` |
   | `FX_USD_MXN_DATE` | `2026-09-28` |
-  | `FX_USD_MXN_SOURCE` | `Banxico FIX (SuperDev ERP)` |
+  | `FX_USD_MXN_SOURCE` | `FIX de Banxico` |
 
   The initial value is the Banxico FIX for 28 Sep 2026, read from SuperDev ERP
   (Odoo `res_currency_rate` id 205, stored as 0.05604972731807659 USD per MXN).

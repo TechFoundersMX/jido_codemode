@@ -90,7 +90,7 @@ defmodule JidoCodemode.Locale.DatasetTest do
     Application.put_env(:jido_codemode, Dataset,
       fx_usd_mxn: "17.8413",
       fx_date: "2026-09-28",
-      fx_source: "Banxico FIX (SuperDev ERP)"
+      fx_source: "FIX de Banxico"
     )
 
     Dataset.reset()
