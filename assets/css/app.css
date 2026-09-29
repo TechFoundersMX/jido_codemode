@@ -1,4 +1,5 @@
 @import "tailwindcss" source(none);
+@import "./landing.css";
 @source "../css";
 @source "../js";
 @source "../../lib/jido_codemode_web";

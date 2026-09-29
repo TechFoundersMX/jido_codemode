@@ -30,7 +30,7 @@ defmodule JidoCodemodeWeb.TranslationsTest do
   end
 
   test "the Spanish page shows Spanish copy and no English interface copy", %{conn: conn} do
-    {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
+    {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/demo")
 
     for spanish <- [
           "Convierte preguntas de negocio en análisis claros",

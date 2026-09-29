@@ -26,6 +26,18 @@ config :jido_codemode, JidoCodemodeWeb.Endpoint,
 config :jido_codemode,
   demo_password: System.get_env("DEMO_PASSWORD")
 
+# Invitation access to the live agent (SuperDev's demo invitation service). Off until
+# Alex sets AGENTIC_BI_SERVICE_TOKEN (the same value as in the Worker); then invitees
+# get the agent, /demo sends everyone else to the self-serve form, and the team
+# password stops being offered.
+if token = System.get_env("AGENTIC_BI_SERVICE_TOKEN") do
+  config :jido_codemode, :demo_access_client, JidoCodemode.DemoAccess.Hub
+
+  config :jido_codemode, JidoCodemode.DemoAccess.Hub,
+    base_url: System.get_env("AGENTIC_BI_HUB_URL", "https://agentic-bi.superdev.mx"),
+    token: token
+end
+
 if fx_usd_mxn = System.get_env("FX_USD_MXN") do
   config :jido_codemode, JidoCodemode.Locale.Dataset,
     fx_usd_mxn: fx_usd_mxn,

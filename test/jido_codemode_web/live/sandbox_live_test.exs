@@ -95,7 +95,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "renders the sandbox demo", %{conn: conn} do
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = live(conn, ~p"/demo")
 
     assert has_element?(view, "#chart-card-revenue-trend")
     assert has_element?(view, "#chart-card-category-revenue")
@@ -128,7 +128,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "unlocks chat with the configured password", %{conn: conn} do
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = live(conn, ~p"/demo")
 
     view
     |> form("#unlock-form", unlock: %{password: "wrong-password"})
@@ -163,7 +163,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
       end
     end)
 
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = live(conn, ~p"/demo")
     view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
 
     view |> form("#chat-form", chat: %{prompt: "First turn"}) |> render_submit()
@@ -240,7 +240,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
       if previous.env_key, do: System.put_env("OPENAI_API_KEY", previous.env_key)
     end)
 
-    {:ok, view, _html} = live(conn, ~p"/")
+    {:ok, view, _html} = live(conn, ~p"/demo")
     view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
     view |> form("#chat-form", chat: %{prompt: "Through the gateway"}) |> render_submit()
 
@@ -261,7 +261,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   test "switching language in place keeps the demo unlocked and starts a new conversation", %{
     conn: conn
   } do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
     view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
     assert has_element?(view, "#chat-form")
 
@@ -287,13 +287,13 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   test "switching language patches the URL so a reload or rejoin keeps the language", %{
     conn: conn
   } do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
 
     view |> element("#locale-es_MX") |> render_click()
-    assert_patch(view, "/?lang=es")
+    assert_patch(view, "/demo?lang=es")
 
     view |> element("#locale-en") |> render_click()
-    assert_patch(view, "/?lang=en")
+    assert_patch(view, "/demo?lang=en")
   end
 
   test "an explicit ?lang beats the session language when the LiveView mounts", %{conn: conn} do
@@ -301,14 +301,14 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
       conn
       |> put_req_cookie("agentic_bi_locale", "es_MX")
       |> put_req_header("accept-language", "es-MX")
-      |> live(~p"/?lang=en")
+      |> live(~p"/demo?lang=en")
 
     assert html =~ "Turn business questions into clear analysis"
     refute html =~ "Convierte preguntas de negocio"
   end
 
   test "the wrong-password error follows the page language", %{conn: conn} do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
 
     view |> form("#unlock-form", unlock: %{password: "wrong-password"}) |> render_submit()
     assert has_element?(view, "#unlock-error", "That password is not correct.")
@@ -321,7 +321,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "the Spanish page shows the MXN footnote with the rate", %{conn: conn} do
-    {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
+    {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/demo")
 
     assert html =~ "Cifras en pesos mexicanos (MXN)"
     assert html =~ "con el tipo de cambio FIX de Banxico del 28/09/2026: 1 USD = 17.8413 MXN."
@@ -330,7 +330,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "the English page has no currency footnote", %{conn: conn} do
-    {:ok, _view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, _view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
     refute html =~ "Cifras en"
     refute html =~ "Figures in"
   end
@@ -338,7 +338,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   test "Spanish sample charts use translated labels, MXN amounts, and a Spanish chart locale", %{
     conn: conn
   } do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/demo")
 
     spec = view |> element("#sample-chart-category-revenue") |> render()
     assert spec =~ "Bebidas"
@@ -359,7 +359,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "ordinary events do not re-send the page copy, but a language switch does", %{conn: conn} do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
 
     :erlang.trace(view.pid, true, [:send])
 
@@ -383,7 +383,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   end
 
   test "connection-lost pop-ups follow the language after an in-place switch", %{conn: conn} do
-    {:ok, view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
 
     assert html =~ "We can&#39;t find the internet"
     refute html =~ "No encontramos conexión a internet"
@@ -400,7 +400,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
   test "the two suggestion buttons in the row have short labels and a full-prompt title", %{
     conn: conn
   } do
-    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/demo")
     view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
 
     assert has_element?(
@@ -449,6 +449,170 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     assert format.(1234, "Quantity") == "1,234"
     assert format.(nil, "Quantity") == "-"
     assert format.("Beverages", "Category") == "Beverages"
+  end
+
+  describe "invitation access (invitation service connected)" do
+    @uuid ~r/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+
+    defp invitee(test_pid, opts \\ []) do
+      JidoCodemode.DemoAccessFake.install(
+        test_pid,
+        Keyword.merge(
+          [status: %{"inv-1" => {:ok, %{authorized: true, remaining_uses: 3, expires_at: nil}}}],
+          opts
+        )
+      )
+    end
+
+    defp stub_model(port_or_nil) do
+      previous = Application.get_env(:req_llm, :openai)
+      previous_key = Application.get_env(:req_llm, :openai_api_key)
+
+      base_url =
+        case port_or_nil do
+          nil -> "http://127.0.0.1:1/v1"
+          port -> "http://127.0.0.1:#{port}/v1"
+        end
+
+      Application.put_env(:req_llm, :openai, base_url: base_url)
+      Application.put_env(:req_llm, :openai_api_key, "test-key")
+
+      on_exit(fn ->
+        for {key, value} <- [openai: previous, openai_api_key: previous_key] do
+          if is_nil(value),
+            do: Application.delete_env(:req_llm, key),
+            else: Application.put_env(:req_llm, key, value)
+        end
+      end)
+    end
+
+    defp start_model_stub do
+      server =
+        start_supervised!({Bandit, plug: {OpenCodeStub, self()}, ip: {127, 0, 0, 1}, port: 0})
+
+      {:ok, {_ip, port}} = ThousandIsland.listener_info(server)
+      stub_model(port)
+    end
+
+    test "a visitor without an invitation is sent to the self-serve form", %{conn: conn} do
+      JidoCodemode.DemoAccessFake.install(self(), [])
+      assert {:error, {:redirect, %{to: "/invite/solicitar"}}} = live(conn, ~p"/demo")
+    end
+
+    test "an invitee gets the agent without a password; one conversation spends one use",
+         %{conn: conn} do
+      invitee(self())
+      start_model_stub()
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+
+      assert has_element?(view, "#chat-form")
+      refute has_element?(view, "#unlock-form")
+      assert has_element?(view, "#invite-status", "3 conversations left")
+
+      assert has_element?(
+               view,
+               "#invite-status a[href='https://superdev.mx/calendar/?kind=demo&utm_source=demo_agentic_bi']"
+             )
+
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+      assert_receive {:demo_access, :consume, ["inv-1", conversation_id]}, 5_000
+      assert conversation_id =~ @uuid
+      render_async(view, 10_000)
+      assert has_element?(view, "#invite-status", "2 conversations left")
+
+      view |> form("#chat-form", chat: %{prompt: "Hello again"}) |> render_submit()
+      render_async(view, 10_000)
+      refute_received {:demo_access, :consume, _args}
+
+      render_click(view, "reset_chat")
+      view |> form("#chat-form", chat: %{prompt: "New conversation"}) |> render_submit()
+      assert_receive {:demo_access, :consume, ["inv-1", new_conversation_id]}, 5_000
+      refute new_conversation_id == conversation_id
+      render_async(view, 10_000)
+      refute_received {:demo_access, :refund, _args}
+    end
+
+    test "a first turn that gets no answer gives the use back", %{conn: conn} do
+      invitee(self())
+      stub_model(nil)
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+
+      assert_receive {:demo_access, :consume, ["inv-1", conversation_id]}, 5_000
+      assert_receive {:demo_access, :refund, ["inv-1", ^conversation_id]}, 15_000
+      render_async(view, 10_000)
+
+      # The refunded id is spent: the next question is a new conversation.
+      view |> form("#chat-form", chat: %{prompt: "Try again"}) |> render_submit()
+      assert_receive {:demo_access, :consume, ["inv-1", next_id]}, 5_000
+      refute next_id == conversation_id
+      render_async(view, 15_000)
+    end
+
+    test "an invitee who already used every conversation sees the call, not the form",
+         %{conn: conn} do
+      invitee(self(),
+        status: %{"inv-0" => {:ok, %{authorized: true, remaining_uses: 0, expires_at: nil}}}
+      )
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-0") |> live(~p"/demo")
+
+      assert has_element?(view, "#access-ended", "Your invitation has no conversations left.")
+      refute has_element?(view, "#chat-form")
+      refute has_element?(view, "#unlock-form")
+    end
+
+    test "a second submit while a turn is pending is ignored", %{conn: conn} do
+      invitee(self())
+      start_model_stub()
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+      render_click(view, "use_suggestion", %{"prompt" => "Show a monthly revenue trend"})
+
+      assert_receive {:demo_access, :consume, ["inv-1", _id]}, 5_000
+      render_async(view, 10_000)
+      refute_received {:demo_access, :consume, _args}
+    end
+
+    test "with no uses left the agent does not answer and offers the call", %{conn: conn} do
+      invitee(self(), consume: {:error, :exhausted})
+      stub_model(nil)
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+      render_async(view, 10_000)
+
+      refute has_element?(view, "#chat-form")
+      assert has_element?(view, "#access-ended", "Your invitation has no conversations left.")
+      assert has_element?(view, "#access-ended a[href*='utm_source=demo_agentic_bi']")
+      refute_received {:demo_access, :refund, _args}
+    end
+
+    test "an invitation revoked mid-visit sends the visitor to the form", %{conn: conn} do
+      invitee(self(), consume: {:error, :invalid})
+      stub_model(nil)
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+
+      assert_redirect(view, "/invite/solicitar", 10_000)
+    end
+
+    test "the service being down does not spend or answer", %{conn: conn} do
+      invitee(self(), consume: {:error, :unavailable})
+      stub_model(nil)
+
+      {:ok, view, _html} = conn |> put_req_cookie("demo_invitation", "inv-1") |> live(~p"/demo")
+      view |> form("#chat-form", chat: %{prompt: "Hello"}) |> render_submit()
+      render_async(view, 10_000)
+
+      assert has_element?(view, "#chat-form")
+      assert render(view) =~ "check your invitation"
+      refute_received {:demo_access, :refund, _args}
+    end
   end
 
   defp collect_diffs(acc \\ []) do

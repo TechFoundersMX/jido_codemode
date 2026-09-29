@@ -4,9 +4,11 @@ defmodule JidoCodemodeWeb.SandboxLive do
   alias Jido.AI, as: JidoAI
   alias Jido.Thread
   alias JidoCodemode.Agent.Report
+  alias JidoCodemode.DemoAccess
   alias JidoCodemode.Locale
   alias JidoCodemode.Locale.{Dataset, Format}
   alias JidoCodemode.SidebarAgent
+  alias JidoCodemodeWeb.Links
   alias VegaLite, as: Vl
 
   @markdown_options [
@@ -17,12 +19,36 @@ defmodule JidoCodemodeWeb.SandboxLive do
   ]
 
   @impl true
-  def mount(_params, _session, socket) do
-    chat_unlocked = is_nil(demo_password())
+  def mount(_params, session, socket) do
+    access = access(session["demo_access"])
+
+    # Once the invitation service is connected, only invitees see the agent:
+    # everyone else goes to its self-serve form (partner contract, 29 Sep 2026).
+    if DemoAccess.enabled?() and access.state not in [:invited, :exhausted] do
+      {:ok, redirect(socket, to: Links.access_request())}
+    else
+      mount_demo(socket, access)
+    end
+  end
+
+  defp mount_demo(socket, access) do
+    unlocked_by =
+      cond do
+        access.state == :invited -> :invite
+        access.state == :exhausted -> nil
+        is_nil(demo_password()) -> :open
+        true -> nil
+      end
+
+    chat_unlocked = not is_nil(unlocked_by)
 
     socket =
       socket
-      |> assign(:page_title, "Agentic BI")
+      |> assign(:page_title, page_title())
+      |> assign(:access, access)
+      |> assign(:unlocked_by, unlocked_by)
+      |> assign(:conversation_id, nil)
+      |> assign(:conversation_paid, false)
       |> assign(:currency, Dataset.currency(socket.assigns.locale))
       |> assign(:charts, build_charts(socket.assigns.locale))
       |> assign(:locale_notice, nil)
@@ -73,6 +99,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       {:noreply,
        socket
        |> assign(:chat_unlocked, true)
+       |> assign(:unlocked_by, :password)
        |> assign(:unlock_form, unlock_form())
        |> assign(:unlock_error, nil)
        |> start_sidebar_agent()}
@@ -110,6 +137,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
         socket =
           socket
           |> assign(:locale, locale)
+          |> assign(:page_title, page_title())
           |> assign(:currency, Dataset.currency(locale))
           |> assign(:charts, build_charts(locale))
 
@@ -127,14 +155,24 @@ defmodule JidoCodemodeWeb.SandboxLive do
          |> push_event("locale-changed", %{
            locale: locale,
            html_lang: Locale.html_lang(locale),
-           title: "Agentic BI · " <> gettext("Decision-ready analysis")
+           title: socket.assigns.page_title
          })
-         |> push_patch(to: ~p"/?lang=#{lang_param(locale)}")}
+         |> push_patch(to: ~p"/demo?lang=#{lang_param(locale)}")}
     end
   end
 
   @impl true
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
+  defp page_title, do: "Agentic BI · " <> gettext("Decision-ready analysis")
+
+  defp access(%{"state" => "invited", "remaining" => remaining, "ref" => ref})
+       when is_integer(remaining) and is_binary(ref),
+       do: %{state: :invited, remaining: remaining, ref: ref}
+
+  defp access(%{"state" => "exhausted"}), do: %{state: :exhausted}
+  defp access(%{"state" => "expired"}), do: %{state: :expired}
+  defp access(_none), do: %{state: :public}
 
   defp lang_param("es_MX"), do: "es"
   defp lang_param(_locale), do: "en"
@@ -163,26 +201,6 @@ defmodule JidoCodemodeWeb.SandboxLive do
   def tool_context(socket),
     do: %{session_id: socket.assigns.agent_id, locale: socket.assigns.locale}
 
-  defp currency_footnote("es_MX", :mxn) do
-    {:ok, fx} = Dataset.fx()
-
-    date =
-      case Date.from_iso8601(fx.date) do
-        {:ok, date} -> Format.date(date, "es_MX", :short)
-        _error -> fx.date
-      end
-
-    gettext(
-      "Figures in Mexican pesos (MXN), converted from USD at the %{source} exchange rate of %{date}: 1 USD = %{rate} MXN.",
-      source: fx.source,
-      date: date,
-      rate: :erlang.float_to_binary(fx.rate, [:short])
-    )
-  end
-
-  defp currency_footnote("es_MX", _usd), do: gettext("Figures in US dollars (USD).")
-  defp currency_footnote(_locale, _currency), do: nil
-
   @impl true
   def handle_info({:poll_agent_reply, request_id}, socket) do
     if socket.assigns.chat_pending and socket.assigns.chat_request_id == request_id do
@@ -198,27 +216,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
   end
 
   @impl true
-  def handle_async({:agent_reply, request_id}, {:ok, {:ok, reply}}, socket) do
+  def handle_async({:agent_reply, request_id}, {:ok, {use, result}}, socket) do
     if socket.assigns.chat_request_id == request_id do
-      {:noreply,
-       socket
-       |> refresh_chat_messages()
-       |> refresh_agent_report()
-       |> clear_pending_chat()
-       |> maybe_put_reply_flash(reply)}
-    else
-      {:noreply, socket}
-    end
-  end
-
-  def handle_async({:agent_reply, request_id}, {:ok, {:error, reason}}, socket) do
-    if socket.assigns.chat_request_id == request_id do
-      {:noreply,
-       socket
-       |> refresh_chat_messages()
-       |> refresh_agent_report()
-       |> clear_pending_chat()
-       |> put_flash(:error, error_reply(reason))}
+      {:noreply, socket |> apply_use(use) |> finish_reply(result)}
     else
       {:noreply, socket}
     end
@@ -226,15 +226,88 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   def handle_async({:agent_reply, request_id}, {:exit, reason}, socket) do
     if socket.assigns.chat_request_id == request_id do
-      {:noreply,
-       socket
-       |> refresh_chat_messages()
-       |> refresh_agent_report()
-       |> clear_pending_chat()
-       |> put_flash(:error, error_reply(reason))}
+      {:noreply, finish_reply(socket, {:error, reason})}
     else
       {:noreply, socket}
     end
+  end
+
+  defp finish_reply(socket, result) do
+    socket =
+      socket
+      |> refresh_chat_messages()
+      |> refresh_agent_report()
+      |> clear_pending_chat()
+
+    case result do
+      {:ok, reply} -> maybe_put_reply_flash(socket, reply)
+      {:error, {:access, reason}} -> put_flash(socket, :error, access_error(reason))
+      {:error, reason} -> put_flash(socket, :error, error_reply(reason))
+    end
+  end
+
+  # What the invitation service did for this turn (see run_turn/2).
+  defp apply_use(socket, :none), do: socket
+  # The refunded id is spent on the service's side: the next question starts a new one.
+  defp apply_use(socket, :refunded),
+    do: assign(socket, conversation_id: uuid4(), conversation_paid: false)
+
+  defp apply_use(socket, {:consumed, remaining}) do
+    socket
+    |> assign(:conversation_paid, true)
+    |> assign(:access, %{socket.assigns.access | remaining: remaining})
+  end
+
+  defp apply_use(socket, {:denied, :exhausted}) do
+    socket
+    |> assign(:chat_unlocked, false)
+    |> assign(:unlocked_by, nil)
+    |> assign(:access, %{state: :exhausted})
+  end
+
+  # The invitation is gone (expired or revoked): back to the request form.
+  defp apply_use(socket, {:denied, :invalid}), do: redirect(socket, to: Links.access_request())
+
+  defp apply_use(socket, {:denied, _unavailable}), do: socket
+
+  defp access_error(:exhausted), do: gettext("Your invitation has no conversations left.")
+  defp access_error(:invalid), do: gettext("Your invitation is no longer available.")
+
+  defp access_error(_unavailable),
+    do: gettext("We couldn't check your invitation. Reload the page and try again.")
+
+  @doc """
+  Runs one agent turn. For an invitee's first question in a conversation, spends
+  one use first, and gives it back once if the turn gets no answer. Returns
+  `{use, result}` where `result` is `{:ok, reply}` or `{:error, reason}`.
+  """
+  def run_turn(nil, ask), do: {:none, safe_ask(ask)}
+
+  def run_turn({token, conversation_id}, ask) do
+    case DemoAccess.consume(token, conversation_id) do
+      {:ok, remaining} ->
+        case safe_ask(ask) do
+          {:ok, _reply} = ok ->
+            {{:consumed, remaining}, ok}
+
+          error ->
+            _ = DemoAccess.refund(token, conversation_id)
+            {:refunded, error}
+        end
+
+      {:error, reason} ->
+        {{:denied, reason}, {:error, {:access, reason}}}
+    end
+  end
+
+  defp safe_ask(ask) do
+    case ask.() do
+      {:ok, _reply} = ok -> ok
+      {:error, _reason} = error -> error
+      other -> {:error, other}
+    end
+  catch
+    kind, reason -> {:error, {kind, reason}}
   end
 
   @impl true
@@ -661,13 +734,38 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 </div>
               </div>
 
+              <div
+                :if={not @chat_unlocked and DemoAccess.enabled?()}
+                id="access-ended"
+                class="shrink-0 space-y-2 border-t border-base-300/70 px-4 py-4 text-sm leading-5"
+              >
+                <p class="font-medium text-base-content">
+                  {gettext("Your invitation has no conversations left.")}
+                </p>
+                <p class="text-base-content/70">
+                  {gettext("Rather see it with your company's data?")}
+                  <a href={Links.calendar(:demo_invitee)} class="font-medium text-primary underline">
+                    {gettext("Book your exploratory call")}
+                  </a>
+                </p>
+              </div>
+
               <.form
-                :if={not @chat_unlocked}
+                :if={not @chat_unlocked and not DemoAccess.enabled?()}
                 id="unlock-form"
                 for={@unlock_form}
                 phx-submit="unlock_chat"
                 class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
               >
+                <p id="access-notice" class="text-sm leading-5 text-base-content/75">
+                  {if @access.state == :expired,
+                    do: gettext("Your invitation is no longer available."),
+                    else: gettext("The live agent is by invitation.")}
+                  <a href={~p"/" <> "#pruebalo"} class="font-medium text-primary underline">
+                    {gettext("Request access")}
+                  </a>
+                </p>
+
                 <div class="space-y-1">
                   <label
                     for={@unlock_form[:password].id}
@@ -735,9 +833,29 @@ defmodule JidoCodemodeWeb.SandboxLive do
               </.form>
             </section>
 
+            <div
+              :if={@unlocked_by == :invite}
+              id="invite-status"
+              class="mt-3 space-y-1 px-1 text-xs leading-5 text-pretty text-base-content/65"
+            >
+              <p>
+                {ngettext(
+                  "1 conversation left on your invitation. Each new conversation uses one.",
+                  "%{count} conversations left on your invitation. Each new conversation uses one.",
+                  @access.remaining
+                )}
+              </p>
+              <p>
+                {gettext("Rather see it with your company's data?")}
+                <a href={Links.calendar(:demo_invitee)} class="font-medium text-primary underline">
+                  {gettext("Book your exploratory call")}
+                </a>
+              </p>
+            </div>
+
             <%!-- Outside the fixed-height card so it never takes space from the conversation. --%>
             <p
-              :if={footnote = currency_footnote(@locale, @currency)}
+              :if={footnote = JidoCodemodeWeb.CurrencyNote.footnote(@locale, @currency)}
               id="currency-footnote"
               class="mt-3 px-1 text-xs leading-5 text-pretty text-base-content/55"
             >
@@ -821,6 +939,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
       prompt == "" ->
         {:noreply, assign(socket, :chat_form, chat_form())}
 
+      # The input is disabled while a turn runs; the server enforces it too.
+      socket.assigns.chat_pending ->
+        {:noreply, socket}
+
       is_nil(socket.assigns.agent_pid) ->
         {:noreply,
          socket
@@ -830,11 +952,18 @@ defmodule JidoCodemodeWeb.SandboxLive do
            gettext("The agent session is still starting. Try again in a moment.")
          )}
 
+      billing(socket) == :missing_token ->
+        {:noreply,
+         socket
+         |> assign(:chat_form, chat_form(prompt))
+         |> put_flash(:error, access_error(:unavailable))}
+
       true ->
         agent_pid = socket.assigns.agent_pid
         agent_id = socket.assigns.agent_id
         tool_context = tool_context(socket)
         request_id = System.unique_integer([:positive])
+        billing = billing(socket)
 
         Process.send_after(self(), {:poll_agent_reply, request_id}, 120)
 
@@ -847,16 +976,36 @@ defmodule JidoCodemodeWeb.SandboxLive do
          |> assign(:pending_prompt, prompt)
          |> assign(:pending_reply_content, nil)
          |> start_async({:agent_reply, request_id}, fn ->
-           SidebarAgent.ask_sync(agent_pid, prompt,
-             timeout: 60_000,
-             req_http_options: [
-               headers: JidoCodemode.AI.request_headers() ++ [{"x-opencode-session", agent_id}]
-             ],
-             tool_context: tool_context
-           )
+           # Unlinked, so closing the tab mid-answer can't kill the turn between
+           # spending the use and refunding it.
+           JidoCodemode.Agent.TaskSupervisor
+           |> Task.Supervisor.async_nolink(fn ->
+             run_turn(billing, fn ->
+               SidebarAgent.ask_sync(agent_pid, prompt,
+                 timeout: 60_000,
+                 req_http_options: [
+                   headers:
+                     JidoCodemode.AI.request_headers() ++ [{"x-opencode-session", agent_id}]
+                 ],
+                 tool_context: tool_context
+               )
+             end)
+           end)
+           |> Task.await(:infinity)
          end)}
     end
   end
+
+  # nil when this turn costs nothing: team password, open demo, or a conversation
+  # that already spent its use. Otherwise the invitation token and conversation id.
+  defp billing(%{assigns: %{unlocked_by: :invite, conversation_paid: false}} = socket) do
+    case DemoAccess.Tokens.fetch(socket.assigns.access[:ref]) do
+      {:ok, token} -> {token, socket.assigns.conversation_id}
+      :error -> :missing_token
+    end
+  end
+
+  defp billing(_socket), do: nil
 
   defp build_charts(locale) do
     rate = Dataset.rate(locale)
@@ -938,8 +1087,31 @@ defmodule JidoCodemodeWeb.SandboxLive do
     socket
     |> assign(:agent_id, agent_id)
     |> assign(:agent_pid, agent_pid)
+    |> assign(:conversation_id, uuid4())
+    |> assign(:conversation_paid, false)
     |> refresh_chat_messages()
     |> refresh_agent_report()
+  end
+
+  # A new conversation id per agent session: the invitation service spends one use
+  # per id and treats repeats as the same conversation.
+  defp uuid4 do
+    <<a::48, _::4, b::12, _::2, c::62>> = :crypto.strong_rand_bytes(16)
+
+    <<a::48, 4::4, b::12, 2::2, c::62>>
+    |> Base.encode16(case: :lower)
+    |> then(fn hex ->
+      Enum.join(
+        [
+          binary_part(hex, 0, 8),
+          binary_part(hex, 8, 4),
+          binary_part(hex, 12, 4),
+          binary_part(hex, 16, 4),
+          binary_part(hex, 20, 12)
+        ],
+        "-"
+      )
+    end)
   end
 
   defp maybe_start_sidebar_agent(socket) do
@@ -1205,7 +1377,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       x: [axis: [title: gettext("Average order value"), format: "$,.0f"]],
       y: [axis: [title: gettext("Orders")]]
     )
-    |> Tucan.size_by("revenue")
+    |> Tucan.size_by("revenue", legend: [format: "$,.2s"])
     |> style_spec()
     |> encode_spec()
   end
