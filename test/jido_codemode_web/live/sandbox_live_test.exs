@@ -440,6 +440,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     assert format.(10_248, "id_pedido") == "10248"
     assert format.(10_248, "id") == "10248"
     assert format.(10_248, "Folio de factura") == "10248"
+    assert format.(1_234_567, "Portafolio") == "1,234,567"
     assert format.(1_234, "Pedidos") == "1,234"
     assert format.(1997, "Year") == "1997"
     assert format.(1997, "order_year") == "1997"
