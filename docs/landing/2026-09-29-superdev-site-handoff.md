@@ -84,14 +84,16 @@ After the landing launches:
 - **`/projects/agentic-bi`:** «Ver demo en vivo» → `https://agentic-bi.superdev.mx/demo`. The root becomes the landing.
 - **`/business-intelligence/`:** the hero's secondary button stays «Ver casos». Add the gallery link above, and a line in "Casos" linking to `https://agentic-bi.superdev.mx`.
 - **Link `/projects/agentic-bi` from the BI page's "Casos"** (today only another case page links to it).
-- **Request-access form** (Alex approved a superdev.mx form that grants access instantly). Fields and copy, from the approved draft:
-  - Nombre, Correo, Empresa. Teléfono is optional; drop it if the CRM doesn't need it.
+- **Request-access form: the invitation service hosts it, not superdev.mx** (hub proposal 29 Sep, pending Alex). The Worker serves the self-serve form at `https://agentic-bi.superdev.mx/solicitud`. It reuses the live Expo / Te Invitamos access-campaign code: Turnstile, per-email and per-IP limits, the email with the link, and a CRM lead only with consent. **superdev.mx only links to it**, labelled «Pide acceso al agente en vivo».
+- **SITE owns the privacy side of that form:**
+  - Add the Agentic BI demo to the privacy notice (#demos).
+  - Set the consent wording in ES and EN. Alex chose the short sentence: «Al entrar guardamos tu nombre, correo y empresa para darte acceso y enviarte el enlace.» The hub notes its follow-up box is now at version 2 («…guarde mis datos y esta conversación…»). Agentic BI conversations never reach the Worker or the CRM, so the "esta conversación" part doesn't apply. Confirm with Alex which box text to show.
+- The form's copy comes from the approved draft:
+  - Fields: Nombre, Correo, Empresa.
   - Body: «Tienes tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo, y entras en cuanto envías tus datos.»
-  - Consent, the short version Alex approved: «Al entrar guardamos tu nombre, correo y empresa para darte acceso y enviarte el enlace.» plus a link to «Aviso de privacidad» (https://superdev.mx/privacidad/#demos). Add the required follow-up checkbox only if #demos requires it for this flow.
-  - Submit button: «Entrar al agente». Below it: «¿Prefieres verlo con los datos de tu empresa? Agenda tu llamada exploratoria».
-  - On success, redirect to the activation link the invitation service returns. Minting is server to server and depends on the White label session's work: host `agentic-bi.superdev.mx`, a mint endpoint, and a one-time code redirect. Don't build the backend until that contract is agreed.
-  - States to design: sending, error (generic, no detail), already has an active invite (resend link), rate-limited.
-  - Attribution: the lead goes to Odoo with `utm_source=agentic_bi` (id 72) like the landing's call links.
+  - Submit button: «Entrar al agente».
+  - Below it: «¿Prefieres verlo con los datos de tu empresa? Agenda tu llamada exploratoria».
+- Attribution: the ERP must accept `demo.app = "agentic_bi"` (Odoo returns 422 for unknown apps today), in addition to `utm_source=agentic_bi` (id 72).
 
 ### 2.4 "Para tu equipo de TI" (BI page)
 
@@ -166,7 +168,7 @@ From the landing, all within site-messaging rules:
 | `static/assets/bi-examples.js` (new) | Data, format helpers, SVG renderers, hero cycle, gallery draw-in |
 | `static/components.css` | `.bi-viz`, `.bi-gallery`, `.it-list`, `.stats-band`, `.num`, reduced-motion block |
 | `static/main.js` | `i18n.en` entries for every new key; optional `data-draw` hook in the reveal observer |
-| Request form page and handler | After the invitation-service contract is agreed (§2.3) |
+| `static/privacidad/` | Add the Agentic BI demo to #demos, with the consent wording (§2.3) |
 | Generated files | `npm run seo:build` (sitemap, `llms.txt`, `llms-full.txt`) |
 
 ## 5. Acceptance checks
@@ -186,7 +188,7 @@ From the landing, all within site-messaging rules:
 1. **White-label.** The Agentic BI landing's English view now has a partners block: «Offer it under your brand.», covering your brand, we do the build, your client, your call. Nothing in the site canon documents a white-label BI offer. Should superdev.mx mention it anywhere (EN BI page, or the AI Employee offer), or keep it only on the landing?
 2. **Governance claims** in §2.4 ("Quién ve qué", "Un solo número") need confirming.
 3. **BI final-CTA headline:** keep the current one or reuse the landing's (§3).
-4. **Request form:** is a phone field needed, and does the follow-up checkbox apply (#demos)?
+4. **Consent box:** the short sentence (Alex's pick) or the hub's version 2 box («…y esta conversación…»)? Conversations don't reach the CRM, so the short one fits.
 
 ## Appendix: example data (Northwind sample, USD; Spanish shows ×17.8413 MXN)
 
