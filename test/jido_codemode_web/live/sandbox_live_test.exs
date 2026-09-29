@@ -277,7 +277,11 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
              "Cambiaste a español. Las cifras ahora están en MXN."
            )
 
-    assert_push_event(view, "locale-changed", %{locale: "es_MX", html_lang: "es-MX"})
+    assert_push_event(view, "locale-changed", %{
+      locale: "es_MX",
+      html_lang: "es-MX",
+      title: "Agentic BI · Análisis listo para decidir"
+    })
   end
 
   test "the Spanish page shows the MXN footnote with the rate", %{conn: conn} do

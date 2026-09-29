@@ -84,8 +84,9 @@ if (process.env.NODE_ENV === "development") {
 // Page language: the LiveView switches copy in place; persist the choice and
 // update <html lang> so the next visit and assistive technology agree.
 window.addEventListener("phx:locale-changed", (event) => {
-  const {locale, html_lang: htmlLang} = event.detail
+  const {locale, html_lang: htmlLang, title} = event.detail
   document.documentElement.lang = htmlLang
+  document.title = title
   const secure = location.protocol === "https:" ? "; secure" : ""
   document.cookie = `agentic_bi_locale=${locale}; path=/; max-age=31536000; samesite=lax${secure}`
 })
