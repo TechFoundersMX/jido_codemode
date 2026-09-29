@@ -80,3 +80,8 @@ config :phoenix_live_view,
   debug_attributes: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
+
+config :jido_codemode, JidoCodemode.Locale.Dataset,
+  fx_usd_mxn: "17.8413",
+  fx_date: "2026-09-28",
+  fx_source: "Banxico FIX (SuperDev ERP)"

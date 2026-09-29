@@ -20,3 +20,8 @@ config :phoenix_live_view,
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+config :jido_codemode, JidoCodemode.Locale.Dataset,
+  fx_usd_mxn: "17.8413",
+  fx_date: "2026-09-28",
+  fx_source: "Banxico FIX (SuperDev ERP)"
