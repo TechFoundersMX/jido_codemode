@@ -26,6 +26,12 @@ config :jido_codemode, JidoCodemodeWeb.Endpoint,
 config :jido_codemode,
   demo_password: System.get_env("DEMO_PASSWORD")
 
+# Co-founders' /live page: Cloudflare Access application for agentic-bi.superdev.mx/live*.
+# Both values are public (team domain and the app's AUD tag). Unset: /live is a 404.
+config :jido_codemode, JidoCodemode.StaffAccess,
+  team_domain: System.get_env("CF_ACCESS_TEAM_DOMAIN"),
+  aud: System.get_env("CF_ACCESS_LIVE_AUD")
+
 # Invitation access to the live agent (SuperDev's demo invitation service). Off until
 # Alex sets AGENTIC_BI_SERVICE_TOKEN (the same value as in the Worker); then invitees
 # get the agent, /demo sends everyone else to the self-serve form, and the team

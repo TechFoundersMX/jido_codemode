@@ -18,6 +18,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
   ]
 
   @impl true
+  def mount(_params, _session, %{assigns: %{live_action: :staff}} = socket) do
+    # /live: StaffHook already checked the co-founder's Access session. No invitation,
+    # no password, no uses spent.
+    mount_demo(socket, %{state: :staff})
+  end
+
   def mount(_params, session, socket) do
     access = access(session["demo_access"])
 
@@ -33,6 +39,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   defp mount_demo(socket, access) do
     unlocked_by =
       cond do
+        access.state == :staff -> :staff
         access.state == :invited -> :invite
         access.state == :exhausted -> nil
         is_nil(demo_password()) -> :open
@@ -156,7 +163,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
            html_lang: Locale.html_lang(locale),
            title: socket.assigns.page_title
          })
-         |> push_patch(to: ~p"/demo?lang=#{lang_param(locale)}")}
+         |> push_patch(to: "#{page_path(socket)}?lang=#{lang_param(locale)}")}
     end
   end
 
@@ -166,6 +173,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
   # Invitees are demo testers in Odoo (source 73); everyone else is the landing's funnel.
   defp call_url(:invite), do: Links.calendar(:demo_invitee)
   defp call_url(_unlocked_by), do: Links.calendar(:landing)
+
+  defp page_path(%{assigns: %{live_action: :staff}}), do: "/live"
+  defp page_path(_socket), do: "/demo"
 
   defp page_title, do: "Agentic BI · " <> gettext("Decision-ready analysis")
 
@@ -339,6 +349,13 @@ defmodule JidoCodemodeWeb.SandboxLive do
           <header class="grid max-w-3xl gap-2">
             <p class="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">
               {gettext("Live agent · sample data")}
+              <span
+                :if={@unlocked_by == :staff}
+                id="staff-badge"
+                class="ml-2 rounded-full bg-primary/10 px-2 py-0.5 normal-case tracking-normal"
+              >
+                {gettext("Team")} · {@staff_email}
+              </span>
             </p>
             <h1 class="text-3xl font-bold tracking-tight text-balance text-base-content sm:text-4xl">
               {gettext("Ask the sample distributor.")}
