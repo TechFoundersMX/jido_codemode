@@ -4,6 +4,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
   alias Jido.AI, as: JidoAI
   alias Jido.Thread
   alias JidoCodemode.Agent.Report
+  alias JidoCodemode.Locale
+  alias JidoCodemode.Locale.{Dataset, Format}
   alias JidoCodemode.SidebarAgent
   alias VegaLite, as: Vl
 
@@ -21,7 +23,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
     socket =
       socket
       |> assign(:page_title, "Agentic BI")
-      |> assign(:charts, build_charts())
+      |> assign(:currency, Dataset.currency(socket.assigns.locale))
+      |> assign(:charts, build_charts(socket.assigns.locale))
+      |> assign(:locale_notice, nil)
       |> assign(:agent_id, nil)
       |> assign(:agent_pid, nil)
       |> assign(:chat_form, chat_form())
@@ -89,15 +93,84 @@ defmodule JidoCodemodeWeb.SandboxLive do
   end
 
   def handle_event("reset_chat", _params, socket) do
-    {:noreply,
-     socket
-     |> stop_sidebar_agent()
-     |> assign(:chat_form, chat_form())
-     |> assign(:chat_messages, [])
-     |> assign(:agent_report, nil)
-     |> clear_pending_chat()
-     |> maybe_start_sidebar_agent()}
+    {:noreply, socket |> assign(:locale_notice, nil) |> restart_conversation()}
   end
+
+  def handle_event("set_locale", %{"locale" => value}, socket) do
+    case Locale.normalize(value) do
+      nil ->
+        {:noreply, socket}
+
+      locale when locale == socket.assigns.locale ->
+        {:noreply, socket}
+
+      locale ->
+        Gettext.put_locale(JidoCodemodeWeb.Gettext, locale)
+
+        socket =
+          socket
+          |> assign(:locale, locale)
+          |> assign(:currency, Dataset.currency(locale))
+          |> assign(:charts, build_charts(locale))
+
+        socket =
+          if socket.assigns.chat_unlocked do
+            socket
+            |> restart_conversation()
+            |> assign(:locale_notice, locale_notice(locale, socket.assigns.currency))
+          else
+            socket
+          end
+
+        {:noreply,
+         push_event(socket, "locale-changed", %{
+           locale: locale,
+           html_lang: Locale.html_lang(locale)
+         })}
+    end
+  end
+
+  defp restart_conversation(socket) do
+    socket
+    |> stop_sidebar_agent()
+    |> assign(:chat_form, chat_form())
+    |> assign(:chat_messages, [])
+    |> assign(:agent_report, nil)
+    |> clear_pending_chat()
+    |> maybe_start_sidebar_agent()
+  end
+
+  defp locale_notice("es_MX", :mxn),
+    do: gettext("You switched to Spanish. Figures are now in MXN.")
+
+  defp locale_notice("es_MX", _currency), do: gettext("You switched to Spanish.")
+
+  defp locale_notice(_locale, _currency),
+    do: gettext("You switched to English. Figures are now in USD.")
+
+  @doc false
+  def tool_context(socket),
+    do: %{session_id: socket.assigns.agent_id, locale: socket.assigns.locale}
+
+  defp currency_footnote("es_MX", :mxn) do
+    {:ok, fx} = Dataset.fx()
+
+    date =
+      case Date.from_iso8601(fx.date) do
+        {:ok, date} -> Format.date(date, "es_MX", :short)
+        _error -> fx.date
+      end
+
+    gettext(
+      "Figures in Mexican pesos (MXN), converted from USD at the %{source} exchange rate of %{date}: 1 USD = %{rate} MXN.",
+      source: fx.source,
+      date: date,
+      rate: :erlang.float_to_binary(fx.rate, [:short])
+    )
+  end
+
+  defp currency_footnote("es_MX", _usd), do: gettext("Figures in US dollars (USD).")
+  defp currency_footnote(_locale, _currency), do: nil
 
   @impl true
   def handle_info({:poll_agent_reply, request_id}, socket) do
@@ -163,7 +236,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
       main_class="min-h-dvh isolate"
       content_class="mx-auto max-w-[96rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-5"
     >
-      <section class="space-y-5">
+      <%!-- Iterating over [@locale] re-renders the page copy in full on a language switch: gettext text has no assigns, so LiveView change tracking would otherwise skip it. --%>
+      <section :for={_locale <- [@locale]} class="space-y-5">
         <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
           <div class="grid min-w-0 gap-4">
             <a href={~p"/"} aria-label={gettext("Homepage")} class="flex w-fit items-center gap-3">
@@ -193,6 +267,34 @@ defmodule JidoCodemodeWeb.SandboxLive do
           </div>
 
           <div class="flex flex-wrap items-center gap-2 md:max-w-lg md:justify-end">
+            <div
+              role="group"
+              aria-label={gettext("Language")}
+              class="inline-flex items-center rounded-full p-0.5 ring-1 ring-base-300/70"
+            >
+              <button
+                :for={
+                  {code, label, aria} <- [
+                    {"es_MX", "ES", gettext("Switch to Spanish")},
+                    {"en", "EN", gettext("Switch to English")}
+                  ]
+                }
+                id={"locale-#{code}"}
+                type="button"
+                phx-click="set_locale"
+                phx-value-locale={code}
+                aria-label={aria}
+                aria-pressed={to_string(@locale == code)}
+                class={[
+                  "rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  @locale == code && "bg-base-content text-base-100",
+                  @locale != code && "text-base-content/65 hover:text-base-content"
+                ]}
+              >
+                {label}
+              </button>
+            </div>
+
             <Layouts.theme_toggle />
 
             <details class="group open:w-full sm:relative sm:open:w-auto">
@@ -250,7 +352,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                           {block.label}
                         </p>
                         <p class="text-4xl font-semibold tracking-tight tabular-nums text-base-content">
-                          {format_metric_value(block.value, block.format)}
+                          {format_metric_value(block.value, block.format, @currency)}
                         </p>
                       </div>
                     <% %Report.TableBlock{} -> %>
@@ -330,6 +432,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                             id={"report-chart-#{block.id}"}
                             phx-hook=".VegaChart"
                             data-spec={block.spec_json}
+                            data-locale={Locale.html_lang(@locale)}
                             class="min-h-72 w-full"
                           />
                         </div>
@@ -400,6 +503,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                         id={"sample-chart-#{chart.id}"}
                         phx-hook=".VegaChart"
                         data-spec={chart.spec_json}
+                        data-locale={Locale.html_lang(@locale)}
                         class="min-h-72 w-full"
                       />
                     </div>
@@ -475,6 +579,14 @@ defmodule JidoCodemodeWeb.SandboxLive do
               </div>
 
               <div class="min-h-0 flex-1 overflow-y-auto bg-base-200/40 px-4 py-4">
+                <p
+                  :if={@locale_notice}
+                  id="locale-notice"
+                  class="mb-4 rounded-lg bg-base-200/70 px-3 py-2 text-sm text-base-content/75"
+                >
+                  {@locale_notice}
+                </p>
+
                 <div
                   :if={not show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
                   class="flex h-full min-h-48 items-center justify-center text-center"
@@ -607,6 +719,14 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   </button>
                 </div>
               </.form>
+
+              <p
+                :if={footnote = currency_footnote(@locale, @currency)}
+                id="currency-footnote"
+                class="shrink-0 px-4 pb-4 text-xs leading-5 text-pretty text-base-content/55"
+              >
+                {footnote}
+              </p>
             </section>
           </aside>
         </section>
@@ -637,10 +757,25 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
             this.view?.finalize()
 
-            const result = await vegaEmbed(this.el, JSON.parse(spec), {
-              actions: false,
-              renderer: "svg",
-            })
+            const esMX = this.el.dataset.locale === "es-MX"
+
+            const options = {actions: false, renderer: "svg"}
+
+            if (esMX) {
+              options.formatLocale = {decimal: ".", thousands: ",", grouping: [3], currency: ["$", ""]}
+              options.timeFormatLocale = {
+                dateTime: "%A, %e de %B de %Y, %X",
+                date: "%d/%m/%Y",
+                time: "%H:%M:%S",
+                periods: ["AM", "PM"],
+                days: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
+                shortDays: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+                months: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+                shortMonths: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
+              }
+            }
+
+            const result = await vegaEmbed(this.el, JSON.parse(spec), options)
 
             this.view = result.view
           },
@@ -669,6 +804,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       true ->
         agent_pid = socket.assigns.agent_pid
         agent_id = socket.assigns.agent_id
+        tool_context = tool_context(socket)
         request_id = System.unique_integer([:positive])
 
         Process.send_after(self(), {:poll_agent_reply, request_id}, 120)
@@ -676,6 +812,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
         {:noreply,
          socket
          |> assign(:chat_form, chat_form())
+         |> assign(:locale_notice, nil)
          |> assign(:chat_pending, true)
          |> assign(:chat_request_id, request_id)
          |> assign(:pending_prompt, prompt)
@@ -686,41 +823,43 @@ defmodule JidoCodemodeWeb.SandboxLive do
              req_http_options: [
                headers: JidoCodemode.AI.request_headers() ++ [{"x-opencode-session", agent_id}]
              ],
-             tool_context: %{session_id: agent_id}
+             tool_context: tool_context
            )
          end)}
     end
   end
 
-  defp build_charts do
+  defp build_charts(locale) do
+    rate = Dataset.rate(locale)
+
     [
       %{
         id: "revenue-trend",
         kicker: gettext("Line"),
         title: gettext("Monthly revenue trend"),
         description: gettext("A simple time-series anchor for the conversation."),
-        spec_json: revenue_trend_spec()
+        spec_json: revenue_trend_spec(rate)
       },
       %{
         id: "category-revenue",
         kicker: gettext("Bar"),
         title: gettext("Revenue by category"),
         description: gettext("A ranked comparison of the biggest drivers."),
-        spec_json: category_revenue_spec()
+        spec_json: category_revenue_spec(rate)
       },
       %{
         id: "channel-mix",
         kicker: gettext("Donut"),
         title: gettext("Channel mix"),
         description: gettext("A quick composition view for share of revenue."),
-        spec_json: channel_mix_spec()
+        spec_json: channel_mix_spec(rate)
       },
       %{
         id: "customer-shape",
         kicker: gettext("Scatter"),
         title: gettext("Customer value vs. order volume"),
         description: gettext("A compact way to spot high-value segments."),
-        spec_json: customer_shape_spec()
+        spec_json: customer_shape_spec(rate)
       }
     ]
   end
@@ -761,7 +900,9 @@ defmodule JidoCodemodeWeb.SandboxLive do
     {:ok, agent_pid} = Jido.start_agent(JidoCodemode.Jido, SidebarAgent, id: agent_id)
 
     _ =
-      JidoAI.set_system_prompt(agent_pid, SidebarAgent.system_prompt_with_schema(),
+      JidoAI.set_system_prompt(
+        agent_pid,
+        SidebarAgent.system_prompt_with_schema(socket.assigns.locale),
         timeout: 15_000
       )
 
@@ -947,27 +1088,20 @@ defmodule JidoCodemodeWeb.SandboxLive do
     "max-w-[92%] rounded-[1.5rem] rounded-bl-md bg-base-100 px-4 py-3 text-base-content ring-1 ring-base-300/60"
   end
 
-  defp format_metric_value(value, :currency) when is_integer(value),
-    do: "$" <> format_integer(value)
+  defp format_metric_value(value, :currency, currency) when is_number(value),
+    do: Format.money(value, currency)
 
-  defp format_metric_value(value, :currency) when is_float(value),
-    do: "$" <> :erlang.float_to_binary(value, decimals: 2)
+  defp format_metric_value(value, :percent, _currency) when is_number(value),
+    do: Format.percent(value)
 
-  defp format_metric_value(value, :percent) when is_number(value),
-    do: :erlang.float_to_binary(value * 100, decimals: 1) <> "%"
+  defp format_metric_value(value, :number, _currency) when is_number(value),
+    do: Format.number(value)
 
-  defp format_metric_value(value, _format), do: to_string(value)
+  defp format_metric_value(value, _format, _currency), do: to_string(value)
 
   defp format_table_value(nil), do: "-"
+  defp format_table_value(value) when is_number(value), do: Format.number(value)
   defp format_table_value(value), do: to_string(value)
-
-  defp format_integer(value) do
-    value
-    |> Integer.to_string()
-    |> String.reverse()
-    |> String.replace(~r/(\d{3})(?=\d)/, "\\1,")
-    |> String.reverse()
-  end
 
   defp clear_pending_chat(socket) do
     socket
@@ -977,8 +1111,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> assign(:pending_reply_content, nil)
   end
 
-  defp revenue_trend_spec do
-    monthly_revenue_data()
+  defp revenue_trend_spec(rate) do
+    monthly_revenue_data(rate)
     |> Tucan.lineplot("month", "revenue",
       height: 260,
       width: :container,
@@ -991,8 +1125,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> encode_spec()
   end
 
-  defp category_revenue_spec do
-    category_revenue_data()
+  defp category_revenue_spec(rate) do
+    category_revenue_data(rate)
     |> Tucan.bar("category", "revenue",
       height: 260,
       width: :container,
@@ -1005,8 +1139,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> encode_spec()
   end
 
-  defp channel_mix_spec do
-    channel_mix_data()
+  defp channel_mix_spec(rate) do
+    channel_mix_data(rate)
     |> Tucan.donut("revenue", "channel",
       height: 260,
       width: :container,
@@ -1016,8 +1150,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> encode_spec()
   end
 
-  defp customer_shape_spec do
-    customer_shape_data()
+  defp customer_shape_spec(rate) do
+    customer_shape_data(rate)
     |> Tucan.scatter("avg_order_value", "orders",
       height: 260,
       width: :container,
@@ -1058,7 +1192,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> Jason.encode!()
   end
 
-  defp monthly_revenue_data do
+  defp monthly_revenue_data(rate) do
     [
       %{month: ~D[2024-01-01], revenue: 48_200},
       %{month: ~D[2024-02-01], revenue: 52_800},
@@ -1069,9 +1203,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
       %{month: ~D[2024-07-01], revenue: 72_300},
       %{month: ~D[2024-08-01], revenue: 76_800}
     ]
+    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
   end
 
-  defp category_revenue_data do
+  defp category_revenue_data(rate) do
     [
       %{category: gettext("Beverages"), revenue: 267_900},
       %{category: gettext("Dairy"), revenue: 234_500},
@@ -1079,18 +1214,20 @@ defmodule JidoCodemodeWeb.SandboxLive do
       %{category: gettext("Meat"), revenue: 163_000},
       %{category: gettext("Seafood"), revenue: 131_300}
     ]
+    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
   end
 
-  defp channel_mix_data do
+  defp channel_mix_data(rate) do
     [
       %{channel: gettext("Direct"), revenue: 228_000},
       %{channel: gettext("Partners"), revenue: 154_000},
       %{channel: gettext("Inbound"), revenue: 96_000},
       %{channel: gettext("Expansion"), revenue: 72_000}
     ]
+    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
   end
 
-  defp customer_shape_data do
+  defp customer_shape_data(rate) do
     [
       %{
         customer: "QuickStop",
@@ -1149,5 +1286,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
         segment: gettext("Mid-market")
       }
     ]
+    |> Enum.map(
+      &%{
+        &1
+        | revenue: round(&1.revenue * rate),
+          avg_order_value: round(&1.avg_order_value * rate)
+      }
+    )
   end
 end
