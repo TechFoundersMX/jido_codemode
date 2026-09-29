@@ -367,16 +367,34 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     unlock_diffs = collect_diffs()
     assert Enum.any?(unlock_diffs, &(&1 =~ "chat-form"))
     refute Enum.any?(unlock_diffs, &(&1 =~ "Turn business questions"))
+    refute Enum.any?(unlock_diffs, &(&1 =~ "We can't find the internet"))
 
     view |> element("#locale-es_MX") |> render_click()
     switch_diffs = collect_diffs()
     assert Enum.any?(switch_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+    assert Enum.any?(switch_diffs, &(&1 =~ "No encontramos conexión a internet"))
 
     view |> element("button[phx-click=reset_chat]") |> render_click()
     reset_diffs = collect_diffs()
     refute Enum.any?(reset_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+    refute Enum.any?(reset_diffs, &(&1 =~ "No encontramos conexión a internet"))
 
     :erlang.trace(view.pid, false, [:send])
+  end
+
+  test "connection-lost pop-ups follow the language after an in-place switch", %{conn: conn} do
+    {:ok, view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+
+    assert html =~ "We can&#39;t find the internet"
+    refute html =~ "No encontramos conexión a internet"
+
+    html = view |> element("#locale-es_MX") |> render_click()
+
+    assert html =~ "No encontramos conexión a internet"
+    assert html =~ "Algo salió mal"
+    refute html =~ "We can&#39;t find the internet"
+    refute html =~ "We can't find the internet"
+    refute html =~ "Something went wrong!"
   end
 
   test "the two suggestion buttons in the row have short labels and a full-prompt title", %{
