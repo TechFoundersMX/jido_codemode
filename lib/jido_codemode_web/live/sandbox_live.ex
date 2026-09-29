@@ -76,7 +76,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       {:noreply,
        socket
        |> assign(:unlock_form, unlock_form())
-       |> assign(:unlock_error, "That password is not correct.")}
+       |> assign(:unlock_error, gettext("That password is not correct."))}
     end
   end
 
@@ -166,7 +166,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       <section class="space-y-5">
         <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
           <div class="grid min-w-0 gap-4">
-            <a href={~p"/"} aria-label="Homepage" class="flex w-fit items-center gap-3">
+            <a href={~p"/"} aria-label={gettext("Homepage")} class="flex w-fit items-center gap-3">
               <img
                 src={~p"/images/agentic-bi-mark.svg"}
                 alt=""
@@ -174,7 +174,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
               />
               <div class="min-w-0">
                 <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                  Decision intelligence
+                  {gettext("Decision intelligence")}
                 </p>
                 <p class="font-semibold tracking-tight text-base-content">Agentic BI</p>
               </div>
@@ -182,11 +182,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
             <div class="grid gap-2">
               <h1 class="max-w-[35ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
-                Turn business questions into clear analysis
+                {gettext("Turn business questions into clear analysis")}
               </h1>
               <p class="max-w-[56ch] text-base leading-7 text-pretty text-base-content/65">
-                Explore your data with an agent that can query, compare, visualize, and explain
-                its findings.
+                {gettext(
+                  "Explore your data with an agent that can query, compare, visualize, and explain its findings."
+                )}
               </p>
             </div>
           </div>
@@ -196,13 +197,17 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
             <details class="group open:w-full sm:relative sm:open:w-auto">
               <summary class="inline-flex w-fit cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                How it works
+                {gettext("How it works")}
               </summary>
               <div class="mt-2 w-full rounded-2xl bg-base-100 p-4 text-base leading-7 text-base-content/70 shadow-lg ring-1 ring-base-300 sm:absolute sm:right-0 sm:z-20 sm:w-88 sm:text-sm sm:leading-6 [[data-theme=dark]_&]:shadow-none">
                 <ol class="list-decimal space-y-2 pl-5">
-                  <li>The agent reads a compact schema through a read-only connection.</li>
-                  <li>It runs bounded queries and builds the needed metrics and visuals.</li>
-                  <li>Every result is validated before it appears in your analysis.</li>
+                  <li>
+                    {gettext("The agent reads a compact schema through a read-only connection.")}
+                  </li>
+                  <li>
+                    {gettext("It runs bounded queries and builds the needed metrics and visuals.")}
+                  </li>
+                  <li>{gettext("Every result is validated before it appears in your analysis.")}</li>
                 </ol>
               </div>
             </details>
@@ -218,7 +223,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
             >
               <div class="space-y-2">
                 <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                  Generated analysis
+                  {gettext("Generated analysis")}
                 </p>
                 <h2 class="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
                   {@agent_report.title}
@@ -239,7 +244,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     <% %Report.MetricBlock{} -> %>
                       <div class="space-y-2">
                         <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
-                          Metric
+                          {gettext("Metric")}
                         </p>
                         <p class="truncate text-sm text-base-content/60" title={block.label}>
                           {block.label}
@@ -266,7 +271,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                           :if={Enum.empty?(block.rows)}
                           class="py-8 text-base text-base-content/45 sm:text-sm"
                         >
-                          No rows to show for this table.
+                          {gettext("No rows to show for this table.")}
                         </div>
 
                         <div
@@ -317,7 +322,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                           :if={not chart_block_has_rows?(block)}
                           class="py-8 text-base text-base-content/45 sm:text-sm"
                         >
-                          No rows to show for this chart.
+                          {gettext("No rows to show for this chart.")}
                         </div>
 
                         <div :if={chart_block_has_rows?(block)} class="overflow-hidden">
@@ -341,10 +346,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
               <div class="max-w-md space-y-3">
                 <.icon name="hero-chart-bar-square-micro" class="mx-auto size-4 text-primary" />
                 <h2 class="text-xl font-semibold tracking-tight text-base-content">
-                  Your analysis will appear here
+                  {gettext("Your analysis will appear here")}
                 </h2>
                 <p class="text-base leading-7 text-base-content/60">
-                  Ask the analysis agent for a chart, table, metric, or complete report.
+                  {gettext("Ask the analysis agent for a chart, table, metric, or complete report.")}
                 </p>
               </div>
             </section>
@@ -353,10 +358,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
               <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6">
                 <div>
                   <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                    Example analyses
+                    {gettext("Example analyses")}
                   </p>
                   <h2 class="mt-1 text-lg font-semibold tracking-tight text-base-content">
-                    See what Agentic BI can build
+                    {gettext("See what Agentic BI can build")}
                   </h2>
                 </div>
                 <.icon
@@ -372,7 +377,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     phx-click="reset_chat"
                     class="rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    Restart session
+                    {gettext("Restart session")}
                   </button>
                 </div>
 
@@ -410,10 +415,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 <div class="flex items-start justify-between gap-4">
                   <div>
                     <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                      Analysis agent
+                      {gettext("Analysis agent")}
                     </p>
                     <h2 class="mt-1 text-xl font-semibold tracking-tight text-base-content">
-                      Ask about Northwind
+                      {gettext("Ask about Northwind")}
                     </h2>
                   </div>
                   <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
@@ -426,11 +431,11 @@ defmodule JidoCodemodeWeb.SandboxLive do
                       aria-hidden="true"
                     >
                     </span>
-                    {if @chat_unlocked, do: "Ready", else: "Locked"}
+                    {if @chat_unlocked, do: gettext("Ready"), else: gettext("Locked")}
                   </span>
                 </div>
                 <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
-                  Ask a business question or request a complete analysis.
+                  {gettext("Ask a business question or request a complete analysis.")}
                 </p>
               </header>
 
@@ -450,7 +455,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
                   <details class="group relative shrink-0">
                     <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                      More
+                      {gettext("More")}
                     </summary>
                     <div class="absolute right-0 z-20 mt-2 w-72 space-y-1 rounded-xl bg-base-100 p-2 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
                       <button
@@ -476,9 +481,11 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 >
                   <div class="max-w-xs space-y-2">
                     <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
-                    <p class="font-medium text-base-content">Start with a prompt</p>
+                    <p class="font-medium text-base-content">{gettext("Start with a prompt")}</p>
                     <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
-                      Select an example above or describe the decision you want to support.
+                      {gettext(
+                        "Select an example above or describe the decision you want to support."
+                      )}
                     </p>
                   </div>
                 </div>
@@ -508,7 +515,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     <div :if={@pending_prompt} class="flex justify-end">
                       <div class={message_classes(:user)}>
                         <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
-                          You
+                          {gettext("You")}
                         </p>
                         <p class="text-base leading-7 sm:text-sm sm:leading-6">{@pending_prompt}</p>
                       </div>
@@ -517,7 +524,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     <div :if={@chat_pending and @pending_reply_content} class="flex justify-start">
                       <div class={message_classes(:assistant)}>
                         <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
-                          Agent
+                          {gettext("Agent")}
                         </p>
                         <div class={assistant_markdown_classes()}>
                           {render_markdown(@pending_reply_content)}
@@ -540,10 +547,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     for={@unlock_form[:password].id}
                     class="text-sm font-medium text-base-content"
                   >
-                    Demo password
+                    {gettext("Demo password")}
                   </label>
                   <p class="text-sm leading-5 text-base-content/55">
-                    Enter the password to unlock the analysis agent.
+                    {gettext("Enter the password to unlock the analysis agent.")}
                   </p>
                 </div>
 
@@ -552,7 +559,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     field={@unlock_form[:password]}
                     type="password"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder={gettext("Password")}
                     aria-invalid={not is_nil(@unlock_error)}
                     aria-describedby={@unlock_error && "unlock-error"}
                     class="min-w-0 flex-1 rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0"
@@ -561,7 +568,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     type="submit"
                     class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    Unlock
+                    {gettext("Unlock")}
                   </button>
                 </div>
 
@@ -580,7 +587,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 <.input
                   field={@chat_form[:prompt]}
                   type="textarea"
-                  placeholder="Ask about revenue, customers, products, or trends"
+                  placeholder={gettext("Ask about revenue, customers, products, or trends")}
                   rows="2"
                   disabled={@chat_pending}
                   class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
@@ -588,7 +595,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
                 <div class="flex items-center justify-between gap-3">
                   <p class="text-sm leading-5 text-base-content/50">
-                    Connected with read-only access
+                    {gettext("Connected with read-only access")}
                   </p>
 
                   <button
@@ -596,7 +603,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={@chat_pending}
                   >
-                    {if @chat_pending, do: "Analyzing...", else: "Send"}
+                    {if @chat_pending, do: gettext("Analyzing..."), else: gettext("Send")}
                   </button>
                 </div>
               </.form>
@@ -654,7 +661,10 @@ defmodule JidoCodemodeWeb.SandboxLive do
         {:noreply,
          socket
          |> assign(:chat_form, chat_form(prompt))
-         |> put_flash(:error, "The agent session is still starting. Try again in a moment.")}
+         |> put_flash(
+           :error,
+           gettext("The agent session is still starting. Try again in a moment.")
+         )}
 
       true ->
         agent_pid = socket.assigns.agent_pid
@@ -686,30 +696,30 @@ defmodule JidoCodemodeWeb.SandboxLive do
     [
       %{
         id: "revenue-trend",
-        kicker: "Line",
-        title: "Monthly revenue trend",
-        description: "A simple time-series anchor for the conversation.",
+        kicker: gettext("Line"),
+        title: gettext("Monthly revenue trend"),
+        description: gettext("A simple time-series anchor for the conversation."),
         spec_json: revenue_trend_spec()
       },
       %{
         id: "category-revenue",
-        kicker: "Bar",
-        title: "Revenue by category",
-        description: "A ranked comparison of the biggest drivers.",
+        kicker: gettext("Bar"),
+        title: gettext("Revenue by category"),
+        description: gettext("A ranked comparison of the biggest drivers."),
         spec_json: category_revenue_spec()
       },
       %{
         id: "channel-mix",
-        kicker: "Donut",
-        title: "Channel mix",
-        description: "A quick composition view for share of revenue.",
+        kicker: gettext("Donut"),
+        title: gettext("Channel mix"),
+        description: gettext("A quick composition view for share of revenue."),
         spec_json: channel_mix_spec()
       },
       %{
         id: "customer-shape",
-        kicker: "Scatter",
-        title: "Customer value vs. order volume",
-        description: "A compact way to spot high-value segments.",
+        kicker: gettext("Scatter"),
+        title: gettext("Customer value vs. order volume"),
+        description: gettext("A compact way to spot high-value segments."),
         spec_json: customer_shape_spec()
       }
     ]
@@ -794,28 +804,28 @@ defmodule JidoCodemodeWeb.SandboxLive do
     [
       %{
         icon: "hero-chart-bar-micro",
-        label: "Revenue trend",
-        prompt: "Show a monthly revenue trend"
+        label: gettext("Revenue trend"),
+        prompt: gettext("Show a monthly revenue trend")
       },
       %{
         icon: "hero-squares-2x2-micro",
-        label: "Top categories",
-        prompt: "Compare the top categories"
+        label: gettext("Top categories"),
+        prompt: gettext("Compare the top categories")
       },
       %{
         icon: "hero-users-micro",
-        label: "Top customers",
-        prompt: "List the top customers by revenue"
+        label: gettext("Top customers"),
+        prompt: gettext("List the top customers by revenue")
       },
       %{
         icon: "hero-circle-stack-micro",
-        label: "Important joins",
-        prompt: "Describe the most important joins"
+        label: gettext("Important joins"),
+        prompt: gettext("Describe the most important joins")
       },
       %{
         icon: "hero-sparkles-micro",
-        label: "Complete analysis",
-        prompt: "Build a short analysis with a chart and a table"
+        label: gettext("Complete analysis"),
+        prompt: gettext("Build a short analysis with a chart and a table")
       }
     ]
   end
@@ -883,18 +893,22 @@ defmodule JidoCodemodeWeb.SandboxLive do
     put_flash(
       socket,
       :info,
-      "The agent returned a non-text response: #{inspect(reply, pretty: true, limit: 20)}"
+      gettext("The agent returned a non-text response: %{details}",
+        details: inspect(reply, pretty: true, limit: 20)
+      )
     )
   end
 
   defp error_reply(reason) do
-    "The agent request failed: #{inspect(reason, pretty: true, limit: 20)}"
+    gettext("The agent request failed: %{reason}",
+      reason: inspect(reason, pretty: true, limit: 20)
+    )
   end
 
   defp chat_row_classes(:user), do: "flex justify-end"
   defp chat_row_classes(:assistant), do: "flex justify-start"
 
-  defp role_label(:user), do: "You"
+  defp role_label(:user), do: gettext("You")
   defp role_label(:assistant), do: "Agentic BI"
 
   defp render_markdown(content) when is_binary(content) do
@@ -1009,8 +1023,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
       width: :container,
       tooltip: :data,
       color_by: "segment",
-      x: [axis: [title: "Average order value", format: "$,.0f"]],
-      y: [axis: [title: "Orders"]]
+      x: [axis: [title: gettext("Average order value"), format: "$,.0f"]],
+      y: [axis: [title: gettext("Orders")]]
     )
     |> Tucan.size_by("revenue")
     |> style_spec()
@@ -1059,20 +1073,20 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   defp category_revenue_data do
     [
-      %{category: "Beverages", revenue: 267_900},
-      %{category: "Dairy", revenue: 234_500},
-      %{category: "Confections", revenue: 167_400},
-      %{category: "Meat", revenue: 163_000},
-      %{category: "Seafood", revenue: 131_300}
+      %{category: gettext("Beverages"), revenue: 267_900},
+      %{category: gettext("Dairy"), revenue: 234_500},
+      %{category: gettext("Confections"), revenue: 167_400},
+      %{category: gettext("Meat"), revenue: 163_000},
+      %{category: gettext("Seafood"), revenue: 131_300}
     ]
   end
 
   defp channel_mix_data do
     [
-      %{channel: "Direct", revenue: 228_000},
-      %{channel: "Partners", revenue: 154_000},
-      %{channel: "Inbound", revenue: 96_000},
-      %{channel: "Expansion", revenue: 72_000}
+      %{channel: gettext("Direct"), revenue: 228_000},
+      %{channel: gettext("Partners"), revenue: 154_000},
+      %{channel: gettext("Inbound"), revenue: 96_000},
+      %{channel: gettext("Expansion"), revenue: 72_000}
     ]
   end
 
@@ -1083,56 +1097,56 @@ defmodule JidoCodemodeWeb.SandboxLive do
         orders: 26,
         avg_order_value: 4_240,
         revenue: 110_200,
-        segment: "Enterprise"
+        segment: gettext("Enterprise")
       },
       %{
         customer: "Ernst Handel",
         orders: 24,
         avg_order_value: 4_360,
         revenue: 104_900,
-        segment: "Enterprise"
+        segment: gettext("Enterprise")
       },
       %{
         customer: "Save-a-lot",
         orders: 23,
         avg_order_value: 4_100,
         revenue: 104_400,
-        segment: "Enterprise"
+        segment: gettext("Enterprise")
       },
       %{
         customer: "Hungry Owl",
         orders: 14,
         avg_order_value: 3_570,
         revenue: 50_000,
-        segment: "Growth"
+        segment: gettext("Growth")
       },
       %{
         customer: "Rattlesnake",
         orders: 13,
         avg_order_value: 3_930,
         revenue: 51_100,
-        segment: "Growth"
+        segment: gettext("Growth")
       },
       %{
         customer: "Hanari",
         orders: 9,
         avg_order_value: 3_650,
         revenue: 32_800,
-        segment: "Mid-market"
+        segment: gettext("Mid-market")
       },
       %{
         customer: "White Clover",
         orders: 8,
         avg_order_value: 3_420,
         revenue: 27_400,
-        segment: "Mid-market"
+        segment: gettext("Mid-market")
       },
       %{
         customer: "Folk och fa HB",
         orders: 7,
         avg_order_value: 4_220,
         revenue: 29_600,
-        segment: "Mid-market"
+        segment: gettext("Mid-market")
       }
     ]
   end
