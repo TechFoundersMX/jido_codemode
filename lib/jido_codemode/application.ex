@@ -7,6 +7,8 @@ defmodule JidoCodemode.Application do
 
   @impl true
   def start(_type, _args) do
+    :ok = JidoCodemode.Locale.Dataset.setup()
+
     children = [
       JidoCodemode.Agent.ReportStore,
       {Task.Supervisor, name: JidoCodemode.Agent.TaskSupervisor},

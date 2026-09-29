@@ -26,6 +26,13 @@ config :jido_codemode, JidoCodemodeWeb.Endpoint,
 config :jido_codemode,
   demo_password: System.get_env("DEMO_PASSWORD")
 
+if fx_usd_mxn = System.get_env("FX_USD_MXN") do
+  config :jido_codemode, JidoCodemode.Locale.Dataset,
+    fx_usd_mxn: fx_usd_mxn,
+    fx_date: System.get_env("FX_USD_MXN_DATE"),
+    fx_source: System.get_env("FX_USD_MXN_SOURCE")
+end
+
 present_env = fn name ->
   case System.get_env(name) do
     value when is_binary(value) and value != "" -> value
