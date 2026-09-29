@@ -367,6 +367,36 @@ footer.site a { text-decoration: none; font-weight: 400; color: var(--ink-soft);
 footer.site a:hover { color: var(--ink); }
 footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
 
+/* Compact page: slim pains strip, tabbed explore block, compact closing band */
+section.band.slim { padding-block: 18px; }
+.slim .container { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 28px; align-items: center; }
+.slim .sec-head { margin: 0; gap: 2px; }
+.slim .sec-head .eyebrow { margin: 0; }
+.slim .sec-head h2 { font-size: 1.05rem; letter-spacing: -.01em; max-width: 22ch; }
+.slim .symptoms li { padding-block: 6px; border-top: 0; font-size: .95rem; grid-template-columns: 1.8em 1fr; }
+@media (max-width: 900px) { .slim .container { grid-template-columns: 1fr; } }
+section.band.explore { padding-block: 20px 32px; }
+.tabbar { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--rule); margin-bottom: 20px; scrollbar-width: none; }
+.tabbar::-webkit-scrollbar { display: none; }
+.tabbar button { font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; border: 0; background: transparent; color: var(--ink-soft); padding: 10px 12px; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+.tabbar button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.tabbar button:hover { color: var(--ink); }
+.tabbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.panel .sec-head { margin-bottom: 18px; }
+.panel .sec-head .eyebrow { display: none; }
+.panel h2 { font-size: clamp(1.35rem, 1.1rem + .8vw, 1.75rem); }
+.panel .sec-head .lede { font-size: 1rem; }
+.panel .case .sec-head { margin: 0; }
+.final { padding-block: 28px; }
+.final .container { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 32px; align-items: center; }
+.final .eyebrow { display: none; }
+.final h2 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.7rem); }
+.final .lede { margin-top: 6px; font-size: 1rem; }
+.final .cta-row { margin-top: 0; justify-content: flex-end; }
+.final .cta-note { margin-top: 0 !important; grid-column: 2; text-align: right; }
+@media (max-width: 820px) { .final .container { grid-template-columns: 1fr; } .final .cta-row { justify-content: flex-start; } .final .cta-note { grid-column: 1; text-align: left; } }
+footer.site { padding-block: 18px; }
+
 /* Palette accents in dark mode */
 @media (prefers-color-scheme: dark) {
   :root[data-palette="hoja"]:not([data-theme="light"]) { --accent: #37c98e; --accent-wash: #0f2a1f; --hl: #0f2a1f; --data-2: #7aa2ff; --data-3: #f5c542; --data-4: #ff7a70; }
@@ -455,7 +485,7 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     </div>
   </section>
 
-  <section class="band tint" aria-labelledby="suena-h">
+  <section class="band tint slim" aria-labelledby="suena-h">
     <div class="container">
       <div class="sec-head">
         <p class="eyebrow" data-i18n="s_eyebrow">¿Te suena?</p>
@@ -470,19 +500,21 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     </div>
   </section>
 
-  <section class="band" id="ejemplos" aria-labelledby="ex-h">
+    <section class="band explore" id="explorar" aria-label="Explora Agentic BI">
     <div class="container">
+      <div class="tabbar" role="tablist" aria-label="Secciones"><button type="button" role="tab" id="t-ejemplos" aria-controls="ejemplos" aria-selected="true" tabindex="0" data-tab="ejemplos" data-i18n="tab_ex">Ejemplos</button><button type="button" role="tab" id="t-pruebalo" aria-controls="pruebalo" aria-selected="false" tabindex="-1" data-tab="pruebalo" data-i18n="tab_try">Pruébalo</button><button type="button" role="tab" id="t-como-funciona" aria-controls="como-funciona" aria-selected="false" tabindex="-1" data-tab="como-funciona" data-i18n="tab_how">Cómo funciona</button><button type="button" role="tab" id="t-ti" aria-controls="ti" aria-selected="false" tabindex="-1" data-tab="ti" data-i18n="tab_it">Para TI</button><button type="button" role="tab" id="t-caso" aria-controls="caso" aria-selected="false" tabindex="-1" data-tab="caso" data-i18n="tab_case">Caso</button><button type="button" role="tab" id="t-proceso" aria-controls="proceso" aria-selected="false" tabindex="-1" data-tab="proceso" data-i18n="tab_proc">Cómo trabajamos</button><button type="button" role="tab" id="t-preguntas" aria-controls="preguntas" aria-selected="false" tabindex="-1" data-tab="preguntas" data-i18n="tab_faq">Preguntas</button></div>
+        <div class="panel" role="tabpanel" id="ejemplos" aria-labelledby="t-ejemplos">
+
       <div class="sec-head">
         <p class="eyebrow" data-i18n="g_eyebrow">Lo que puedes preguntarle</p>
         <h2 id="ex-h" data-i18n="g_h2">Pregúntale lo que hoy le pides a alguien de tu equipo.</h2>
         <p class="lede" data-i18n="g_lede">Tendencias, comparaciones, mezclas, rankings e indicadores. Cada respuesta llega con el número, la gráfica que mejor la explica y la tabla. Estos son ejemplos reales con los datos ficticios de la demo.</p>
       </div>
       <div class="gallery" data-gallery></div>
-    </div>
-  </section>
+    
+        </div>
+        <div class="panel" role="tabpanel" id="pruebalo" aria-labelledby="t-pruebalo" hidden>
 
-  <section class="band tint" id="pruebalo" aria-labelledby="try-h">
-    <div class="container">
       <div class="sec-head">
         <p class="eyebrow" data-i18n="t_eyebrow">Pruébalo</p>
         <h2 id="try-h" data-i18n="t_h2">Compruébalo antes de creernos.</h2>
@@ -552,11 +584,10 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
           <p class="fineprint"><a class="textlink" href="https://agentic-bi.superdev.mx/" data-i18n="a_full">Abrir la demo completa</a></p>
         </aside>
       </div>
-    </div>
-  </section>
+    
+        </div>
+        <div class="panel" role="tabpanel" id="como-funciona" aria-labelledby="t-como-funciona" hidden>
 
-  <section class="band" id="como-funciona" aria-labelledby="how-h">
-    <div class="container">
       <div class="sec-head">
         <p class="eyebrow" data-i18n="h_eyebrow">Cómo funciona</p>
         <h2 id="how-h" data-i18n="h_h2">Tres pasos. El número llega a ti.</h2>
@@ -582,17 +613,17 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
             <li data-i18n="c_a4">Mismo número para todas las áreas</li>
           </ol>
         </div>
+      </div>
       <ol class="steps">
         <li><span class="n">01</span><h3 data-i18n="h_1t">Conectamos tus fuentes una vez.</h3><p data-i18n="h_1b">El ERP, tus hojas de cálculo y la facturación. Tus datos no se mudan: se conectan.</p></li>
         <li><span class="n">02</span><h3 data-i18n="h_2t">Preguntas en español.</h3><p data-i18n="h_2b">Como se lo preguntarías a una persona de tu equipo, también desde el celular.</p></li>
         <li><span class="n">03</span><h3 data-i18n="h_3t">Decides con la respuesta.</h3><p data-i18n="h_3b">El número, una gráfica y una tabla, con la misma definición para todas las áreas.</p></li>
       </ol>
       </div>
-    </div>
-  </section>
+    
+        </div>
+        <div class="panel" role="tabpanel" id="ti" aria-labelledby="t-ti" hidden>
 
-  <section class="band tint" id="ti" aria-labelledby="it-h">
-    <div class="container">
       <div class="sec-head">
         <p class="eyebrow" data-i18n="i_eyebrow">Para tu equipo de TI</p>
         <h2 id="it-h" data-i18n="i_h2">Lo que tu área de sistemas va a preguntar.</h2>
@@ -613,11 +644,10 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
         <div><span class="lvl" data-i18n="m_4l">04 · Prescriptivo</span><span class="q" data-i18n="m_4q">¿Qué conviene hacer?</span></div>
       </div>
       <p class="fineprint" style="margin-top:12px" data-i18n="m_note">Empezamos donde estás, casi siempre en descriptivo, y construimos la ruta hacia arriba. El agente cubre hoy las dos primeras etapas.</p>
-    </div>
-  </section>
-
-  <section class="band" aria-labelledby="case-h">
-    <div class="container case">
+    
+        </div>
+        <div class="panel" role="tabpanel" id="caso" aria-labelledby="t-caso" hidden>
+<div class="case">
       <div class="sec-head" style="margin:0">
         <p class="eyebrow" data-i18n="k_eyebrow">Caso</p>
         <h2 id="case-h" data-i18n="k_h2">Agente de Datos.</h2>
@@ -632,10 +662,9 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
         <p><a class="textlink" href="https://superdev.mx/projects/agente-de-datos" data-i18n="k_link">Ver el caso</a></p>
       </div>
     </div>
-  </section>
+        </div>
+        <div class="panel" role="tabpanel" id="proceso" aria-labelledby="t-proceso" hidden>
 
-  <section class="band tint" aria-labelledby="proc-h">
-    <div class="container">
       <div class="sec-head">
         <p class="eyebrow" data-i18n="p_eyebrow">Cómo trabajamos</p>
         <h2 id="proc-h" data-i18n="p_h2">Todo empieza con una llamada de 30 minutos.</h2>
@@ -651,11 +680,10 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
         <a class="btn btn-secondary" href="https://superdev.mx/ai-readiness/" data-i18n="cta_secondary">Haz la evaluación preliminar</a>
         <span class="cta-note" data-i18n="cta_secondary_note">3 min · 14 preguntas · resultado al instante</span>
       </div>
-    </div>
-  </section>
-
-  <section class="band" id="preguntas" aria-labelledby="faq-h">
-    <div class="container faq">
+    
+        </div>
+        <div class="panel" role="tabpanel" id="preguntas" aria-labelledby="t-preguntas" hidden>
+<div class="faq">
       <div class="sec-head" style="margin:0">
         <p class="eyebrow" data-i18n="f_eyebrow">Preguntas</p>
         <h2 id="faq-h" data-i18n="f_h2">Lo que nos preguntan antes de empezar.</h2>
@@ -671,7 +699,23 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
         <details><summary data-i18n="f_8q">¿Quién lo mantiene después?</summary><p data-i18n="f_8a">Tu equipo. Cerramos con documentación y capacitación, para que no dependa solo de nosotros.</p></details>
       </div>
     </div>
+        </div>
+    </div>
   </section>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
   <section class="final" aria-labelledby="final-h">
     <div class="container">
@@ -719,6 +763,7 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     cta_secondary_note: ["3 min · 14 preguntas · resultado al instante", "3 min · 14 questions · instant result"],
     q_top: ["Agente de análisis · datos de ejemplo", "Analysis agent · sample data"], q_time: ["4 s", "4 s"],
     q_sample: ["datos de ejemplo", "sample data"],
+    tab_ex: ["Ejemplos", "Examples"], tab_try: ["Pruébalo", "Try it"], tab_how: ["Cómo funciona", "How it works"], tab_it: ["Para TI", "For IT"], tab_case: ["Caso", "Case"], tab_proc: ["Cómo trabajamos", "How we work"], tab_faq: ["Preguntas", "FAQ"],
     tab_1: ["Ventas_sept", "Sales_Sept"], tab_2: ["Ventas_sept (2)", "Sales_Sept (2)"], tab_3: ["Reporte_FINAL_v7", "Report_FINAL_v7"], tab_4: ["Pregunta", "Question"],
     q_question: ["¿Cuáles son las 3 categorías que más venden?", "Which 3 categories sell the most?"],
     q_answer: ["Bebidas lidera con $4,779,116.56 MXN, seguida de Lácteos y Dulces y postres.", "Beverages leads with $267,868.18, followed by Dairy Products and Confections."],
@@ -999,6 +1044,28 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     const f = e.currentTarget;
     if (!f.checkValidity()) { f.reportValidity(); return; }
     mode = "invited"; apply();
+  });
+
+  function selectTab(id, focus) {
+    const tabs = [...document.querySelectorAll("[data-tab]")];
+    if (!tabs.some(t => t.dataset.tab === id)) return false;
+    tabs.forEach(t => { const on = t.dataset.tab === id; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+    document.querySelectorAll(".panel").forEach(pn => { pn.hidden = pn.id !== id; });
+    return true;
+  }
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-tab]");
+    if (t) { selectTab(t.dataset.tab); return; }
+    const a = e.target.closest('a[href^="#"]');
+    if (a) { const id = a.getAttribute("href").slice(1); if (selectTab(id)) { e.preventDefault(); document.getElementById("explorar").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); } }
+    if (e.target.closest("[data-set-mode]") && !e.target.closest(".access")) selectTab("pruebalo");
+  });
+  document.querySelector(".tabbar").addEventListener("keydown", e => {
+    if (!["ArrowRight", "ArrowLeft"].includes(e.key)) return;
+    const tabs = [...document.querySelectorAll("[data-tab]")];
+    const i = tabs.findIndex(t => t.getAttribute("aria-selected") === "true");
+    const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+    selectTab(n.dataset.tab, true); e.preventDefault();
   });
   apply();
   const card = document.querySelector(".query");
