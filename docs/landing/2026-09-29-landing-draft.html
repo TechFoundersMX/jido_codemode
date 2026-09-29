@@ -418,6 +418,8 @@ footer.site { padding-block: 18px; }
 :root[data-theme="dark"][data-bg="tinta"]   { --paper: #151311; --sheet: #1f1c19; --well: #292520; --band-bg: #292520; --rule: rgba(245, 238, 228, .12); --ink: #f3eee6; --ink-soft: #b8afa3; --ink-faint: #958b7f; }
 .review button i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid rgba(127, 127, 127, .6); }
 </style>
+<script>/* Chosen look: Hoja de cálculo palette on the Niebla background (Alex, 29 Sep). Dark mode still follows the device. */
+document.documentElement.dataset.palette = "hoja"; document.documentElement.dataset.bg = "niebla";</script>
 
 <div class="review" role="region" aria-label="Controles del borrador">
   <div class="container">
@@ -433,16 +435,16 @@ footer.site { padding-block: 18px; }
       <button type="button" data-set-mode="expired" aria-pressed="false">Invitación vencida</button>
     </span>
     <span class="grp">Paleta
-      <button type="button" data-set-palette="" aria-pressed="true">Azul reporte</button>
-      <button type="button" data-set-palette="hoja" aria-pressed="false">Hoja de cálculo</button>
+      <button type="button" data-set-palette="" aria-pressed="false">Azul reporte</button>
+      <button type="button" data-set-palette="hoja" aria-pressed="true">Hoja de cálculo ✓</button>
       <button type="button" data-set-palette="resaltador" aria-pressed="false">Tinta y resaltador</button>
       <button type="button" data-set-palette="superdev" aria-pressed="false">Marca SuperDev</button>
     </span>
     <span class="grp">Fondo
-      <button type="button" data-set-bg="" aria-pressed="true">Según paleta</button>
+      <button type="button" data-set-bg="" aria-pressed="false">Según paleta</button>
       <button type="button" data-set-bg="blanco" aria-pressed="false"><i style="background:#ffffff"></i>Blanco</button>
       <button type="button" data-set-bg="crema" aria-pressed="false"><i style="background:#f8f4ea"></i>Crema</button>
-      <button type="button" data-set-bg="niebla" aria-pressed="false"><i style="background:#eef1f5"></i>Niebla</button>
+      <button type="button" data-set-bg="niebla" aria-pressed="true"><i style="background:#eef1f5"></i>Niebla ✓</button>
       <button type="button" data-set-bg="salvia" aria-pressed="false"><i style="background:#eef3ee"></i>Salvia</button>
       <button type="button" data-set-bg="hielo" aria-pressed="false"><i style="background:#eef3fc"></i>Hielo</button>
       <button type="button" data-set-bg="arena" aria-pressed="false"><i style="background:#ebe4d6"></i>Arena</button>
