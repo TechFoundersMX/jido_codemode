@@ -114,6 +114,20 @@ defmodule JidoCodemode.Locale.DatasetTest do
     assert Dataset.rate("es_MX") == 1.0
   end
 
+  test "target_path/1 is unique per BEAM and per call" do
+    first = Dataset.target_path("/tmp")
+    second = Dataset.target_path("/tmp")
+
+    assert Path.dirname(first) == "/tmp"
+    assert Path.basename(first) =~ System.pid()
+    assert String.ends_with?(first, ".sqlite")
+    refute first == second
+  end
+
+  test "target_path/1 has no path when there is no temp directory" do
+    assert Dataset.target_path(nil) == nil
+  end
+
   defp scalar(path, sql) do
     {:ok, conn} = Sqlite3.open(path, mode: :readonly)
     {:ok, statement} = Sqlite3.prepare(conn, sql)

@@ -16,6 +16,26 @@ defmodule JidoCodemode.SidebarAgentTest do
     assert prompt =~ "Schema digest:"
   end
 
+  test "both prompts require every BuildReport string, including SQL aliases, in the answer language" do
+    for locale <- ["es_MX", "en"] do
+      prompt = SidebarAgent.system_prompt_with_schema(locale)
+
+      assert prompt =~ "Every string you pass to BuildReport"
+      assert prompt =~ "SQL column aliases used as table headers or axis titles"
+      assert prompt =~ "in the language of your answer"
+    end
+
+    assert SidebarAgent.system_prompt_with_schema("es_MX") =~ ~s|AS "Ingresos (MXN)"|
+    assert SidebarAgent.system_prompt_with_schema("en") =~ ~s|AS "Revenue"|
+  end
+
+  test "the Spanish glossary parentheses are only the English original" do
+    prompt = SidebarAgent.system_prompt_with_schema("es_MX")
+
+    assert prompt =~ "only the English original"
+    assert prompt =~ "must not be used in SQL filters"
+  end
+
   test "the English prompt keeps USD and has no Spanish glossary" do
     prompt = SidebarAgent.system_prompt_with_schema("en")
 

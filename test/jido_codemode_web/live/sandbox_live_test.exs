@@ -284,6 +284,42 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     })
   end
 
+  test "switching language patches the URL so a reload or rejoin keeps the language", %{
+    conn: conn
+  } do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+
+    view |> element("#locale-es_MX") |> render_click()
+    assert_patch(view, "/?lang=es")
+
+    view |> element("#locale-en") |> render_click()
+    assert_patch(view, "/?lang=en")
+  end
+
+  test "an explicit ?lang beats the session language when the LiveView mounts", %{conn: conn} do
+    {:ok, _view, html} =
+      conn
+      |> put_req_cookie("agentic_bi_locale", "es_MX")
+      |> put_req_header("accept-language", "es-MX")
+      |> live(~p"/?lang=en")
+
+    assert html =~ "Turn business questions into clear analysis"
+    refute html =~ "Convierte preguntas de negocio"
+  end
+
+  test "the wrong-password error follows the page language", %{conn: conn} do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+
+    view |> form("#unlock-form", unlock: %{password: "wrong-password"}) |> render_submit()
+    assert has_element?(view, "#unlock-error", "That password is not correct.")
+
+    view |> element("#locale-es_MX") |> render_click()
+
+    assert has_element?(view, "#unlock-error", "Esa contraseña no es correcta.")
+    refute has_element?(view, "#unlock-error", "That password is not correct.")
+    assert has_element?(view, "#unlock-form input[aria-describedby='unlock-error']")
+  end
+
   test "the Spanish page shows the MXN footnote with the rate", %{conn: conn} do
     {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
 
@@ -348,6 +384,11 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     assert format.(10_248, "OrderId") == "10248"
     assert format.(10_248, "Id") == "10248"
     assert format.(10_248, "customerID") == "10248"
+    assert format.(10_248, "ID de pedido") == "10248"
+    assert format.(10_248, "id_pedido") == "10248"
+    assert format.(10_248, "id") == "10248"
+    assert format.(10_248, "Folio de factura") == "10248"
+    assert format.(1_234, "Pedidos") == "1,234"
     assert format.(1997, "Year") == "1997"
     assert format.(1997, "order_year") == "1997"
     assert format.(2016, "Año") == "2016"
