@@ -2,7 +2,7 @@ defmodule JidoCodemode.Agent.QueryRunner do
   @moduledoc false
 
   alias Exqlite.Sqlite3
-  alias JidoCodemode.Agent.Schema
+  alias JidoCodemode.Locale.Dataset
 
   @supported_purposes ["analysis", "chart", "table"]
   @disallowed_keyword_regex ~r/\b(insert|update|delete|drop|alter|attach|detach|pragma|create|replace|vacuum)\b/i
@@ -94,7 +94,7 @@ defmodule JidoCodemode.Agent.QueryRunner do
   defp execute_query(sql, limits) do
     started_at = System.monotonic_time(:millisecond)
 
-    with_connection(fn conn ->
+    with_connection(Map.get(limits, :locale, "en"), fn conn ->
       case Sqlite3.prepare(conn, sql) do
         {:ok, statement} ->
           try do
@@ -259,8 +259,8 @@ defmodule JidoCodemode.Agent.QueryRunner do
 
   defp shorten_value(value, _max_chars), do: value
 
-  defp with_connection(fun) do
-    case Sqlite3.open(database_path(), mode: :readonly) do
+  defp with_connection(locale, fun) do
+    case Sqlite3.open(Dataset.path(locale), mode: :readonly) do
       {:ok, conn} ->
         try do
           fun.(conn)
@@ -271,12 +271,6 @@ defmodule JidoCodemode.Agent.QueryRunner do
       {:error, reason} ->
         {:error, {:database_open_failed, reason}}
     end
-  end
-
-  defp database_path do
-    :jido_codemode
-    |> Application.get_env(Schema, [])
-    |> Keyword.get(:database_path, Path.expand("../../../northwind.sqlite", __DIR__))
   end
 
   defp normalize_query_error({:too_many_columns, _count, _max} = reason), do: reason

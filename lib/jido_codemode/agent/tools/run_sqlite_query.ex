@@ -20,8 +20,10 @@ defmodule JidoCodemode.Agent.Tools.RunSqliteQuery do
   alias JidoCodemode.Agent.QueryRunner
 
   @impl true
-  def run(%{sql: sql, purpose: purpose}, _context) do
-    with {:ok, result} <- QueryRunner.run(sql, purpose) do
+  def run(%{sql: sql, purpose: purpose}, context) do
+    locale = Map.get(context, :locale, "en")
+
+    with {:ok, result} <- QueryRunner.run(sql, purpose, locale: locale) do
       {:ok, QueryRunner.to_preview(result)}
     end
   end

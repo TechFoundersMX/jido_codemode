@@ -321,7 +321,13 @@ defmodule JidoCodemode.Agent.Tools.BuildReport do
       sql = Map.get(params, "sql")
       purpose = Map.get(params, "purpose") || "analysis"
 
-      case QueryRunner.run(sql, purpose) do
+      locale =
+        case Lua.get_private(state, :tool_context) do
+          {:ok, context} when is_map(context) -> Map.get(context, :locale, "en")
+          _other -> "en"
+        end
+
+      case QueryRunner.run(sql, purpose, locale: locale) do
         {:ok, result} ->
           {encoded, state} = Lua.encode!(state, QueryRunner.to_source(result))
           {[encoded], state}
