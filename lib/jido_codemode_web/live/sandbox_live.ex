@@ -125,7 +125,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
         {:noreply,
          push_event(socket, "locale-changed", %{
            locale: locale,
-           html_lang: Locale.html_lang(locale)
+           html_lang: Locale.html_lang(locale),
+           title: "Agentic BI · " <> gettext("Decision-ready analysis")
          })}
     end
   end
@@ -719,15 +720,16 @@ defmodule JidoCodemodeWeb.SandboxLive do
                   </button>
                 </div>
               </.form>
-
-              <p
-                :if={footnote = currency_footnote(@locale, @currency)}
-                id="currency-footnote"
-                class="shrink-0 px-4 pb-4 text-xs leading-5 text-pretty text-base-content/55"
-              >
-                {footnote}
-              </p>
             </section>
+
+            <%!-- Outside the fixed-height card so it never takes space from the conversation. --%>
+            <p
+              :if={footnote = currency_footnote(@locale, @currency)}
+              id="currency-footnote"
+              class="mt-3 px-1 text-xs leading-5 text-pretty text-base-content/55"
+            >
+              {footnote}
+            </p>
           </aside>
         </section>
       </section>
