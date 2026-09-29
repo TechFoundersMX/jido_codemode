@@ -1,6 +1,7 @@
 defmodule JidoCodemode.SidebarAgentTest do
   use ExUnit.Case, async: false
 
+  alias JidoCodemode.Locale.Dataset
   alias JidoCodemode.SidebarAgent
 
   test "the Spanish prompt carries the mirror rule, voice, glossary, and MXN rule" do
@@ -27,6 +28,38 @@ defmodule JidoCodemode.SidebarAgentTest do
 
     assert SidebarAgent.system_prompt_with_schema("es_MX") =~ ~s|AS "Ingresos (MXN)"|
     assert SidebarAgent.system_prompt_with_schema("en") =~ ~s|AS "Revenue"|
+  end
+
+  test "the Spanish alias example follows the currency the data is in" do
+    assert SidebarAgent.system_prompt_with_schema("es_MX") =~ ~s|AS "Ingresos (MXN)"|
+
+    previous = Application.get_env(:jido_codemode, Dataset)
+
+    on_exit(fn ->
+      if previous,
+        do: Application.put_env(:jido_codemode, Dataset, previous),
+        else: Application.delete_env(:jido_codemode, Dataset)
+
+      Dataset.reset()
+    end)
+
+    Application.put_env(:jido_codemode, Dataset, fx_usd_mxn: "abc")
+    Dataset.reset()
+
+    prompt = SidebarAgent.system_prompt_with_schema("es_MX")
+
+    assert prompt =~ ~s|AS "Ingresos (USD)"|
+    assert prompt =~ "Write amounts as $1,234.56 USD."
+    refute prompt =~ "(MXN)"
+  end
+
+  test "both prompts tell the agent to sort comparison bars largest first" do
+    for locale <- ["es_MX", "en"] do
+      prompt = SidebarAgent.system_prompt_with_schema(locale)
+
+      assert prompt =~ "sort the bars by the measured value, largest first"
+      assert prompt =~ "unless the question asks for another order"
+    end
   end
 
   test "the Spanish glossary parentheses are only the English original" do

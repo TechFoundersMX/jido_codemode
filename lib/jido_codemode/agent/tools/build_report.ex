@@ -84,6 +84,10 @@ defmodule JidoCodemode.Agent.Tools.BuildReport do
   })
   ```
 
+  The example is in English only for illustration. Write column aliases, titles, summaries, and
+  labels in the language of the answer (the system prompt gives the language), not necessarily
+  in English.
+
   Donut example:
 
   ```lua

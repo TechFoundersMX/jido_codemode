@@ -277,22 +277,22 @@ defmodule JidoCodemode.Agent.Report do
   end
 
   defp chart_spec(rows, "bar", x, y, _color_by, _size_by) do
+    # Vega-Lite sorts a nominal or ordinal axis alphabetically unless told otherwise,
+    # which discards the row order (usually ORDER BY value DESC). `sort: nil` keeps it.
     options = [
       height: 260,
       width: :container,
       tooltip: :data,
-      x: [type: x.type, axis: axis_for(x, nil)],
-      y: [type: y.type, axis: axis_for(y, nil)]
+      x: [type: x.type, axis: axis_for(x, nil)] |> keep_data_order(x),
+      y: [type: y.type, axis: axis_for(y, nil)] |> keep_data_order(y)
     ]
 
-    options =
-      if x.type == :quantitative and y.type in [:nominal, :ordinal] do
-        Keyword.put(options, :orient, :horizontal)
-      else
-        options
-      end
-
-    Tucan.bar(rows, x.field, y.field, options)
+    if x.type == :quantitative and y.type in [:nominal, :ordinal] do
+      # Tucan takes (category, value) and swaps them onto the y and x channels when horizontal.
+      Tucan.bar(rows, y.field, x.field, Keyword.put(options, :orient, :horizontal))
+    else
+      Tucan.bar(rows, x.field, y.field, options)
+    end
   end
 
   defp chart_spec(rows, "donut", x, y, _color_by, _size_by) do
@@ -315,6 +315,11 @@ defmodule JidoCodemode.Agent.Report do
     )
     |> maybe_size_by(size_by)
   end
+
+  defp keep_data_order(encoding, %FieldRef{type: type}) when type in [:nominal, :ordinal],
+    do: Keyword.put(encoding, :sort, nil)
+
+  defp keep_data_order(encoding, _field_ref), do: encoding
 
   defp maybe_size_by(vl, nil), do: vl
   defp maybe_size_by(vl, %FieldRef{field: field}), do: Tucan.size_by(vl, field)

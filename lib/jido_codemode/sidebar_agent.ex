@@ -66,8 +66,11 @@ defmodule JidoCodemode.SidebarAgent do
           "The database stores category and country names in English."
       end
 
+    currency = Dataset.currency("es_MX")
+    income_alias = ~s|AS "Ingresos (#{currency |> Atom.to_string() |> String.upcase()})"|
+
     money =
-      case {Dataset.currency("es_MX"), Dataset.fx()} do
+      case {currency, Dataset.fx()} do
         {:mxn, {:ok, fx}} ->
           "Money amounts in the database are already in Mexican pesos (MXN), converted from USD " <>
             "at #{fx.rate} MXN per USD (#{fx.source}, #{fx.date}). Never convert them again. " <>
@@ -83,7 +86,7 @@ defmodule JidoCodemode.SidebarAgent do
     - The page language is Spanish (Mexico).
     - Answer in the language of the user's question. If the question gives no language signal, answer in Spanish.
     - When you answer in Spanish: use Mexican Spanish with "tú", professional and warm. Give the answer first, then the context. Do not repeat the question. Use "reporte", "gráfica", "ingresos", and "pedidos". Write dates as "28 de septiembre de 2026" or 28/09/2026.
-    - #{report_text(~s|AS "Ingresos (MXN)"|)}
+    - #{report_text(income_alias)}
     - #{labels}
     - #{money}
     """
@@ -103,7 +106,10 @@ defmodule JidoCodemode.SidebarAgent do
     "Every string you pass to BuildReport is written in the language of your answer: report and " <>
       "block titles, summaries, metric labels, chart titles, and SQL column aliases used as table " <>
       "headers or axis titles. Alias SQL columns in the language of your answer, for example " <>
-      alias_example <> "."
+      alias_example <>
+      ". For bar charts that compare categories or customers, sort the bars by the measured " <>
+      "value, largest first (ORDER BY the value in SQL and keep that order), unless the " <>
+      "question asks for another order."
   end
 
   def recent_tool_calls(agent_pid, limit \\ 10) do
