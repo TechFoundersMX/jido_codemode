@@ -1,0 +1,667 @@
+<title>Agentic BI Landing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a report-sheet page. Left-aligned sections on one 1120px column; the hero pairs copy with a
+   live "consulta" card; numbers are always tabular and set in Geist Mono like a ledger. */
+:root {
+  --paper: #f6f6f3;
+  --sheet: #ffffff;
+  --ink: #14161b;
+  --ink-soft: #4d5360;
+  --ink-faint: #6b7180;
+  --rule: rgba(20, 22, 27, .10);
+  --accent: #2563eb;
+  --accent-ink: #ffffff;
+  --accent-wash: #e9effd;
+  --data-2: #0f8b8d;
+  --data-3: #c26a1a;
+  --well: #eeeeea;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+  --band-bg: #14161b;
+  --band-fg: #f6f6f3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1014; --sheet: #161920; --ink: #eef0f4; --ink-soft: #aab0bd; --ink-faint: #8a91a0;
+    --rule: rgba(238, 240, 244, .12); --accent: #6d97ff; --accent-ink: #0b1020; --accent-wash: #18223b;
+    --data-2: #3cc3c5; --data-3: #f0a45c; --well: #1b1f27; --band-bg: #1b1f27; --band-fg: #eef0f4; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --band-bg: #1b1f27; --band-fg: #eef0f4;
+  --paper: #0e1014; --sheet: #161920; --ink: #eef0f4; --ink-soft: #aab0bd; --ink-faint: #8a91a0;
+  --rule: rgba(238, 240, 244, .12); --accent: #6d97ff; --accent-ink: #0b1020; --accent-wash: #18223b;
+  --data-2: #3cc3c5; --data-3: #f0a45c; --well: #1b1f27; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; margin: 0; }
+a { color: inherit; }
+.container { max-width: 1120px; margin: 0 auto; padding-inline: 20px; }
+.num, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Review toolbar (not part of the landing) */
+.review { background: var(--ink); color: var(--paper); font-size: 13px; }
+.review .container { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding-block: 8px; }
+.review b { font-weight: 600; }
+.review .grp { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.review button { font: inherit; border: 1px solid rgba(255,255,255,.25); background: transparent; color: inherit; border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.review button[aria-pressed="true"] { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+/* Header */
+.site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.brand { display: flex; align-items: baseline; gap: 8px; text-decoration: none; }
+.brand .name { font-weight: 700; letter-spacing: -.02em; font-size: 18px; }
+.brand .by { font-size: 13px; color: var(--ink-faint); }
+.nav { display: flex; align-items: center; gap: 22px; }
+.nav a.link { text-decoration: none; font-size: 14px; color: var(--ink-soft); }
+.nav a.link:hover { color: var(--ink); }
+.nav .links { display: flex; gap: 22px; }
+@media (max-width: 860px) { .nav .links { display: none; } }
+.lang { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 2px; }
+.lang button { font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .04em; border: 0; background: transparent; color: var(--ink-soft); padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600; font-size: 16px; text-decoration: none; border-radius: 10px; padding: 12px 18px; cursor: pointer; border: 1px solid transparent; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, var(--ink)); }
+.btn-secondary { background: transparent; color: var(--ink); border-color: color-mix(in srgb, var(--ink) 25%, transparent); }
+.btn-secondary:hover { background: var(--sheet); }
+.btn-sm { font-size: 14px; padding: 8px 12px; border-radius: 8px; }
+.btn:focus-visible, .lang button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.cta-note { font-size: 14px; color: var(--ink-faint); }
+.textlink { font-weight: 600; text-decoration: none; color: var(--accent); }
+.textlink:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Type */
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 12px; }
+h1 { font-size: clamp(2.4rem, 1.4rem + 4.2vw, 4.25rem); line-height: 1.02; letter-spacing: -.035em; font-weight: 700; text-wrap: balance; margin: 0; max-width: 16ch; }
+h2 { font-size: clamp(1.75rem, 1.2rem + 1.9vw, 2.6rem); line-height: 1.08; letter-spacing: -.025em; font-weight: 650; text-wrap: balance; margin: 0; max-width: 24ch; }
+h3 { font-size: 1.1rem; line-height: 1.3; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+p { margin: 0; text-wrap: pretty; }
+.lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 52ch; }
+.sec-head { display: grid; gap: 14px; margin-bottom: 40px; }
+.sec-head .lede { font-size: 1.05rem; }
+
+section.band { padding-block: 88px; border-top: 1px solid var(--rule); }
+section.band.tint { background: var(--sheet); }
+
+/* Hero */
+.hero { padding-block: 64px 88px; }
+.hero .grid { display: grid; grid-template-columns: 11fr 9fr; gap: 48px; align-items: center; }
+.hero .copy { display: grid; gap: 22px; min-width: 0; }
+@media (max-width: 900px) { .hero .grid { grid-template-columns: 1fr; } }
+
+.query { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: 18px; display: grid; gap: 14px; box-shadow: 0 1px 2px rgba(20,22,27,.04), 0 12px 32px -12px rgba(20,22,27,.18); min-width: 0; }
+:root[data-theme="dark"] .query { box-shadow: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .query { box-shadow: none; } }
+.query .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: var(--ink-faint); }
+.query .top .dot { width: 8px; height: 8px; border-radius: 50%; background: #22a06b; display: inline-block; margin-right: 6px; }
+.bubble { justify-self: end; background: var(--accent); color: var(--accent-ink); border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 15px; max-width: 34ch; }
+.answer { font-size: 15px; color: var(--ink); }
+.answer strong { font-weight: 600; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: minmax(0, 8.5em) 1fr; gap: 10px; align-items: center; font-size: 13px; }
+.bar .lbl { color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar .track { position: relative; height: 26px; background: var(--well); border-radius: 6px; overflow: hidden; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 6px; width: var(--w); transform-origin: left; animation: grow .9s cubic-bezier(.2,.8,.2,1) both; }
+.bar:nth-child(2) .fill { background: var(--data-2); animation-delay: .08s; }
+.bar:nth-child(3) .fill { background: var(--data-3); animation-delay: .16s; }
+.bar .val { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: var(--font-mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+@keyframes grow { from { transform: scaleX(.02); } to { transform: scaleX(1); } }
+.caption { font-size: 12px; color: var(--ink-faint); }
+
+/* Symptoms */
+.symptoms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; margin: 0; padding: 0; list-style: none; }
+.symptoms li { padding-block: 20px; border-top: 1px solid var(--rule); font-size: 1.15rem; line-height: 1.45; display: grid; grid-template-columns: 2.2em 1fr; gap: 8px; }
+.symptoms li .k { font-family: var(--font-mono); color: var(--ink-faint); font-size: 14px; padding-top: 3px; }
+@media (max-width: 760px) { .symptoms { grid-template-columns: 1fr; } }
+
+/* Pruébalo */
+.try { display: grid; grid-template-columns: 3fr 2fr; gap: 32px; align-items: start; }
+@media (max-width: 900px) { .try { grid-template-columns: 1fr; } }
+.replay { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; min-width: 0; }
+.replay .head { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--rule); font-size: 13px; color: var(--ink-faint); flex-wrap: wrap; }
+.replay .body { padding: 18px; display: grid; gap: 16px; }
+.tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--accent-wash); color: var(--accent); white-space: nowrap; }
+.report-title { font-weight: 600; font-size: 15px; }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 500; color: var(--ink-faint); font-size: 13px; }
+td.r, th.r { text-align: right; }
+td.r { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+.access { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.access .state { display: grid; gap: 14px; }
+.access .status { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+.access .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); display: inline-block; font-style: normal; }
+.access[data-mode="invited"] .status i { background: #22a06b; }
+.access[data-mode="expired"] .status i { background: var(--data-3); }
+.access .ask { display: grid; gap: 10px; }
+.access textarea { width: 100%; font: inherit; font-size: 16px; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--paper); color: var(--ink); resize: none; min-height: 72px; }
+.access textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.fineprint { font-size: 13px; color: var(--ink-faint); }
+
+/* Before / after */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; }
+.compare > div { padding: 28px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.compare .before { background: var(--well); }
+.compare .after { background: var(--sheet); }
+.compare h3 { font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; color: var(--ink-faint); }
+.compare .after h3 { color: var(--accent); }
+.compare ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: s; }
+.compare li { counter-increment: s; display: grid; grid-template-columns: 1.8em 1fr; gap: 6px; font-size: 1.05rem; }
+.compare li::before { content: counter(s); font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); padding-top: 3px; }
+.compare .before li { color: var(--ink-soft); }
+@media (max-width: 760px) { .compare { grid-template-columns: 1fr; } }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; gap: 10px; align-content: start; border-top: 2px solid var(--ink); padding-top: 16px; }
+.steps .n { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+.steps p { color: var(--ink-soft); }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+
+/* IT */
+.it { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; margin: 0; }
+.it div { padding-block: 22px; border-top: 1px solid var(--rule); display: grid; gap: 6px; align-content: start; }
+.it dt { font-weight: 600; }
+.it dd { margin: 0; color: var(--ink-soft); font-size: 15px; }
+@media (max-width: 900px) { .it { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .it { grid-template-columns: 1fr; } }
+.maturity { margin-top: 32px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; }
+.maturity div { padding: 14px 16px; display: grid; gap: 4px; background: var(--sheet); border-left: 1px solid var(--rule); min-width: 0; }
+.maturity div:first-child { border-left: 0; }
+.maturity .lvl { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); }
+.maturity .q { font-size: 14px; color: var(--ink-soft); }
+.maturity .now { background: var(--accent-wash); }
+.maturity .now .lvl { color: var(--accent); }
+@media (max-width: 760px) { .maturity { grid-template-columns: 1fr 1fr; } .maturity div:nth-child(3) { border-left: 0; } .maturity div:nth-child(n+3) { border-top: 1px solid var(--rule); } }
+
+/* Case */
+.case { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; align-items: start; }
+@media (max-width: 860px) { .case { grid-template-columns: 1fr; } }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; }
+.stats div { padding: 4px 18px; border-left: 1px solid var(--rule); display: grid; gap: 4px; min-width: 0; }
+.stats div:first-child { border-left: 0; padding-left: 0; }
+.stats dt { font-size: 14px; color: var(--ink-soft); order: 2; }
+.stats dd { margin: 0; font-family: var(--font-mono); font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem); letter-spacing: -.02em; order: 1; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .stats { grid-template-columns: 1fr; } .stats div { border-left: 0; padding: 12px 0; border-top: 1px solid var(--rule); } .stats div:first-child { border-top: 0; } }
+.case .body { display: grid; gap: 18px; }
+
+/* Process */
+.process { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+.process li { padding: 18px 18px 18px 0; display: grid; gap: 8px; align-content: start; }
+.process li + li { padding-left: 18px; border-left: 1px solid var(--rule); }
+.process .n { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+.process p { font-size: 15px; color: var(--ink-soft); }
+@media (max-width: 1000px) { .process { grid-template-columns: 1fr; } .process li, .process li + li { padding: 16px 0; border-left: 0; border-top: 1px solid var(--rule); } .process li:first-child { border-top: 0; } }
+.process-cta { margin-top: 28px; }
+
+/* FAQ */
+.faq { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; }
+@media (max-width: 860px) { .faq { grid-template-columns: 1fr; } }
+.faq .list { border-top: 1px solid var(--rule); }
+.faq details { border-bottom: 1px solid var(--rule); }
+.faq summary { list-style: none; cursor: pointer; padding: 18px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--font-mono); color: var(--ink-faint); }
+.faq details[open] summary::after { content: "–"; }
+.faq details p { padding: 0 0 18px; color: var(--ink-soft); max-width: 62ch; }
+
+/* Final CTA */
+.final { padding-block: 96px; border-top: 1px solid var(--rule); background: var(--band-bg); color: var(--band-fg); }
+.final .eyebrow { color: color-mix(in srgb, var(--band-fg) 70%, transparent); }
+.final h2 { max-width: 22ch; }
+.final .lede { color: color-mix(in srgb, var(--band-fg) 72%, transparent); margin-top: 16px; }
+.final .cta-row { margin-top: 30px; }
+.final .btn-primary { background: var(--band-fg); color: var(--band-bg); }
+.final .btn-primary:hover { background: color-mix(in srgb, var(--band-fg) 88%, var(--band-bg)); }
+.final .cta-note { color: color-mix(in srgb, var(--band-fg) 65%, transparent); }
+.final .textlink { color: var(--band-fg); }
+
+footer.site { padding-block: 40px; font-size: 14px; color: var(--ink-soft); }
+footer.site .container { display: grid; gap: 14px; }
+footer.site .links { display: flex; gap: 18px; flex-wrap: wrap; }
+footer.site a { text-decoration: none; font-weight: 400; color: var(--ink-soft); }
+footer.site a:hover { color: var(--ink); }
+footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
+</style>
+
+<div class="review" role="region" aria-label="Controles del borrador">
+  <div class="container">
+    <b>Borrador para revisión</b>
+    <span class="grp">Idioma
+      <button type="button" data-set-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+    </span>
+    <span class="grp">Acceso al agente
+      <button type="button" data-set-mode="public" aria-pressed="true">Público</button>
+      <button type="button" data-set-mode="invited" aria-pressed="false">Invitado</button>
+      <button type="button" data-set-mode="expired" aria-pressed="false">Invitación vencida</button>
+    </span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Agentic BI, inicio"><span class="name">Agentic BI</span><span class="by" data-i18n="by">por SuperDev</span></a>
+    <nav class="nav" aria-label="Principal">
+      <div class="links">
+        <a class="link" href="#pruebalo" data-i18n="nav_try">Pruébalo</a>
+        <a class="link" href="#como-funciona" data-i18n="nav_how">Cómo funciona</a>
+        <a class="link" href="#ti" data-i18n="nav_it">Para TI</a>
+        <a class="link" href="#preguntas" data-i18n="nav_faq">Preguntas</a>
+      </div>
+      <div class="lang" role="group" aria-label="Idioma">
+        <button type="button" data-set-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="btn btn-secondary btn-sm" href="https://superdev.mx/calendar/" data-i18n="nav_cta">Llamada exploratoria</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container grid">
+      <div class="copy">
+        <p class="eyebrow" data-i18n="hero_eyebrow">Agentic BI · IA sobre los datos de tu empresa</p>
+        <h1 data-i18n="hero_h1">Tu próximo reporte, en una pregunta.</h1>
+        <p class="lede" data-i18n="hero_lede">Tienes los datos, pero cada reporte tarda días y depende de una persona. Conectamos tus fuentes (Dynamics 365, Odoo, SAP Business One, Airtable) para que cualquiera pregunte y decida al instante.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a>
+          <a class="textlink" href="#pruebalo" data-i18n="cta_demo">Ver demo en vivo</a>
+        </div>
+        <p class="cta-note" data-i18n="cta_note">30 min · gratis · sin compromiso</p>
+      </div>
+      <figure class="query" aria-label="Ejemplo de consulta">
+        <div class="top"><span><span class="dot"></span><span data-i18n="q_top">Agente de análisis · datos de ejemplo</span></span><span class="num" data-i18n="q_time">4 s</span></div>
+        <p class="bubble" data-i18n="q_question">¿Cuáles son las 3 categorías que más venden?</p>
+        <p class="answer" data-i18n="q_answer"><strong>Bebidas</strong> lidera con $4,779,116.56 MXN, seguida de Lácteos y Dulces y postres.</p>
+        <div class="bars" data-bars></div>
+        <figcaption class="caption" data-i18n="q_caption">Datos de ejemplo de una distribuidora ficticia.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="band tint" aria-labelledby="suena-h">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="s_eyebrow">¿Te suena?</p>
+        <h2 id="suena-h" data-i18n="s_h2">Tus datos ya existen. La respuesta es lo que no.</h2>
+      </div>
+      <ul class="symptoms" role="list">
+        <li><span class="k">01</span><span data-i18n="s_1">Cada reporte depende de una persona que "sabe sacar la información".</span></li>
+        <li><span class="k">02</span><span data-i18n="s_2">Tus datos están en el ERP, pero sacarlos es un proyecto.</span></li>
+        <li><span class="k">03</span><span data-i18n="s_3">Cada área llega a la junta con su propio número.</span></li>
+        <li><span class="k">04</span><span data-i18n="s_4">Decides con datos del mes pasado, o con intuición.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band" id="pruebalo" aria-labelledby="try-h">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="t_eyebrow">Pruébalo</p>
+        <h2 id="try-h" data-i18n="t_h2">Compruébalo antes de creernos.</h2>
+        <p class="lede" data-i18n="t_lede">Una distribuidora de ejemplo, con datos ficticios. Así contesta el agente una pregunta de negocio: el número, la gráfica y la tabla, en español y en pesos.</p>
+      </div>
+      <div class="try">
+        <article class="replay" aria-label="Respuesta de ejemplo">
+          <div class="head"><span data-i18n="r_head">Respuesta real del agente, guardada.</span><span class="tag" data-i18n="r_tag">Datos ficticios</span></div>
+          <div class="body">
+            <p class="bubble" data-i18n="r_question">¿Cuáles son las 3 categorías principales por ingresos?</p>
+            <p class="answer" data-i18n-html="r_answer">Las 3 categorías principales por ingresos son <strong>Bebidas</strong> ($4,779,116.56 MXN), <strong>Lácteos</strong> ($4,183,914.82 MXN) y <strong>Dulces y postres</strong> ($2,985,870.46 MXN).</p>
+            <p class="report-title" data-i18n="r_report">Ingresos por categoría</p>
+            <div class="bars" data-bars></div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th data-i18n="r_col1">Categoría</th><th class="r" data-i18n="r_col2">Ingresos (MXN)</th></tr></thead>
+                <tbody data-rows></tbody>
+              </table>
+            </div>
+            <p class="fineprint" data-i18n="r_note">Datos ficticios. Todavía no es tu operación.</p>
+          </div>
+        </article>
+        <aside class="access" data-mode="public" aria-live="polite">
+          <div class="state" data-when="public">
+            <p class="status"><i></i><span data-i18n="a_pub_status">Agente en vivo · por invitación</span></p>
+            <h3 data-i18n="a_pub_h">Hazle tus propias preguntas.</h3>
+            <p data-i18n="a_pub_body">El agente en vivo es por invitación. Pide acceso y te enviamos un enlace para hacerle tus propias preguntas.</p>
+            <div><a class="btn btn-secondary" href="https://superdev.mx/calendar/" data-i18n="a_pub_cta">Pide acceso al agente en vivo</a></div>
+            <p class="fineprint" data-i18n="a_pub_fine">Mientras abrimos el formulario de acceso, te lo damos en la llamada exploratoria.</p>
+          </div>
+          <div class="state" data-when="invited" hidden>
+            <p class="status"><i></i><span data-i18n="a_inv_status">Tienes acceso al agente en vivo. Te quedan 3 conversaciones.</span></p>
+            <h3 data-i18n="a_inv_h">Pregúntale a la distribuidora de ejemplo.</h3>
+            <div class="ask">
+              <label for="ask-q" class="fineprint" data-i18n="a_inv_label">Tu pregunta</label>
+              <textarea id="ask-q" name="question" rows="3" data-i18n-ph="a_inv_ph" placeholder="Pregunta sobre ingresos, clientes, productos o tendencias"></textarea>
+              <div><button type="button" class="btn btn-primary btn-sm" data-i18n="a_inv_send">Enviar</button></div>
+            </div>
+            <p class="fineprint" data-i18n="a_inv_fine">Cada conversación nueva usa una de tus 3. Las preguntas dentro de una conversación no cuentan.</p>
+          </div>
+          <div class="state" data-when="expired" hidden>
+            <p class="status"><i></i><span data-i18n="a_exp_status">Invitación no disponible</span></p>
+            <h3 data-i18n="a_exp_h">Esta invitación ya no está disponible.</h3>
+            <p data-i18n="a_exp_body">Venció o ya usaste tus conversaciones. Pide una nueva y te la enviamos.</p>
+            <div><a class="btn btn-secondary" href="https://superdev.mx/calendar/" data-i18n="a_pub_cta">Pide acceso al agente en vivo</a></div>
+          </div>
+          <p class="fineprint"><a class="textlink" href="https://agentic-bi.superdev.mx/" data-i18n="a_full">Abrir la demo completa</a></p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tint" aria-labelledby="cmp-h">
+    <div class="container">
+      <div class="sec-head">
+        <h2 id="cmp-h" data-i18n="c_h2">De pedir un reporte a hacer una pregunta.</h2>
+      </div>
+      <div class="compare">
+        <div class="before">
+          <h3 data-i18n="c_before">Antes</h3>
+          <ol>
+            <li data-i18n="c_b1">Pides el reporte</li>
+            <li data-i18n="c_b2">Alguien lo arma a mano</li>
+            <li data-i18n="c_b3">Esperas</li>
+            <li data-i18n="c_b4">Llega desactualizado</li>
+            <li data-i18n="c_b5">Nadie confía en el número</li>
+          </ol>
+        </div>
+        <div class="after">
+          <h3 data-i18n="c_after">Con Agentic BI</h3>
+          <ol>
+            <li data-i18n="c_a1">Haces la pregunta</li>
+            <li data-i18n="c_a2">La respuesta llega en segundos</li>
+            <li data-i18n="c_a3">Con gráfica y tabla</li>
+            <li data-i18n="c_a4">Mismo número para todas las áreas</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="como-funciona" aria-labelledby="how-h">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="h_eyebrow">Cómo funciona</p>
+        <h2 id="how-h" data-i18n="h_h2">Tres pasos. El número llega a ti.</h2>
+      </div>
+      <ol class="steps">
+        <li><span class="n">01</span><h3 data-i18n="h_1t">Conectamos tus fuentes una vez.</h3><p data-i18n="h_1b">El ERP, tus hojas de cálculo y la facturación. Tus datos no se mudan: se conectan.</p></li>
+        <li><span class="n">02</span><h3 data-i18n="h_2t">Preguntas en español.</h3><p data-i18n="h_2b">Como se lo preguntarías a una persona de tu equipo, también desde el celular.</p></li>
+        <li><span class="n">03</span><h3 data-i18n="h_3t">Decides con la respuesta.</h3><p data-i18n="h_3b">El número, una gráfica y una tabla, con la misma definición para todas las áreas.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="band tint" id="ti" aria-labelledby="it-h">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="i_eyebrow">Para tu equipo de TI</p>
+        <h2 id="it-h" data-i18n="i_h2">Lo que tu área de sistemas va a preguntar.</h2>
+        <p class="lede" data-i18n="i_lede">El agente solo lee. Cada consulta pasa por controles antes de ejecutarse, y cada número tiene una definición y un dueño.</p>
+      </div>
+      <dl class="it">
+        <div><dt data-i18n="i_1t">Solo lectura</dt><dd data-i18n="i_1b">No puede modificar ni borrar información. Solo ejecuta consultas de lectura que se validan antes de correr.</dd></div>
+        <div><dt data-i18n="i_2t">Tus datos no se mudan</dt><dd data-i18n="i_2b">Se conecta a Dynamics 365, Odoo, SAP Business One o Airtable. No reemplazamos tu ERP ni copiamos tu operación a otra herramienta.</dd></div>
+        <div><dt data-i18n="i_3t">Un solo número</dt><dd data-i18n="i_3b">Cada indicador queda escrito: su definición, su fuente y su dueño. Se acaba la versión de cada área.</dd></div>
+        <div><dt data-i18n="i_4t">Quién ve qué</dt><dd data-i18n="i_4b">Permisos por rol. Queda escrito de quién es cada dato y quién puede verlo.</dd></div>
+        <div><dt data-i18n="i_5t">Límites claros</dt><dd data-i18n="i_5b">Cada consulta tiene tiempo y tamaño máximos. Si la pregunta es ambigua, el agente lo dice o pregunta; no inventa números.</dd></div>
+        <div><dt data-i18n="i_6t">Privacidad</dt><dd data-i18n-html="i_6b">La demo usa datos ficticios. En tu proyecto, los datos personales se tratan según nuestro <a class="textlink" href="https://superdev.mx/privacidad/">aviso de privacidad</a>.</dd></div>
+      </dl>
+      <div class="maturity" aria-label="Madurez de datos">
+        <div class="now"><span class="lvl" data-i18n="m_1l">01 · Descriptivo</span><span class="q" data-i18n="m_1q">¿Qué pasó?</span></div>
+        <div class="now"><span class="lvl" data-i18n="m_2l">02 · Diagnóstico</span><span class="q" data-i18n="m_2q">¿Por qué pasó?</span></div>
+        <div><span class="lvl" data-i18n="m_3l">03 · Predictivo</span><span class="q" data-i18n="m_3q">¿Qué va a pasar?</span></div>
+        <div><span class="lvl" data-i18n="m_4l">04 · Prescriptivo</span><span class="q" data-i18n="m_4q">¿Qué conviene hacer?</span></div>
+      </div>
+      <p class="fineprint" style="margin-top:12px" data-i18n="m_note">Empezamos donde estás, casi siempre en descriptivo, y construimos la ruta hacia arriba. El agente cubre hoy las dos primeras etapas.</p>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="case-h">
+    <div class="container case">
+      <div class="sec-head" style="margin:0">
+        <p class="eyebrow" data-i18n="k_eyebrow">Caso</p>
+        <h2 id="case-h" data-i18n="k_h2">Agente de Datos.</h2>
+      </div>
+      <div class="body">
+        <dl class="stats">
+          <div><dt data-i18n="k_s1">usuarios en lenguaje natural</dt><dd>42</dd></div>
+          <div><dt data-i18n="k_s2">meses para tener el agente en vivo</dt><dd>&lt; 2</dd></div>
+          <div><dt data-i18n="k_s3">semanas y 12 entregables, el proyecto completo</dt><dd>16</dd></div>
+        </dl>
+        <p class="lede" data-i18n="k_body">De repartidores al director general, consultan los datos del negocio en lenguaje natural, también desde el celular. El proyecto completo incluyó gobernanza y capacitación. ERP fuente: Dynamics 365.</p>
+        <p><a class="textlink" href="https://superdev.mx/projects/agente-de-datos" data-i18n="k_link">Ver el caso</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tint" aria-labelledby="proc-h">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="p_eyebrow">Cómo trabajamos</p>
+        <h2 id="proc-h" data-i18n="p_h2">Todo empieza con una llamada de 30 minutos.</h2>
+      </div>
+      <ol class="process">
+        <li><span class="n">01</span><h3 data-i18n="p_1t">Llamada exploratoria</h3><p data-i18n="p_1b">Entendemos tu operación y vemos si hay un buen fit. Gratis.</p></li>
+        <li><span class="n">02</span><h3 data-i18n="p_2t">Diagnóstico IA</h3><p data-i18n="p_2b">Con acceso a tus sistemas: un reporte con tu punto de partida y un plan priorizado.</p></li>
+        <li><span class="n">03</span><h3 data-i18n="p_3t">Implementación</h3><p data-i18n="p_3b">Construimos lo que el diagnóstico prioriza, por entregables. Cronograma de referencia: 16 semanas.</p></li>
+        <li><span class="n">04</span><h3 data-i18n="p_4t">Medición</h3><p data-i18n="p_4b">Comparamos contra la línea base que fijamos en el diagnóstico.</p></li>
+        <li><span class="n">05</span><h3 data-i18n="p_5t">Acompañamiento</h3><p data-i18n="p_5b">Iguala mensual para mantener y mejorar.</p></li>
+      </ol>
+      <div class="process-cta cta-row">
+        <a class="btn btn-secondary" href="https://superdev.mx/ai-readiness/" data-i18n="cta_secondary">Haz la evaluación preliminar</a>
+        <span class="cta-note" data-i18n="cta_secondary_note">3 min · 14 preguntas · resultado al instante</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="preguntas" aria-labelledby="faq-h">
+    <div class="container faq">
+      <div class="sec-head" style="margin:0">
+        <p class="eyebrow" data-i18n="f_eyebrow">Preguntas</p>
+        <h2 id="faq-h" data-i18n="f_h2">Lo que nos preguntan antes de empezar.</h2>
+      </div>
+      <div class="list">
+        <details><summary data-i18n="f_1q">¿Tenemos que mudar nuestros datos?</summary><p data-i18n="f_1a">No. Nos conectamos al ERP y a las hojas que ya usas. Mudar los datos es un proyecto aparte y casi nunca hace falta para empezar.</p></details>
+        <details><summary data-i18n="f_2q">¿Puede cambiar o borrar información?</summary><p data-i18n="f_2a">No. El agente solo lee, y cada consulta se revisa antes de ejecutarse.</p></details>
+        <details><summary data-i18n="f_3q">¿Qué pasa si la pregunta es ambigua?</summary><p data-i18n="f_3a">El agente dice qué supuso o te pregunta. Si un dato no existe, lo dice en lugar de inventarlo.</p></details>
+        <details><summary data-i18n="f_4q">¿Con qué sistemas funciona?</summary><p data-i18n="f_4a">Dynamics 365, Odoo, SAP Business One, Airtable y hojas de cálculo. En el Diagnóstico IA confirmamos qué fuentes se conectan y cómo.</p></details>
+        <details><summary data-i18n="f_5q">¿Y si nuestros datos están sucios?</summary><p data-i18n="f_5a">Es lo normal. El Diagnóstico IA dice qué tan utilizables están hoy y qué hay que limpiar primero.</p></details>
+        <details><summary data-i18n="f_6q">¿Los datos de la demo son de un cliente?</summary><p data-i18n="f_6a">No. Son de una distribuidora ficticia. Las cifras en pesos se convirtieron de dólares con el tipo de cambio FIX de Banxico.</p></details>
+        <details><summary data-i18n="f_7q">¿Cuánto cuesta?</summary><p data-i18n="f_7a">Se cotiza en una propuesta formal, después del Diagnóstico IA, según tus fuentes y el alcance.</p></details>
+        <details><summary data-i18n="f_8q">¿Quién lo mantiene después?</summary><p data-i18n="f_8a">Tu equipo. Cerramos con documentación y capacitación, para que no dependa solo de nosotros.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" aria-labelledby="final-h">
+    <div class="container">
+      <p class="eyebrow" data-i18n="z_eyebrow">Empieza aquí</p>
+      <h2 id="final-h" data-i18n="z_h2">¿Y si tu próximo reporte tardara segundos?</h2>
+      <p class="lede" data-i18n="z_body">Una llamada de 30 minutos para revisar tus fuentes de datos y decirte qué es posible.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a>
+        <a class="textlink" href="https://superdev.mx/ai-readiness/" data-i18n="cta_secondary">Haz la evaluación preliminar</a>
+      </div>
+      <p class="cta-note" style="margin-top:12px" data-i18n="cta_note">30 min · gratis · sin compromiso</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="container">
+    <p data-i18n="ft_line">Agentic BI es parte del servicio de Business Intelligence de SuperDev. Consultoría en IA y operaciones de negocio.</p>
+    <div class="links">
+      <a href="https://superdev.mx/">superdev.mx</a>
+      <a href="https://superdev.mx/business-intelligence/">Business Intelligence</a>
+      <a href="https://superdev.mx/privacidad/" data-i18n="ft_privacy">Aviso de privacidad</a>
+    </div>
+    <p class="fx" data-i18n="ft_fx">Cifras en pesos mexicanos (MXN), convertidas de USD con el tipo de cambio FIX de Banxico del 28/09/2026: 1 USD = 17.8413 MXN.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const T = {
+    by: ["por SuperDev", "by SuperDev"],
+    nav_try: ["Pruébalo", "Try it"], nav_how: ["Cómo funciona", "How it works"], nav_it: ["Para TI", "For IT"], nav_faq: ["Preguntas", "FAQ"],
+    nav_cta: ["Llamada exploratoria", "Exploratory call"],
+    hero_eyebrow: ["Agentic BI · IA sobre los datos de tu empresa", "Agentic BI · AI on your company's data"],
+    hero_h1: ["Tu próximo reporte, en una pregunta.", "Your next report, one question away."],
+    hero_lede: ["Tienes los datos, pero cada reporte tarda días y depende de una persona. Conectamos tus fuentes (Dynamics 365, Odoo, SAP Business One, Airtable) para que cualquiera pregunte y decida al instante.",
+      "You have the data, but every report takes days and depends on one person. We connect your sources (Dynamics 365, Odoo, SAP Business One, Airtable) so anyone can ask and decide on the spot."],
+    cta_primary: ["Agenda tu llamada exploratoria", "Book your exploratory call"],
+    cta_demo: ["Ver demo en vivo", "See the live demo"],
+    cta_note: ["30 min · gratis · sin compromiso", "30 min · free · no commitment"],
+    cta_secondary: ["Haz la evaluación preliminar", "Take the preliminary assessment"],
+    cta_secondary_note: ["3 min · 14 preguntas · resultado al instante", "3 min · 14 questions · instant result"],
+    q_top: ["Agente de análisis · datos de ejemplo", "Analysis agent · sample data"], q_time: ["4 s", "4 s"],
+    q_question: ["¿Cuáles son las 3 categorías que más venden?", "Which 3 categories sell the most?"],
+    q_answer: ["Bebidas lidera con $4,779,116.56 MXN, seguida de Lácteos y Dulces y postres.", "Beverages leads with $267,868.18, followed by Dairy Products and Confections."],
+    q_caption: ["Datos de ejemplo de una distribuidora ficticia.", "Sample data from a fictitious distributor."],
+    s_eyebrow: ["¿Te suena?", "Sound familiar?"],
+    s_h2: ["Tus datos ya existen. La respuesta es lo que no.", "Your data already exists. The answer doesn't."],
+    s_1: ["Cada reporte depende de una persona que \"sabe sacar la información\".", "Every report depends on the one person who \"knows how to pull it\"."],
+    s_2: ["Tus datos están en el ERP, pero sacarlos es un proyecto.", "Your data lives in the ERP, but getting it out is a project."],
+    s_3: ["Cada área llega a la junta con su propio número.", "Every team shows up to the meeting with its own number."],
+    s_4: ["Decides con datos del mes pasado, o con intuición.", "You decide with last month's data, or with gut feel."],
+    t_eyebrow: ["Pruébalo", "Try it"],
+    t_h2: ["Compruébalo antes de creernos.", "See it before you believe us."],
+    t_lede: ["Una distribuidora de ejemplo, con datos ficticios. Así contesta el agente una pregunta de negocio: el número, la gráfica y la tabla, en español y en pesos.",
+      "A sample distributor with fictitious data. This is how the agent answers a business question: the number, the chart and the table."],
+    r_head: ["Respuesta real del agente, guardada.", "A real agent answer, saved."], r_tag: ["Datos ficticios", "Fictitious data"],
+    r_question: ["¿Cuáles son las 3 categorías principales por ingresos?", "What are the top 3 categories by revenue?"],
+    r_answer: ["Las 3 categorías principales por ingresos son <strong>Bebidas</strong> ($4,779,116.56 MXN), <strong>Lácteos</strong> ($4,183,914.82 MXN) y <strong>Dulces y postres</strong> ($2,985,870.46 MXN).",
+      "The top 3 categories by revenue are <strong>Beverages</strong> ($267,868.18), <strong>Dairy Products</strong> ($234,507.29) and <strong>Confections</strong> ($167,357.23)."],
+    r_report: ["Ingresos por categoría", "Revenue by category"],
+    r_col1: ["Categoría", "Category"], r_col2: ["Ingresos (MXN)", "Revenue (USD)"],
+    r_note: ["Datos ficticios. Todavía no es tu operación.", "Fictitious data. Not your operation yet."],
+    a_pub_status: ["Agente en vivo · por invitación", "Live agent · by invitation"],
+    a_pub_h: ["Hazle tus propias preguntas.", "Ask it your own questions."],
+    a_pub_body: ["El agente en vivo es por invitación. Pide acceso y te enviamos un enlace para hacerle tus propias preguntas.", "The live agent is by invitation. Ask for access and we'll send you a link to ask your own questions."],
+    a_pub_cta: ["Pide acceso al agente en vivo", "Request access to the live agent"],
+    a_pub_fine: ["Mientras abrimos el formulario de acceso, te lo damos en la llamada exploratoria.", "Until the access form opens, we give you access on the exploratory call."],
+    a_inv_status: ["Tienes acceso al agente en vivo. Te quedan 3 conversaciones.", "You have access to the live agent. You have 3 conversations left."],
+    a_inv_h: ["Pregúntale a la distribuidora de ejemplo.", "Ask the sample distributor."],
+    a_inv_label: ["Tu pregunta", "Your question"],
+    a_inv_ph: ["Pregunta sobre ingresos, clientes, productos o tendencias", "Ask about revenue, customers, products, or trends"],
+    a_inv_send: ["Enviar", "Send"],
+    a_inv_fine: ["Cada conversación nueva usa una de tus 3. Las preguntas dentro de una conversación no cuentan.", "Each new conversation uses one of your 3. Questions within a conversation don't count."],
+    a_exp_status: ["Invitación no disponible", "Invitation unavailable"],
+    a_exp_h: ["Esta invitación ya no está disponible.", "This invitation is no longer available."],
+    a_exp_body: ["Venció o ya usaste tus conversaciones. Pide una nueva y te la enviamos.", "It expired or its conversations are used up. Ask for a new one and we'll send it."],
+    a_full: ["Abrir la demo completa", "Open the full demo"],
+    c_h2: ["De pedir un reporte a hacer una pregunta.", "From requesting a report to asking a question."],
+    c_before: ["Antes", "Before"], c_after: ["Con Agentic BI", "With Agentic BI"],
+    c_b1: ["Pides el reporte", "You request the report"], c_b2: ["Alguien lo arma a mano", "Someone builds it by hand"], c_b3: ["Esperas", "You wait"],
+    c_b4: ["Llega desactualizado", "It arrives out of date"], c_b5: ["Nadie confía en el número", "Nobody trusts the number"],
+    c_a1: ["Haces la pregunta", "You ask the question"], c_a2: ["La respuesta llega en segundos", "The answer arrives in seconds"],
+    c_a3: ["Con gráfica y tabla", "With a chart and a table"], c_a4: ["Mismo número para todas las áreas", "The same number for every team"],
+    h_eyebrow: ["Cómo funciona", "How it works"],
+    h_h2: ["Tres pasos. El número llega a ti.", "Three steps. The number comes to you."],
+    h_1t: ["Conectamos tus fuentes una vez.", "We connect your sources once."],
+    h_1b: ["El ERP, tus hojas de cálculo y la facturación. Tus datos no se mudan: se conectan.", "Your ERP, spreadsheets and billing. Your data doesn't move: it gets connected."],
+    h_2t: ["Preguntas en español.", "You ask in plain language."],
+    h_2b: ["Como se lo preguntarías a una persona de tu equipo, también desde el celular.", "The way you'd ask someone on your team, from your phone too."],
+    h_3t: ["Decides con la respuesta.", "You decide with the answer."],
+    h_3b: ["El número, una gráfica y una tabla, con la misma definición para todas las áreas.", "The number, a chart and a table, with one definition for every team."],
+    i_eyebrow: ["Para tu equipo de TI", "For your IT team"],
+    i_h2: ["Lo que tu área de sistemas va a preguntar.", "What your systems team will ask."],
+    i_lede: ["El agente solo lee. Cada consulta pasa por controles antes de ejecutarse, y cada número tiene una definición y un dueño.", "The agent only reads. Every query goes through checks before it runs, and every number has a definition and an owner."],
+    i_1t: ["Solo lectura", "Read-only"], i_1b: ["No puede modificar ni borrar información. Solo ejecuta consultas de lectura que se validan antes de correr.", "It can't change or delete anything. It only runs read queries, validated before they execute."],
+    i_2t: ["Tus datos no se mudan", "Your data stays put"], i_2b: ["Se conecta a Dynamics 365, Odoo, SAP Business One o Airtable. No reemplazamos tu ERP ni copiamos tu operación a otra herramienta.", "It connects to Dynamics 365, Odoo, SAP Business One or Airtable. We don't replace your ERP or copy your operation into another tool."],
+    i_3t: ["Un solo número", "One number"], i_3b: ["Cada indicador queda escrito: su definición, su fuente y su dueño. Se acaba la versión de cada área.", "Every KPI is written down: its definition, its source and its owner. No more one version per team."],
+    i_4t: ["Quién ve qué", "Who sees what"], i_4b: ["Permisos por rol. Queda escrito de quién es cada dato y quién puede verlo.", "Role-based permissions. It's documented who owns each piece of data and who can see it."],
+    i_5t: ["Límites claros", "Clear limits"], i_5b: ["Cada consulta tiene tiempo y tamaño máximos. Si la pregunta es ambigua, el agente lo dice o pregunta; no inventa números.", "Every query has a time and size limit. If a question is ambiguous, the agent says so or asks; it doesn't make up numbers."],
+    i_6t: ["Privacidad", "Privacy"],
+    i_6b: ["La demo usa datos ficticios. En tu proyecto, los datos personales se tratan según nuestro <a class=\"textlink\" href=\"https://superdev.mx/privacidad/\">aviso de privacidad</a>.", "The demo uses fictitious data. In your project, personal data is handled under our <a class=\"textlink\" href=\"https://superdev.mx/privacidad/\">privacy notice</a>."],
+    m_1l: ["01 · Descriptivo", "01 · Descriptive"], m_1q: ["¿Qué pasó?", "What happened?"],
+    m_2l: ["02 · Diagnóstico", "02 · Diagnostic"], m_2q: ["¿Por qué pasó?", "Why did it happen?"],
+    m_3l: ["03 · Predictivo", "03 · Predictive"], m_3q: ["¿Qué va a pasar?", "What will happen?"],
+    m_4l: ["04 · Prescriptivo", "04 · Prescriptive"], m_4q: ["¿Qué conviene hacer?", "What should we do?"],
+    m_note: ["Empezamos donde estás, casi siempre en descriptivo, y construimos la ruta hacia arriba. El agente cubre hoy las dos primeras etapas.", "We start where you are, usually descriptive, and build the path up. The agent covers the first two stages today."],
+    k_eyebrow: ["Caso", "Case"], k_h2: ["Agente de Datos.", "Data Agent."],
+    k_s1: ["usuarios en lenguaje natural", "users in plain language"],
+    k_s2: ["meses para tener el agente en vivo", "months to get the agent live"],
+    k_s3: ["semanas y 12 entregables, el proyecto completo", "weeks and 12 deliverables, the full project"],
+    k_body: ["De repartidores al director general, consultan los datos del negocio en lenguaje natural, también desde el celular. El proyecto completo incluyó gobernanza y capacitación. ERP fuente: Dynamics 365.", "From delivery drivers to the CEO, they query business data in plain language, from their phones too. The full project included governance and training. Source ERP: Dynamics 365."],
+    k_link: ["Ver el caso", "See the case"],
+    p_eyebrow: ["Cómo trabajamos", "How we work"],
+    p_h2: ["Todo empieza con una llamada de 30 minutos.", "It all starts with a 30-minute call."],
+    p_1t: ["Llamada exploratoria", "Exploratory call"], p_1b: ["Entendemos tu operación y vemos si hay un buen fit. Gratis.", "We understand your operation and check the fit. Free."],
+    p_2t: ["Diagnóstico IA", "AI Diagnostic"], p_2b: ["Con acceso a tus sistemas: un reporte con tu punto de partida y un plan priorizado.", "With access to your systems: a report with your starting point and a prioritized plan."],
+    p_3t: ["Implementación", "Implementation"], p_3b: ["Construimos lo que el diagnóstico prioriza, por entregables. Cronograma de referencia: 16 semanas.", "We build what the diagnostic prioritizes, deliverable by deliverable. Reference timeline: 16 weeks."],
+    p_4t: ["Medición", "Measurement"], p_4b: ["Comparamos contra la línea base que fijamos en el diagnóstico.", "We compare against the baseline set in the diagnostic."],
+    p_5t: ["Acompañamiento", "Ongoing support"], p_5b: ["Iguala mensual para mantener y mejorar.", "A monthly retainer to maintain and improve."],
+    f_eyebrow: ["Preguntas", "FAQ"], f_h2: ["Lo que nos preguntan antes de empezar.", "What people ask before we start."],
+    f_1q: ["¿Tenemos que mudar nuestros datos?", "Do we have to move our data?"], f_1a: ["No. Nos conectamos al ERP y a las hojas que ya usas. Mudar los datos es un proyecto aparte y casi nunca hace falta para empezar.", "No. We connect to the ERP and spreadsheets you already use. Moving data is a separate project and is rarely needed to start."],
+    f_2q: ["¿Puede cambiar o borrar información?", "Can it change or delete anything?"], f_2a: ["No. El agente solo lee, y cada consulta se revisa antes de ejecutarse.", "No. The agent only reads, and every query is checked before it runs."],
+    f_3q: ["¿Qué pasa si la pregunta es ambigua?", "What if my question is ambiguous?"], f_3a: ["El agente dice qué supuso o te pregunta. Si un dato no existe, lo dice en lugar de inventarlo.", "The agent states its assumption or asks you. If the data doesn't exist, it says so instead of making it up."],
+    f_4q: ["¿Con qué sistemas funciona?", "Which systems does it work with?"], f_4a: ["Dynamics 365, Odoo, SAP Business One, Airtable y hojas de cálculo. En el Diagnóstico IA confirmamos qué fuentes se conectan y cómo.", "Dynamics 365, Odoo, SAP Business One, Airtable and spreadsheets. The AI Diagnostic confirms which sources connect and how."],
+    f_5q: ["¿Y si nuestros datos están sucios?", "What if our data is messy?"], f_5a: ["Es lo normal. El Diagnóstico IA dice qué tan utilizables están hoy y qué hay que limpiar primero.", "That's normal. The AI Diagnostic shows how usable it is today and what to clean first."],
+    f_6q: ["¿Los datos de la demo son de un cliente?", "Is the demo data from a client?"], f_6a: ["No. Son de una distribuidora ficticia. Las cifras en pesos se convirtieron de dólares con el tipo de cambio FIX de Banxico.", "No. It's a fictitious distributor. Peso figures were converted from dollars at Banxico's FIX rate."],
+    f_7q: ["¿Cuánto cuesta?", "How much does it cost?"], f_7a: ["Se cotiza en una propuesta formal, después del Diagnóstico IA, según tus fuentes y el alcance.", "It's quoted in a formal proposal after the AI Diagnostic, based on your sources and scope."],
+    f_8q: ["¿Quién lo mantiene después?", "Who maintains it afterwards?"], f_8a: ["Tu equipo. Cerramos con documentación y capacitación, para que no dependa solo de nosotros.", "Your team. We close with documentation and training, so it doesn't depend only on us."],
+    z_eyebrow: ["Empieza aquí", "Start here"],
+    z_h2: ["¿Y si tu próximo reporte tardara segundos?", "What if your next report took seconds?"],
+    z_body: ["Una llamada de 30 minutos para revisar tus fuentes de datos y decirte qué es posible.", "A 30-minute call to review your data sources and tell you what's possible."],
+    ft_line: ["Agentic BI es parte del servicio de Business Intelligence de SuperDev. Consultoría en IA y operaciones de negocio.", "Agentic BI is part of SuperDev's Business Intelligence service. AI and business operations consulting."],
+    ft_privacy: ["Aviso de privacidad", "Privacy notice"],
+    ft_fx: ["Cifras en pesos mexicanos (MXN), convertidas de USD con el tipo de cambio FIX de Banxico del 28/09/2026: 1 USD = 17.8413 MXN.", "Figures in US dollars (USD). The Spanish view shows Mexican pesos at Banxico's FIX rate."]
+  };
+  const DATA = {
+    es: [["Bebidas", 4779116.56], ["Lácteos", 4183914.82], ["Dulces y postres", 2985870.46]],
+    en: [["Beverages", 267868.18], ["Dairy Products", 234507.29], ["Confections", 167357.23]]
+  };
+  let lang = "es";
+  let mode = "public";
+  const money = (v, l) => "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (l === "es" ? " MXN" : "");
+  const short = (v) => v >= 1e6 ? "$" + (v / 1e6).toFixed(2) + " M" : "$" + (v / 1e3).toFixed(0) + " k";
+
+  function renderData() {
+    const rows = DATA[lang];
+    const max = Math.max(...rows.map(r => r[1]));
+    document.querySelectorAll("[data-bars]").forEach(el => {
+      el.innerHTML = rows.map(([name, v]) =>
+        `<div class="bar"><span class="lbl">${name}</span><span class="track"><span class="fill" style="--w:${(v / max * 100).toFixed(1)}%"></span><span class="val">${short(v)}</span></span></div>`).join("");
+    });
+    document.querySelectorAll("[data-rows]").forEach(el => {
+      el.innerHTML = rows.map(([name, v]) => `<tr><td>${name}</td><td class="r">${money(v, lang)}</td></tr>`).join("");
+    });
+  }
+  function apply() {
+    const i = lang === "es" ? 0 : 1;
+    document.documentElement.lang = lang === "es" ? "es-MX" : "en";
+    document.querySelectorAll("[data-i18n]").forEach(el => { const t = T[el.dataset.i18n]; if (t) el.textContent = t[i]; });
+    document.querySelectorAll("[data-i18n-html]").forEach(el => { const t = T[el.dataset.i18nHtml]; if (t) el.innerHTML = t[i]; });
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => { const t = T[el.dataset.i18nPh]; if (t) el.placeholder = t[i]; });
+    document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang)));
+    const acc = document.querySelector(".access");
+    acc.dataset.mode = mode;
+    acc.querySelectorAll("[data-when]").forEach(s => { s.hidden = s.dataset.when !== mode; });
+    document.querySelectorAll("[data-set-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setMode === mode)));
+    renderData();
+  }
+  document.addEventListener("click", e => {
+    const l = e.target.closest("[data-set-lang]");
+    if (l) { lang = l.dataset.setLang; apply(); return; }
+    const m = e.target.closest("[data-set-mode]");
+    if (m) { mode = m.dataset.setMode; apply(); }
+  });
+  apply();
+})();
+</script>
