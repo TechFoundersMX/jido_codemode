@@ -23,7 +23,7 @@ defmodule JidoCodemodeWeb.Layouts do
       class="border-b border-base-300/60 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80"
     >
       <div class="mx-auto flex max-w-[96rem] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <a href={~p"/"} aria-label="Homepage" class="flex items-center gap-3">
+        <a href={~p"/"} aria-label={gettext("Homepage")} class="flex items-center gap-3">
           <img
             src={~p"/images/agentic-bi-mark.svg"}
             alt=""
@@ -32,7 +32,7 @@ defmodule JidoCodemodeWeb.Layouts do
 
           <div>
             <p class="text-xs text-base-content/50">
-              Decision intelligence
+              {gettext("Decision intelligence")}
             </p>
             <p class="text-sm font-semibold tracking-tight text-base-content">Agentic BI</p>
           </div>
@@ -113,7 +113,7 @@ defmodule JidoCodemodeWeb.Layouts do
 
       <button
         type="button"
-        aria-label="Use system theme"
+        aria-label={gettext("Use system theme")}
         class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="system"
@@ -123,7 +123,7 @@ defmodule JidoCodemodeWeb.Layouts do
 
       <button
         type="button"
-        aria-label="Use light theme"
+        aria-label={gettext("Use light theme")}
         class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
@@ -133,7 +133,7 @@ defmodule JidoCodemodeWeb.Layouts do
 
       <button
         type="button"
-        aria-label="Use dark theme"
+        aria-label={gettext("Use dark theme")}
         class="relative flex w-1/3 cursor-pointer p-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-2"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
