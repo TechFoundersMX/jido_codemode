@@ -36,4 +36,21 @@ defmodule JidoCodemodeWeb.Plugs.LocaleTest do
 
     assert html_response(conn, 200) =~ ~s(<html lang="es-MX")
   end
+
+  test "the locale cookie is readable by the page so the language switch can update it", %{
+    conn: conn
+  } do
+    conn = get(conn, ~p"/?lang=es")
+    cookie = conn.resp_cookies["agentic_bi_locale"]
+
+    assert cookie.max_age == 365 * 24 * 60 * 60
+
+    [header] =
+      conn |> Plug.Conn.get_resp_header("set-cookie") |> Enum.filter(&(&1 =~ "agentic_bi_locale"))
+
+    refute String.downcase(header) =~ "httponly"
+    assert header =~ "SameSite=Lax"
+    assert header =~ "max-age=31536000"
+    assert header =~ "path=/"
+  end
 end

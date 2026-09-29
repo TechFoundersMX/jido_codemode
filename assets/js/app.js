@@ -86,5 +86,6 @@ if (process.env.NODE_ENV === "development") {
 window.addEventListener("phx:locale-changed", (event) => {
   const {locale, html_lang: htmlLang} = event.detail
   document.documentElement.lang = htmlLang
-  document.cookie = `agentic_bi_locale=${locale}; path=/; max-age=31536000; samesite=lax`
+  const secure = location.protocol === "https:" ? "; secure" : ""
+  document.cookie = `agentic_bi_locale=${locale}; path=/; max-age=31536000; samesite=lax${secure}`
 })

@@ -25,7 +25,12 @@ defmodule JidoCodemodeWeb.Plugs.Locale do
 
   defp maybe_remember(conn, param, locale) do
     if Locale.normalize(param) do
-      put_resp_cookie(conn, Locale.cookie_name(), locale, max_age: @max_age, same_site: "Lax")
+      # Not HttpOnly on purpose: the ES/EN switch rewrites this cookie from the browser.
+      put_resp_cookie(conn, Locale.cookie_name(), locale,
+        max_age: @max_age,
+        same_site: "Lax",
+        http_only: false
+      )
     else
       conn
     end
