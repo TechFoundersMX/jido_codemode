@@ -84,14 +84,14 @@ After the landing launches:
 - **`/projects/agentic-bi`:** «Ver demo en vivo» → `https://agentic-bi.superdev.mx/demo`. The root becomes the landing.
 - **`/business-intelligence/`:** the hero's secondary button stays «Ver casos». Add the gallery link above, and a line in "Casos" linking to `https://agentic-bi.superdev.mx`.
 - **Link `/projects/agentic-bi` from the BI page's "Casos"** (today only another case page links to it).
-- **Request-access form: the invitation service hosts it, not superdev.mx** (hub proposal 29 Sep, pending Alex). The Worker serves the self-serve form at `https://agentic-bi.superdev.mx/solicitud`. It reuses the live Expo / Te Invitamos access-campaign code: Turnstile, per-email and per-IP limits, the email with the link, and a CRM lead only with consent. **superdev.mx only links to it**, labelled «Pide acceso al agente en vivo».
+- **Request-access form: the invitation service hosts it, not superdev.mx** (option C, Alex approved 29 Sep). The Worker serves the self-serve form at `https://agentic-bi.superdev.mx/solicitud`. It reuses the live Expo / Te Invitamos access-campaign code: Turnstile, per-email and per-IP limits, the email with the link, and a CRM lead only with consent. **superdev.mx only links to it**, labelled «Pide acceso al agente en vivo».
 - **SITE owns the privacy side of that form:**
   - Add the Agentic BI demo to the privacy notice (#demos).
-  - Set the consent wording in ES and EN. Alex chose the short sentence: «Al entrar guardamos tu nombre, correo y empresa para darte acceso y enviarte el enlace.» The hub notes its follow-up box is now at version 2 («…guarde mis datos y esta conversación…»). Agentic BI conversations never reach the Worker or the CRM, so the "esta conversación" part doesn't apply. Confirm with Alex which box text to show.
+  - Consent is **version 2** (Alex, 29 Sep), the same box as every demo: «Estoy de acuerdo con que SuperDev guarde mis datos y esta conversación, y me contacte sobre este servicio.» For what the BI demo actually stores and for how long, see the Agentic BI session's message to SITE of 29 Sep: no transcript is kept after the session, and reports are deleted within 24 h.
 - The form's copy comes from the approved draft:
   - Fields: Nombre, Correo, Empresa.
   - Body: «Tienes tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo, y entras en cuanto envías tus datos.»
-  - Submit button: «Entrar al agente».
+  - Submit button: «Entrar a la demo».
   - Below it: «¿Prefieres verlo con los datos de tu empresa? Agenda tu llamada exploratoria».
 - Attribution: the ERP must accept `demo.app = "agentic_bi"` (Odoo returns 422 for unknown apps today), in addition to `utm_source=agentic_bi` (id 72).
 
@@ -188,7 +188,7 @@ From the landing, all within site-messaging rules:
 1. **White-label.** The Agentic BI landing's English view now has a partners block: «Offer it under your brand.», covering your brand, we do the build, your client, your call. Nothing in the site canon documents a white-label BI offer. Should superdev.mx mention it anywhere (EN BI page, or the AI Employee offer), or keep it only on the landing?
 2. **Governance claims** in §2.4 ("Quién ve qué", "Un solo número") need confirming.
 3. **BI final-CTA headline:** keep the current one or reuse the landing's (§3).
-4. **Consent box:** the short sentence (Alex's pick) or the hub's version 2 box («…y esta conversación…»)? Conversations don't reach the CRM, so the short one fits.
+4. ~~Consent box~~: decided, version 2 (29 Sep).
 
 ## Appendix: example data (Northwind sample, USD; Spanish shows ×17.8413 MXN)
 
