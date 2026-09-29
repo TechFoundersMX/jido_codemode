@@ -67,4 +67,46 @@ defmodule JidoCodemode.Agent.QueryRunnerTest do
     assert result.columns == ["CategoryName"]
     assert length(result.preview_rows) == 2
   end
+
+  test "a Spanish query reads Spanish labels and MXN amounts" do
+    {:ok, result} =
+      QueryRunner.run(
+        """
+        SELECT c.CategoryName, ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS revenue
+        FROM OrderDetail od
+        JOIN Product p ON p.Id = od.ProductId
+        JOIN Category c ON c.Id = p.CategoryId
+        WHERE c.CategoryName = 'Bebidas'
+        GROUP BY c.CategoryName
+        """,
+        :analysis,
+        locale: "es_MX"
+      )
+
+    assert [%{"CategoryName" => "Bebidas", "revenue" => revenue}] = result.rows
+    assert_in_delta revenue, 4_779_116.56, 0.01
+  end
+
+  test "an English query still reads USD and English labels" do
+    {:ok, result} =
+      QueryRunner.run(
+        "SELECT CategoryName FROM Category WHERE CategoryName = 'Beverages'",
+        :analysis
+      )
+
+    assert result.rows == [%{"CategoryName" => "Beverages"}]
+  end
+
+  test "run_sqlite_query uses the locale from the tool context" do
+    {:ok, result} =
+      RunSqliteQuery.run(
+        %{
+          sql: "SELECT CategoryName FROM Category WHERE CategoryName = 'Lácteos'",
+          purpose: "analysis"
+        },
+        %{locale: "es_MX"}
+      )
+
+    assert result.preview_rows == [["Lácteos"]]
+  end
 end

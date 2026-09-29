@@ -197,4 +197,35 @@ defmodule JidoCodemode.Agent.BuildReportTest do
     assert error.message =~ "BuildReport must return a valid report payload"
     assert error.details.reason =~ "version"
   end
+
+  test "db.query in build_report uses the locale from the tool context" do
+    session_id = "build-report-locale-test"
+
+    {:ok, _result} =
+      BuildReport.run(
+        %{
+          code: ~S'''
+            local result = db.query({
+              sql = [[SELECT CategoryName FROM Category WHERE CategoryName = 'Bebidas']],
+              purpose = "analysis"
+            })
+
+            return {
+              version = 1,
+              title = "Categorías",
+              blocks = {
+                { type = "table", id = "cats", title = "Categorías", source = result, columns = {"CategoryName"}, row_limit = 5 }
+              }
+            }
+          '''
+        },
+        %{session_id: session_id, locale: "es_MX"}
+      )
+
+    assert {:ok, %Report{blocks: [%Report.TableBlock{rows: rows}]}} =
+             Report.latest_for_session(session_id)
+
+    assert inspect(rows) =~ "Bebidas"
+    refute inspect(rows) =~ "Beverages"
+  end
 end
