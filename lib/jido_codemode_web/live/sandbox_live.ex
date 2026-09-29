@@ -561,6 +561,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                     type="button"
                     phx-click="use_suggestion"
                     phx-value-prompt={suggestion.prompt}
+                    title={suggestion.prompt}
                     disabled={not @chat_unlocked}
                     class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-base-200 py-2 pr-3 pl-2 text-sm font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
@@ -578,6 +579,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                         type="button"
                         phx-click="use_suggestion"
                         phx-value-prompt={suggestion.prompt}
+                        title={suggestion.prompt}
                         disabled={not @chat_unlocked}
                         class="flex w-full items-center gap-2 rounded-lg py-2 pr-3 pl-2 text-left text-sm font-medium text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-primary"
                       >
@@ -971,12 +973,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
     [
       %{
         icon: "hero-chart-bar-micro",
-        label: gettext("Revenue trend"),
+        label: gettext("Trend"),
         prompt: gettext("Show a monthly revenue trend")
       },
       %{
         icon: "hero-squares-2x2-micro",
-        label: gettext("Top categories"),
+        label: gettext("Categories"),
         prompt: gettext("Compare the top categories")
       },
       %{

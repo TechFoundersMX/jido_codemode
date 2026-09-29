@@ -11,22 +11,22 @@
 msgid ""
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:887
+#: lib/jido_codemode_web/live/sandbox_live.ex:889
 #, elixir-autogen, elixir-format
 msgid "A compact way to spot high-value segments."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:880
+#: lib/jido_codemode_web/live/sandbox_live.ex:882
 #, elixir-autogen, elixir-format
 msgid "A quick composition view for share of revenue."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:873
+#: lib/jido_codemode_web/live/sandbox_live.ex:875
 #, elixir-autogen, elixir-format
 msgid "A ranked comparison of the biggest drivers."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:866
+#: lib/jido_codemode_web/live/sandbox_live.ex:868
 #, elixir-autogen, elixir-format
 msgid "A simple time-series anchor for the conversation."
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:650
+#: lib/jido_codemode_web/live/sandbox_live.ex:652
 #, elixir-autogen, elixir-format
 msgid "Agent"
 msgstr ""
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Analysis agent"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:729
+#: lib/jido_codemode_web/live/sandbox_live.ex:731
 #, elixir-autogen, elixir-format
 msgid "Analyzing..."
 msgstr ""
@@ -61,7 +61,7 @@ msgstr ""
 msgid "Ask about Northwind"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:713
+#: lib/jido_codemode_web/live/sandbox_live.ex:715
 #, elixir-autogen, elixir-format
 msgid "Ask about revenue, customers, products, or trends"
 msgstr ""
@@ -77,57 +77,57 @@ msgstr ""
 msgid "Attempting to reconnect"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1202
+#: lib/jido_codemode_web/live/sandbox_live.ex:1204
 #, elixir-autogen, elixir-format
 msgid "Average order value"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:871
+#: lib/jido_codemode_web/live/sandbox_live.ex:873
 #, elixir-autogen, elixir-format
 msgid "Bar"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1253
+#: lib/jido_codemode_web/live/sandbox_live.ex:1255
 #, elixir-autogen, elixir-format
 msgid "Beverages"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:995
+#: lib/jido_codemode_web/live/sandbox_live.ex:997
 #, elixir-autogen, elixir-format
 msgid "Build a short analysis with a chart and a table"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:879
+#: lib/jido_codemode_web/live/sandbox_live.ex:881
 #, elixir-autogen, elixir-format
 msgid "Channel mix"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:980
+#: lib/jido_codemode_web/live/sandbox_live.ex:982
 #, elixir-autogen, elixir-format
 msgid "Compare the top categories"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:994
+#: lib/jido_codemode_web/live/sandbox_live.ex:996
 #, elixir-autogen, elixir-format
 msgid "Complete analysis"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1255
+#: lib/jido_codemode_web/live/sandbox_live.ex:1257
 #, elixir-autogen, elixir-format
 msgid "Confections"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:721
+#: lib/jido_codemode_web/live/sandbox_live.ex:723
 #, elixir-autogen, elixir-format
 msgid "Connected with read-only access"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:886
+#: lib/jido_codemode_web/live/sandbox_live.ex:888
 #, elixir-autogen, elixir-format
 msgid "Customer value vs. order volume"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1254
+#: lib/jido_codemode_web/live/sandbox_live.ex:1256
 #, elixir-autogen, elixir-format
 msgid "Dairy"
 msgstr ""
@@ -144,34 +144,34 @@ msgstr ""
 msgid "Decision-ready analysis"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:673
+#: lib/jido_codemode_web/live/sandbox_live.ex:675
 #, elixir-autogen, elixir-format
 msgid "Demo password"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:990
+#: lib/jido_codemode_web/live/sandbox_live.ex:992
 #, elixir-autogen, elixir-format
 msgid "Describe the most important joins"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1264
+#: lib/jido_codemode_web/live/sandbox_live.ex:1266
 #, elixir-autogen, elixir-format
 msgid "Direct"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:878
+#: lib/jido_codemode_web/live/sandbox_live.ex:880
 #, elixir-autogen, elixir-format
 msgid "Donut"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:676
+#: lib/jido_codemode_web/live/sandbox_live.ex:678
 #, elixir-autogen, elixir-format
 msgid "Enter the password to unlock the analysis agent."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1279
-#: lib/jido_codemode_web/live/sandbox_live.ex:1286
-#: lib/jido_codemode_web/live/sandbox_live.ex:1293
+#: lib/jido_codemode_web/live/sandbox_live.ex:1281
+#: lib/jido_codemode_web/live/sandbox_live.ex:1288
+#: lib/jido_codemode_web/live/sandbox_live.ex:1295
 #, elixir-autogen, elixir-format
 msgid "Enterprise"
 msgstr ""
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Example analyses"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1267
+#: lib/jido_codemode_web/live/sandbox_live.ex:1269
 #, elixir-autogen, elixir-format
 msgid "Expansion"
 msgstr ""
@@ -201,8 +201,8 @@ msgstr ""
 msgid "Generated analysis"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1300
-#: lib/jido_codemode_web/live/sandbox_live.ex:1307
+#: lib/jido_codemode_web/live/sandbox_live.ex:1302
+#: lib/jido_codemode_web/live/sandbox_live.ex:1309
 #, elixir-autogen, elixir-format
 msgid "Growth"
 msgstr ""
@@ -218,12 +218,12 @@ msgstr ""
 msgid "How it works"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:989
+#: lib/jido_codemode_web/live/sandbox_live.ex:991
 #, elixir-autogen, elixir-format
 msgid "Important joins"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1266
+#: lib/jido_codemode_web/live/sandbox_live.ex:1268
 #, elixir-autogen, elixir-format
 msgid "Inbound"
 msgstr ""
@@ -233,12 +233,12 @@ msgstr ""
 msgid "It runs bounded queries and builds the needed metrics and visuals."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:864
+#: lib/jido_codemode_web/live/sandbox_live.ex:866
 #, elixir-autogen, elixir-format
 msgid "Line"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:985
+#: lib/jido_codemode_web/live/sandbox_live.ex:987
 #, elixir-autogen, elixir-format
 msgid "List the top customers by revenue"
 msgstr ""
@@ -248,7 +248,7 @@ msgstr ""
 msgid "Locked"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1256
+#: lib/jido_codemode_web/live/sandbox_live.ex:1258
 #, elixir-autogen, elixir-format
 msgid "Meat"
 msgstr ""
@@ -258,19 +258,19 @@ msgstr ""
 msgid "Metric"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1314
-#: lib/jido_codemode_web/live/sandbox_live.ex:1321
-#: lib/jido_codemode_web/live/sandbox_live.ex:1328
+#: lib/jido_codemode_web/live/sandbox_live.ex:1316
+#: lib/jido_codemode_web/live/sandbox_live.ex:1323
+#: lib/jido_codemode_web/live/sandbox_live.ex:1330
 #, elixir-autogen, elixir-format
 msgid "Mid-market"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:865
+#: lib/jido_codemode_web/live/sandbox_live.ex:867
 #, elixir-autogen, elixir-format
 msgid "Monthly revenue trend"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:573
+#: lib/jido_codemode_web/live/sandbox_live.ex:574
 #, elixir-autogen, elixir-format
 msgid "More"
 msgstr ""
@@ -285,17 +285,17 @@ msgstr ""
 msgid "No rows to show for this table."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1203
+#: lib/jido_codemode_web/live/sandbox_live.ex:1205
 #, elixir-autogen, elixir-format
 msgid "Orders"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1265
+#: lib/jido_codemode_web/live/sandbox_live.ex:1267
 #, elixir-autogen, elixir-format
 msgid "Partners"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:685
+#: lib/jido_codemode_web/live/sandbox_live.ex:687
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
@@ -310,22 +310,17 @@ msgstr ""
 msgid "Restart session"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:872
+#: lib/jido_codemode_web/live/sandbox_live.ex:874
 #, elixir-autogen, elixir-format
 msgid "Revenue by category"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:974
-#, elixir-autogen, elixir-format
-msgid "Revenue trend"
-msgstr ""
-
-#: lib/jido_codemode_web/live/sandbox_live.ex:885
+#: lib/jido_codemode_web/live/sandbox_live.ex:887
 #, elixir-autogen, elixir-format
 msgid "Scatter"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1257
+#: lib/jido_codemode_web/live/sandbox_live.ex:1259
 #, elixir-autogen, elixir-format
 msgid "Seafood"
 msgstr ""
@@ -335,17 +330,17 @@ msgstr ""
 msgid "See what Agentic BI can build"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:609
+#: lib/jido_codemode_web/live/sandbox_live.ex:611
 #, elixir-autogen, elixir-format
 msgid "Select an example above or describe the decision you want to support."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:729
+#: lib/jido_codemode_web/live/sandbox_live.ex:731
 #, elixir-autogen, elixir-format
 msgid "Send"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:975
+#: lib/jido_codemode_web/live/sandbox_live.ex:977
 #, elixir-autogen, elixir-format
 msgid "Show a monthly revenue trend"
 msgstr ""
@@ -355,7 +350,7 @@ msgstr ""
 msgid "Something went wrong!"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:607
+#: lib/jido_codemode_web/live/sandbox_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Start with a prompt"
 msgstr ""
@@ -370,27 +365,22 @@ msgstr ""
 msgid "The agent reads a compact schema through a read-only connection."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1070
+#: lib/jido_codemode_web/live/sandbox_live.ex:1072
 #, elixir-autogen, elixir-format
 msgid "The agent request failed: %{reason}"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:1063
+#: lib/jido_codemode_web/live/sandbox_live.ex:1065
 #, elixir-autogen, elixir-format
 msgid "The agent returned a non-text response: %{details}"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:827
+#: lib/jido_codemode_web/live/sandbox_live.ex:829
 #, elixir-autogen, elixir-format
 msgid "The agent session is still starting. Try again in a moment."
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:979
-#, elixir-autogen, elixir-format
-msgid "Top categories"
-msgstr ""
-
-#: lib/jido_codemode_web/live/sandbox_live.ex:984
+#: lib/jido_codemode_web/live/sandbox_live.ex:986
 #, elixir-autogen, elixir-format
 msgid "Top customers"
 msgstr ""
@@ -400,7 +390,7 @@ msgstr ""
 msgid "Turn business questions into clear analysis"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:694
+#: lib/jido_codemode_web/live/sandbox_live.ex:696
 #, elixir-autogen, elixir-format
 msgid "Unlock"
 msgstr ""
@@ -425,8 +415,8 @@ msgstr ""
 msgid "We can't find the internet"
 msgstr ""
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:641
-#: lib/jido_codemode_web/live/sandbox_live.ex:1078
+#: lib/jido_codemode_web/live/sandbox_live.ex:643
+#: lib/jido_codemode_web/live/sandbox_live.ex:1080
 #, elixir-autogen, elixir-format
 msgid "You"
 msgstr ""
@@ -479,4 +469,14 @@ msgstr ""
 #: lib/jido_codemode_web/live/sandbox_live.ex:155
 #, elixir-autogen, elixir-format
 msgid "You switched to Spanish. Figures are now in MXN."
+msgstr ""
+
+#: lib/jido_codemode_web/live/sandbox_live.ex:981
+#, elixir-autogen, elixir-format
+msgid "Categories"
+msgstr ""
+
+#: lib/jido_codemode_web/live/sandbox_live.ex:976
+#, elixir-autogen, elixir-format
+msgid "Trend"
 msgstr ""

@@ -379,6 +379,39 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     :erlang.trace(view.pid, false, [:send])
   end
 
+  test "the two suggestion buttons in the row have short labels and a full-prompt title", %{
+    conn: conn
+  } do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
+
+    assert has_element?(
+             view,
+             "button[phx-click=use_suggestion][title='Show a monthly revenue trend']",
+             "Trend"
+           )
+
+    assert has_element?(
+             view,
+             "button[phx-click=use_suggestion][title='Compare the top categories']",
+             "Categories"
+           )
+
+    # The "More" menu buttons carry the full prompt as well.
+    assert has_element?(
+             view,
+             "button[phx-click=use_suggestion][title='List the top customers by revenue']"
+           )
+
+    view |> element("#locale-es_MX") |> render_click()
+
+    assert has_element?(view, "button[phx-click=use_suggestion] span", "Tendencia")
+    assert has_element?(view, "button[phx-click=use_suggestion] span", "Categorías")
+    refute render(view) =~ "Tendencia de ingresos"
+    refute render(view) =~ "Categorías principales"
+    refute render(view) =~ "Revenue trend"
+  end
+
   test "table ids and years stay ungrouped while quantities and amounts are grouped" do
     format = &JidoCodemodeWeb.SandboxLive.format_table_value/2
 
