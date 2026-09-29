@@ -1,7 +1,7 @@
 # Spanish copy and responses for the Agentic BI demo
 
 Date: 2026-09-28
-Status: approved design, pending spec review
+Status: approved; revised 2026-09-28 during planning (see Revisions)
 
 ## Goal
 
@@ -35,9 +35,9 @@ the page language.
 | --- | --- | --- |
 | `JidoCodemodeWeb.Locale` (plug and LiveView `on_mount` hook) | Resolves the language in the order above. Sets the `Gettext` locale, stores the locale in the session, and exposes it for `<html lang>`. | Phoenix, `Gettext` |
 | `priv/gettext/{en,es_MX}` | All interface copy (about 60 strings), the 5 example prompts, sample chart titles and axis labels, the unlock and error messages, the currency footnote, and page metadata. English source text stays in the templates. | `gettext` |
-| `JidoCodemode.Locale.Glossary` | One reviewed English → Spanish map for categories and countries. It is used in the agent instructions and when rendering reports. | none |
+| `JidoCodemode.Locale.Glossary` | One reviewed English → Spanish map for categories and countries. It is used to build the Spanish database copy and in the agent instructions. | none |
 | `JidoCodemode.Locale.Format` | Formats money, percentages, numbers, and dates per locale. | none |
-| `JidoCodemode.Locale.Currency` | Holds the exchange-rate configuration and builds the MXN copy of the database at startup. | `Exqlite` |
+| `JidoCodemode.Locale.Dataset` | Holds the exchange-rate configuration and builds the Spanish copy of the database at startup: money columns converted to MXN and category and country names translated. Exposes `path(locale)`, `currency(locale)`, and `fx()`. | `Exqlite`, `Glossary` |
 
 ### Data flow
 
@@ -49,8 +49,10 @@ the page language.
 4. Each question passes the locale to the tools in `tool_context`. The query
    tools (`run_sqlite_query`, `BuildReport`, `describe_schema`) choose the USD
    database for English or the MXN database for Spanish.
-5. After a report is validated, report localization replaces known category
-   and country values in table cells and chart labels, using the glossary.
+5. The Spanish database copy already stores Spanish category and country
+   names, so query results, the agent's prose, tables, and charts all use them
+   with no post-processing, and a filter such as `WHERE CategoryName =
+   'Bebidas'` works.
 6. `Format` renders money, percentages, and dates for the page locale. The Vega
    charts receive Spanish number and time locales when the page is Spanish.
 
@@ -62,9 +64,10 @@ report code does currency arithmetic on results.
 - Northwind has exactly three money columns: `Order.Freight`,
   `Product.UnitPrice`, and `OrderDetail.UnitPrice`. `OrderDetail.Discount` is a
   fraction and does not change.
-- At startup, `Currency` copies `northwind.sqlite` to a temporary file,
-  multiplies those three columns by the USD → MXN rate, and opens the copy
-  read-only, the same way as the original. The read-only guarantee stays.
+- At startup, `Dataset` copies `northwind.sqlite` to a temporary file,
+  multiplies those three columns by the USD → MXN rate, replaces the category
+  and country names with their glossary translations, and marks the file
+  read-only. Queries open it read-only, the same way as the original.
 - All query paths already open the database through one function
   (`database_path/0` in `QueryRunner` and `Schema`). It takes the locale and
   returns the matching path.
@@ -79,9 +82,16 @@ report code does currency arithmetic on results.
   The initial value is the Banxico FIX for 28 Sep 2026, read from SuperDev ERP
   (Odoo `res_currency_rate` id 205, stored as 0.05604972731807659 USD per MXN).
   To update it, change the variables and restart the app.
-- Display: Spanish amounts show as `$4,779,116.56 MXN`. English amounts stay
-  `$267,868.18` (USD). Mexico uses the same digit grouping and decimal point as
-  the US; only the currency label changes.
+- Display: Spanish amounts in text and metrics show as `$4,779,116.56 MXN`.
+  English amounts stay `$267,868.18` (USD). Mexico uses the same digit grouping
+  and decimal point as the US; only the currency label changes. Chart axes show
+  `$` without the `MXN` suffix, which is too long for tick labels; the footnote
+  states the currency. Table columns carry no type, so numeric cells get digit
+  grouping and 2 decimals in both languages, and the agent names money columns
+  with the currency, for example "Ingresos (MXN)".
+- The four sample charts on the page use illustrative data defined in code, not
+  the database. In Spanish, their labels are translated through `gettext` and
+  their amounts are multiplied by the rate.
 - A footnote shows under the chat and reports in Spanish:
   *"Cifras en pesos mexicanos (MXN), convertidas de USD con el tipo de cambio
   FIX de Banxico del 28/09/2026: 1 USD = 17.8413 MXN."*
@@ -181,7 +191,7 @@ Countries (all 25 values in the data):
   the Spanish page falls back to USD and USD labels. The footnote reads
   *"Cifras en dólares estadounidenses (USD)."* A warning is logged. The demo
   keeps working and never shows a currency label that is wrong. The currency
-  is decided once, by `Currency`, and every consumer reads that decision: the
+  is decided once, by `Dataset`, and every consumer reads that decision: the
   query tools, `Format`, the footnote, and the agent's language block (which
   then states USD instead of MXN).
 - The MXN database fails to build at startup: the same fallback, with an error
@@ -208,7 +218,8 @@ Automated:
 - Agent: `system_prompt(:es_MX)` contains the mirror rule, the glossary, and the
   MXN rule. A stub-server test proves that a Spanish session queries the MXN
   database.
-- Reports: category and country labels in tables and charts are translated.
+- Spanish database copy: category and country names are translated; product,
+  customer, and shipper names are unchanged.
 - Translations: `mix gettext.extract --check-up-to-date` passes, and no
   `es_MX` entry has an empty `msgstr`.
 
@@ -229,3 +240,17 @@ Manual, after deploy (integrated browser, desktop and mobile widths):
    (runtime only) through the API.
 3. Merge, which deploys through the Coolify webhook.
 4. Run the manual checks above.
+
+## Revisions
+
+Made while writing the implementation plan, after reading the code:
+
+1. Category and country names are translated in the Spanish database copy, not
+   after report validation. `Report.normalize/1` builds the Vega chart specs
+   itself, so post-processing would have to rewrite chart JSON, and the agent's
+   `WHERE` filters on Spanish names would not match an English database.
+2. The sample charts use illustrative data defined in code. Their labels go
+   through `gettext` and their amounts are multiplied by the rate.
+3. Chart axes in Spanish show `$` without `MXN`. Table money columns are named
+   with the currency by the agent, because table columns carry no type.
+
