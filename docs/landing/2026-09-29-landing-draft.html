@@ -377,15 +377,10 @@ section.band.slim { padding-block: 18px; }
 .slim .sec-head h2 { font-size: 1.05rem; letter-spacing: -.01em; max-width: 22ch; }
 .slim .symptoms li { padding-block: 6px; border-top: 0; font-size: .95rem; grid-template-columns: 1.8em 1fr; }
 @media (max-width: 900px) { .slim .container { grid-template-columns: 1fr; } }
-section.band.explore { padding-block: 20px 32px; }
-.tabbar { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--rule); margin-bottom: 20px; scrollbar-width: none; }
-.tabbar::-webkit-scrollbar { display: none; }
-.tabbar button { font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; border: 0; background: transparent; color: var(--ink-soft); padding: 10px 12px; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
-.tabbar button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-.tabbar button:hover { color: var(--ink); }
-.tabbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+section.band.explore { padding-block: 32px 40px; }
 .panel .sec-head { margin-bottom: 18px; }
-.panel .sec-head .eyebrow { display: none; }
+.panel + .panel { border-top: 1px solid var(--rule); margin-top: 32px; padding-top: 32px; }
+.panel .sec-head .eyebrow { margin: 0; }
 .panel h2 { font-size: clamp(1.35rem, 1.1rem + .8vw, 1.75rem); }
 .panel .sec-head .lede { font-size: 1rem; }
 .panel .case .sec-head { margin: 0; }
@@ -506,8 +501,7 @@ footer.site { padding-block: 18px; }
 
     <section class="band explore" id="explorar" aria-label="Explora Agentic BI">
     <div class="container">
-      <div class="tabbar" role="tablist" aria-label="Secciones"><button type="button" role="tab" id="t-ejemplos" aria-controls="ejemplos" aria-selected="true" tabindex="0" data-tab="ejemplos" data-i18n="tab_ex">Ejemplos</button><button type="button" role="tab" id="t-pruebalo" aria-controls="pruebalo" aria-selected="false" tabindex="-1" data-tab="pruebalo" data-i18n="tab_try">Pruébalo</button><button type="button" role="tab" id="t-como-funciona" aria-controls="como-funciona" aria-selected="false" tabindex="-1" data-tab="como-funciona" data-i18n="tab_how">Cómo funciona</button><button type="button" role="tab" id="t-ti" aria-controls="ti" aria-selected="false" tabindex="-1" data-tab="ti" data-i18n="tab_it">Para TI</button><button type="button" role="tab" id="t-caso" aria-controls="caso" aria-selected="false" tabindex="-1" data-tab="caso" data-i18n="tab_case">Caso</button><button type="button" role="tab" id="t-proceso" aria-controls="proceso" aria-selected="false" tabindex="-1" data-tab="proceso" data-i18n="tab_proc">Cómo trabajamos</button><button type="button" role="tab" id="t-preguntas" aria-controls="preguntas" aria-selected="false" tabindex="-1" data-tab="preguntas" data-i18n="tab_faq">Preguntas</button></div>
-        <div class="panel" role="tabpanel" id="ejemplos" aria-labelledby="t-ejemplos">
+        <div class="panel" id="ejemplos">
 
       <div class="sec-head">
         <p class="eyebrow" data-i18n="g_eyebrow">Lo que puedes preguntarle</p>
@@ -517,7 +511,7 @@ footer.site { padding-block: 18px; }
       <div class="gallery" data-gallery></div>
     
         </div>
-        <div class="panel" role="tabpanel" id="pruebalo" aria-labelledby="t-pruebalo" hidden>
+        <div class="panel" id="pruebalo">
 
       <div class="sec-head">
         <p class="eyebrow" data-i18n="t_eyebrow">Pruébalo</p>
@@ -590,7 +584,7 @@ footer.site { padding-block: 18px; }
       </div>
     
         </div>
-        <div class="panel" role="tabpanel" id="como-funciona" aria-labelledby="t-como-funciona" hidden>
+        <div class="panel" id="como-funciona">
 
       <div class="sec-head">
         <p class="eyebrow" data-i18n="h_eyebrow">Cómo funciona</p>
@@ -626,7 +620,7 @@ footer.site { padding-block: 18px; }
       </div>
     
         </div>
-        <div class="panel" role="tabpanel" id="ti" aria-labelledby="t-ti" hidden>
+        <div class="panel" id="ti">
 
       <div class="sec-head">
         <p class="eyebrow" data-i18n="i_eyebrow">Para tu equipo de TI</p>
@@ -650,7 +644,7 @@ footer.site { padding-block: 18px; }
       <p class="fineprint" style="margin-top:12px" data-i18n="m_note">Empezamos donde estás, casi siempre en descriptivo, y construimos la ruta hacia arriba. El agente cubre hoy las dos primeras etapas.</p>
     
         </div>
-        <div class="panel" role="tabpanel" id="caso" aria-labelledby="t-caso" hidden>
+        <div class="panel" id="caso">
 <div class="case">
       <div class="sec-head" style="margin:0">
         <p class="eyebrow" data-i18n="k_eyebrow">Caso</p>
@@ -667,7 +661,7 @@ footer.site { padding-block: 18px; }
       </div>
     </div>
         </div>
-        <div class="panel" role="tabpanel" id="proceso" aria-labelledby="t-proceso" hidden>
+        <div class="panel" id="proceso">
 
       <div class="sec-head">
         <p class="eyebrow" data-i18n="p_eyebrow">Cómo trabajamos</p>
@@ -686,7 +680,7 @@ footer.site { padding-block: 18px; }
       </div>
     
         </div>
-        <div class="panel" role="tabpanel" id="preguntas" aria-labelledby="t-preguntas" hidden>
+        <div class="panel" id="preguntas">
 <div class="faq">
       <div class="sec-head" style="margin:0">
         <p class="eyebrow" data-i18n="f_eyebrow">Preguntas</p>
@@ -1051,27 +1045,6 @@ footer.site { padding-block: 18px; }
     mode = "invited"; apply();
   });
 
-  function selectTab(id, focus) {
-    const tabs = [...document.querySelectorAll("[data-tab]")];
-    if (!tabs.some(t => t.dataset.tab === id)) return false;
-    tabs.forEach(t => { const on = t.dataset.tab === id; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
-    document.querySelectorAll(".panel").forEach(pn => { pn.hidden = pn.id !== id; });
-    return true;
-  }
-  document.addEventListener("click", e => {
-    const t = e.target.closest("[data-tab]");
-    if (t) { selectTab(t.dataset.tab); return; }
-    const a = e.target.closest('a[href^="#"]');
-    if (a) { const id = a.getAttribute("href").slice(1); if (selectTab(id)) { e.preventDefault(); document.getElementById("explorar").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); } }
-    if (e.target.closest("[data-set-mode]") && !e.target.closest(".access")) selectTab("pruebalo");
-  });
-  document.querySelector(".tabbar").addEventListener("keydown", e => {
-    if (!["ArrowRight", "ArrowLeft"].includes(e.key)) return;
-    const tabs = [...document.querySelectorAll("[data-tab]")];
-    const i = tabs.findIndex(t => t.getAttribute("aria-selected") === "true");
-    const n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
-    selectTab(n.dataset.tab, true); e.preventDefault();
-  });
   apply();
   const card = document.querySelector(".query");
   card.addEventListener("mouseenter", () => clearInterval(heroTimer));
