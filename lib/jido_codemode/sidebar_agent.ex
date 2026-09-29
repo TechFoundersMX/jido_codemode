@@ -5,6 +5,7 @@ defmodule JidoCodemode.SidebarAgent do
   alias JidoCodemode.Agent.Tools.BuildReport
   alias JidoCodemode.Agent.Tools.DescribeSchema
   alias JidoCodemode.Agent.Tools.RunSqliteQuery
+  alias JidoCodemode.Locale.{Dataset, Glossary}
 
   @base_system_prompt """
   You are the analysis agent inside Agentic BI.
@@ -42,13 +43,58 @@ defmodule JidoCodemode.SidebarAgent do
     tools: [DescribeSchema, RunSqliteQuery, BuildReport],
     system_prompt: @base_system_prompt
 
-  def system_prompt_with_schema do
+  def system_prompt_with_schema(locale \\ "en") do
     [
       @base_system_prompt,
+      language_block(locale),
       "Schema digest:",
       Schema.prompt_digest()
     ]
     |> Enum.join("\n\n")
+  end
+
+  defp language_block("es_MX") do
+    labels =
+      case Dataset.labels("es_MX") do
+        :es ->
+          "The database stores category and country names in Spanish: " <>
+            Glossary.prompt_summary() <> ". Use these Spanish names, including in SQL filters."
+
+        :en ->
+          "The database stores category and country names in English."
+      end
+
+    money =
+      case {Dataset.currency("es_MX"), Dataset.fx()} do
+        {:mxn, {:ok, fx}} ->
+          "Money amounts in the database are already in Mexican pesos (MXN), converted from USD " <>
+            "at #{fx.rate} MXN per USD (#{fx.source}, #{fx.date}). Never convert them again. " <>
+            "Write amounts as $1,234.56 MXN. In report tables, name money columns with the " <>
+            ~s|currency, for example "Ingresos (MXN)".|
+
+        _usd ->
+          "Money amounts in the database are in US dollars (USD). Write amounts as $1,234.56 USD."
+      end
+
+    """
+    Language:
+    - The page language is Spanish (Mexico).
+    - Answer in the language of the user's question. If the question gives no language signal, answer in Spanish.
+    - When you answer in Spanish: use Mexican Spanish with "tú", professional and warm. Give the answer first, then the context. Do not repeat the question. Use "reporte", "gráfica", "ingresos", and "pedidos". Write dates as "28 de septiembre de 2026" or 28/09/2026.
+    - Write report titles, summaries, and column headers in the language of your answer.
+    - #{labels}
+    - #{money}
+    """
+  end
+
+  defp language_block(_locale) do
+    """
+    Language:
+    - The page language is English.
+    - Answer in the language of the user's question. If the question gives no language signal, answer in English.
+    - Write report titles, summaries, and column headers in the language of your answer.
+    - Money amounts in the database are in US dollars (USD). Write amounts as $1,234.56.
+    """
   end
 
   def recent_tool_calls(agent_pid, limit \\ 10) do
