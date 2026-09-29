@@ -80,7 +80,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       {:noreply,
        socket
        |> assign(:unlock_form, unlock_form())
-       |> assign(:unlock_error, gettext("That password is not correct."))}
+       |> assign(:unlock_error, :invalid_password)}
     end
   end
 
@@ -123,13 +123,23 @@ defmodule JidoCodemodeWeb.SandboxLive do
           end
 
         {:noreply,
-         push_event(socket, "locale-changed", %{
+         socket
+         |> push_event("locale-changed", %{
            locale: locale,
            html_lang: Locale.html_lang(locale),
            title: "Agentic BI · " <> gettext("Decision-ready analysis")
-         })}
+         })
+         |> push_patch(to: ~p"/?lang=#{lang_param(locale)}")}
     end
   end
+
+  @impl true
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
+  defp lang_param("es_MX"), do: "es"
+  defp lang_param(_locale), do: "en"
+
+  defp unlock_error_text(:invalid_password), do: gettext("That password is not correct.")
 
   defp restart_conversation(socket) do
     socket
@@ -686,7 +696,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 </div>
 
                 <p :if={@unlock_error} id="unlock-error" class="text-sm text-error" role="alert">
-                  {@unlock_error}
+                  {unlock_error_text(@unlock_error)}
                 </p>
               </.form>
 
@@ -1125,13 +1135,14 @@ defmodule JidoCodemodeWeb.SandboxLive do
   def format_table_value(value, _column) when is_number(value), do: Format.number(value)
   def format_table_value(value, _column), do: to_string(value)
 
-  # Ids and years are labels, not quantities: they stay ungrouped.
+  # Ids, folios, and years are labels, not quantities: they stay ungrouped.
   defp identifier_column?(column) do
     name = to_string(column)
     lowered = String.downcase(name)
 
-    name == "Id" or String.ends_with?(name, ["Id", "ID"]) or
-      String.contains?(lowered, ["year", "año"])
+    name == "Id" or String.ends_with?(name, ["Id", "ID"]) or lowered == "id" or
+      String.starts_with?(lowered, ["id ", "id_"]) or
+      String.contains?(lowered, ["year", "año", "folio"])
   end
 
   defp clear_pending_chat(socket) do

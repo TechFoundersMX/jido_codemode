@@ -58,7 +58,9 @@ defmodule JidoCodemode.SidebarAgent do
       case Dataset.labels("es_MX") do
         :es ->
           "The database stores category and country names in Spanish: " <>
-            Glossary.prompt_summary() <> ". Use these Spanish names, including in SQL filters."
+            Glossary.prompt_summary() <>
+            ". Use these Spanish names, including in SQL filters. " <>
+            "The text in parentheses is only the English original and must not be used in SQL filters."
 
         :en ->
           "The database stores category and country names in English."
@@ -81,7 +83,7 @@ defmodule JidoCodemode.SidebarAgent do
     - The page language is Spanish (Mexico).
     - Answer in the language of the user's question. If the question gives no language signal, answer in Spanish.
     - When you answer in Spanish: use Mexican Spanish with "tú", professional and warm. Give the answer first, then the context. Do not repeat the question. Use "reporte", "gráfica", "ingresos", and "pedidos". Write dates as "28 de septiembre de 2026" or 28/09/2026.
-    - Write report titles, summaries, and column headers in the language of your answer.
+    - #{report_text(~s|AS "Ingresos (MXN)"|)}
     - #{labels}
     - #{money}
     """
@@ -92,9 +94,16 @@ defmodule JidoCodemode.SidebarAgent do
     Language:
     - The page language is English.
     - Answer in the language of the user's question. If the question gives no language signal, answer in English.
-    - Write report titles, summaries, and column headers in the language of your answer.
+    - #{report_text(~s|AS "Revenue"|)}
     - Money amounts in the database are in US dollars (USD). Write amounts as $1,234.56.
     """
+  end
+
+  defp report_text(alias_example) do
+    "Every string you pass to BuildReport is written in the language of your answer: report and " <>
+      "block titles, summaries, metric labels, chart titles, and SQL column aliases used as table " <>
+      "headers or axis titles. Alias SQL columns in the language of your answer, for example " <>
+      alias_example <> "."
   end
 
   def recent_tool_calls(agent_pid, limit \\ 10) do

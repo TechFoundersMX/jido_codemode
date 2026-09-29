@@ -83,12 +83,6 @@ defmodule JidoCodemode.Locale.Dataset do
   @doc "Builds the Spanish copy from configuration and caches the result."
   @spec setup() :: :ok
   def setup do
-    target =
-      Path.join(
-        System.tmp_dir!(),
-        "agentic-bi-es_MX-#{System.unique_integer([:positive])}.sqlite"
-      )
-
     {rate, currency} =
       case fx() do
         {:ok, %{rate: rate}} ->
@@ -100,17 +94,39 @@ defmodule JidoCodemode.Locale.Dataset do
       end
 
     state =
-      case build(source_path(), target, rate) do
-        :ok ->
-          %{path: target, currency: currency, labels: :es}
-
-        {:error, reason} ->
-          Logger.error("Could not build the Spanish database copy: #{inspect(reason)}")
+      case target_path(System.tmp_dir()) do
+        nil ->
+          Logger.error("No writable temp directory; the Spanish demo shows USD in English.")
           %{path: source_path(), currency: :usd, labels: :en}
+
+        target ->
+          case build(source_path(), target, rate) do
+            :ok ->
+              %{path: target, currency: currency, labels: :es}
+
+            {:error, reason} ->
+              Logger.error("Could not build the Spanish database copy: #{inspect(reason)}")
+              %{path: source_path(), currency: :usd, labels: :en}
+          end
       end
 
     :persistent_term.put(@key, state)
     :ok
+  end
+
+  @doc false
+  # The OS pid and a random suffix keep the name unique across BEAMs sharing a temp directory,
+  # because `System.unique_integer/1` restarts in every VM.
+  @spec target_path(Path.t() | nil) :: Path.t() | nil
+  def target_path(nil), do: nil
+
+  def target_path(tmp_dir) do
+    suffix = Base.url_encode64(:crypto.strong_rand_bytes(6), padding: false)
+
+    Path.join(
+      tmp_dir,
+      "agentic-bi-es_MX-#{System.pid()}-#{System.unique_integer([:positive])}-#{suffix}.sqlite"
+    )
   end
 
   @doc "Forgets the cached Spanish copy so the next call rebuilds it. For tests."
