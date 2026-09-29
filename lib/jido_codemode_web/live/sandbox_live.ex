@@ -242,6 +242,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
     ~H"""
     <Layouts.app
       flash={@flash}
+      locale={@locale}
       app_chrome={false}
       full_width={true}
       main_class="min-h-dvh isolate"

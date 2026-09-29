@@ -9,6 +9,10 @@ defmodule JidoCodemodeWeb.Layouts do
     default: nil,
     doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
 
+  attr :locale, :string,
+    default: nil,
+    doc: "the page locale; when it changes, the flash copy is re-rendered in the new language"
+
   attr :app_chrome, :boolean, default: true, doc: "whether to render the top navigation"
   attr :full_width, :boolean, default: false, doc: "whether content should span the page width"
   attr :main_class, :string, default: nil, doc: "optional classes for the main element"
@@ -54,7 +58,7 @@ defmodule JidoCodemodeWeb.Layouts do
       </div>
     </main>
 
-    <.flash_group flash={@flash} />
+    <.flash_group flash={@flash} locale={@locale} />
     """
   end
 
@@ -64,13 +68,20 @@ defmodule JidoCodemodeWeb.Layouts do
   ## Examples
 
       <.flash_group flash={@flash} />
+      <.flash_group flash={@flash} locale={@locale} />
   """
   attr :flash, :map, required: true, doc: "the map of flash messages"
+
+  attr :locale, :string,
+    default: nil,
+    doc: "the page locale; the group re-renders only when it changes"
+
   attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} aria-live="polite">
+    <%!-- Keyed iteration over [@locale] re-renders the gettext titles only when the locale changes: they have no assigns, so change tracking would otherwise keep the old language. --%>
+    <div :for={loc <- [@locale]} :key={loc} id={@id} aria-live="polite">
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 
