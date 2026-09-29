@@ -612,9 +612,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                       <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
                       <p class="font-medium text-base-content">{gettext("Start with a prompt")}</p>
                       <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
-                        {gettext(
-                          "Pick an example or describe the decision you want to support."
-                        )}
+                        {gettext("Pick an example or describe the decision you want to support.")}
                       </p>
                     </div>
                   </div>
