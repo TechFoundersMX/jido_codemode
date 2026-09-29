@@ -87,6 +87,63 @@ defmodule JidoCodemode.Agent.BuildReportTest do
              Report.latest_for_session(session_id)
   end
 
+  test "bar charts keep the data order on the category axis" do
+    session_id = "build-report-bar-order-test"
+
+    {:ok, _result} =
+      BuildReport.run(
+        %{
+          code: ~S'''
+            local rows = db.query({
+              sql = [[
+                SELECT CategoryName AS category, COUNT(*) AS product_count
+                FROM Product
+                JOIN Category ON Category.Id = Product.CategoryId
+                GROUP BY CategoryName
+                ORDER BY product_count DESC
+              ]],
+              purpose = "chart"
+            })
+
+            return report.build({
+              version = 1,
+              title = "Products by category",
+              blocks = {
+                report.bar({
+                  id = "vertical",
+                  title = "Products by category",
+                  source = rows,
+                  x = report.field({ field = "category", type = "nominal", format = "string" }),
+                  y = report.field({ field = "product_count", type = "quantitative", format = "number" })
+                }),
+                report.bar({
+                  id = "horizontal",
+                  title = "Products by category",
+                  source = rows,
+                  x = report.field({ field = "product_count", type = "quantitative", format = "number" }),
+                  y = report.field({ field = "category", type = "nominal", format = "string" })
+                })
+              }
+            })
+          '''
+        },
+        %{session_id: session_id}
+      )
+
+    assert {:ok, %Report{blocks: [vertical, horizontal]}} =
+             Report.latest_for_session(session_id)
+
+    assert %{"encoding" => %{"x" => %{"field" => "category", "sort" => nil} = x}} =
+             Jason.decode!(vertical.spec_json)
+
+    assert Map.has_key?(x, "sort")
+
+    assert %{"encoding" => %{"y" => %{"field" => "category"} = y}} =
+             Jason.decode!(horizontal.spec_json)
+
+    assert Map.has_key?(y, "sort") and y["sort"] == nil
+  end
+
   test "build_report helpers can build a donut chart" do
     session_id = "build-report-donut-helper-test"
 
