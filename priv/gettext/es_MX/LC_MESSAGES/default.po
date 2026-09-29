@@ -337,24 +337,24 @@ msgid_plural "%{count} conversations left on your invitation. Each new conversat
 msgstr[0] "Te queda 1 conversación en tu invitación. Cada conversación nueva usa una."
 msgstr[1] "Te quedan %{count} conversaciones en tu invitación. Cada conversación nueva usa una."
 
-#: lib/jido_codemode_web/live/landing_live.ex:499
+#: lib/jido_codemode_web/live/landing_live.ex:468
 #, elixir-autogen, elixir-format
 msgid "3 min · 14 questions · instant result"
 msgstr "3 min · 14 preguntas · resultado al instante"
 
 #: lib/jido_codemode_web/live/landing_live.ex:112
-#: lib/jido_codemode_web/live/landing_live.ex:451
-#: lib/jido_codemode_web/live/landing_live.ex:538
+#: lib/jido_codemode_web/live/landing_live.ex:420
+#: lib/jido_codemode_web/live/landing_live.ex:507
 #, elixir-autogen, elixir-format
 msgid "30 min · free · no commitment"
 msgstr "30 min · gratis · sin compromiso"
 
-#: lib/jido_codemode_web/live/landing_live.ex:525
+#: lib/jido_codemode_web/live/landing_live.ex:494
 #, elixir-autogen, elixir-format
 msgid "A 30-minute call to review your data sources and tell you what's possible."
 msgstr "Una llamada de 30 minutos para revisar tus fuentes de datos y decirte qué es posible."
 
-#: lib/jido_codemode_web/live/landing_live.ex:492
+#: lib/jido_codemode_web/live/landing_live.ex:461
 #, elixir-autogen, elixir-format
 msgid "A monthly retainer to maintain and improve."
 msgstr "Iguala mensual para mantener y mejorar."
@@ -369,12 +369,12 @@ msgstr "Respuesta real del agente, guardada."
 msgid "A sample distributor with fictitious data. This is how the agent answers a business question: the number, the chart and the table."
 msgstr "Una distribuidora de ejemplo, con datos ficticios. Así contesta el agente una pregunta de negocio: el número, la gráfica y la tabla, en español y en pesos."
 
-#: lib/jido_codemode_web/live/landing_live.ex:468
+#: lib/jido_codemode_web/live/landing_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "AI Diagnostic"
 msgstr "Diagnóstico IA"
 
-#: lib/jido_codemode_web/live/landing_live.ex:420
+#: lib/jido_codemode_web/live/landing_live.ex:389
 #, elixir-autogen, elixir-format
 msgid "Agencies, consultancies, and software resellers can offer Agentic BI to their clients as their own. We build and run the agent. You keep the client relationship."
 msgstr "Agencias, consultoras y revendedores de software pueden ofrecer Agentic BI a sus clientes como propio. Nosotros construimos y operamos el agente. Tú conservas la relación con el cliente."
@@ -407,12 +407,12 @@ msgstr "Agentic BI: señales de datos que se convierten en acción."
 msgid "Ask it what you ask someone on your team today."
 msgstr "Pregúntale lo que hoy le pides a alguien de tu equipo."
 
-#: lib/jido_codemode_web/live/landing_live.ex:670
+#: lib/jido_codemode_web/live/landing_live.ex:639
 #, elixir-autogen, elixir-format
 msgid "Ask it your own questions."
 msgstr "Hazle tus propias preguntas."
 
-#: lib/jido_codemode_web/live/landing_live.ex:646
+#: lib/jido_codemode_web/live/landing_live.ex:615
 #: lib/jido_codemode_web/live/sandbox_live.ex:361
 #, elixir-autogen, elixir-format
 msgid "Ask the sample distributor."
@@ -445,9 +445,9 @@ msgid "Beverages leads, followed by Dairy Products and Confections."
 msgstr "Bebidas lidera, seguida de Lácteos y Dulces y postres."
 
 #: lib/jido_codemode_web/live/landing_live.ex:108
-#: lib/jido_codemode_web/live/landing_live.ex:449
-#: lib/jido_codemode_web/live/landing_live.ex:532
-#: lib/jido_codemode_web/live/landing_live.ex:711
+#: lib/jido_codemode_web/live/landing_live.ex:418
+#: lib/jido_codemode_web/live/landing_live.ex:501
+#: lib/jido_codemode_web/live/landing_live.ex:680
 #: lib/jido_codemode_web/live/sandbox_live.ex:693
 #: lib/jido_codemode_web/live/sandbox_live.ex:796
 #, elixir-autogen, elixir-format
@@ -459,15 +459,10 @@ msgstr "Agenda tu llamada exploratoria"
 msgid "Brazil"
 msgstr "Brasil"
 
-#: lib/jido_codemode_web/live/landing_live.ex:723
+#: lib/jido_codemode_web/live/landing_live.ex:692
 #, elixir-autogen, elixir-format
 msgid "Can it change or delete anything?"
 msgstr "¿Puede cambiar o borrar información?"
-
-#: lib/jido_codemode_web/live/landing_live.ex:387
-#, elixir-autogen, elixir-format
-msgid "Case"
-msgstr "Caso"
 
 #: lib/jido_codemode_web/live/landing_live.ex:223
 #, elixir-autogen, elixir-format
@@ -489,11 +484,6 @@ msgstr "Comparación"
 msgid "Dairy Products"
 msgstr "Lácteos"
 
-#: lib/jido_codemode_web/live/landing_live.ex:388
-#, elixir-autogen, elixir-format
-msgid "Data Agent."
-msgstr "Agente de Datos."
-
 #: lib/jido_codemode_web/live/landing_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "Data maturity"
@@ -504,17 +494,17 @@ msgstr "Madurez de datos"
 msgid "December was the best month of the year, and October the second."
 msgstr "Diciembre fue el mejor mes del año y octubre el segundo."
 
-#: lib/jido_codemode_web/live/landing_live.ex:719
+#: lib/jido_codemode_web/live/landing_live.ex:688
 #, elixir-autogen, elixir-format
 msgid "Do we have to move our data?"
 msgstr "¿Tenemos que mudar nuestros datos?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:730
+#: lib/jido_codemode_web/live/landing_live.ex:699
 #, elixir-autogen, elixir-format
 msgid "Dynamics 365, Odoo, SAP Business One, Airtable and spreadsheets. The AI Diagnostic confirms which sources connect and how."
 msgstr "Dynamics 365, Odoo, SAP Business One, Airtable y hojas de cálculo. En el Diagnóstico IA confirmamos qué fuentes se conectan y cómo."
 
-#: lib/jido_codemode_web/live/landing_live.ex:653
+#: lib/jido_codemode_web/live/landing_live.ex:622
 #, elixir-autogen, elixir-format
 msgid "Each new conversation uses one. Questions within a conversation don't count."
 msgstr "Cada conversación nueva usa una. Las preguntas dentro de una conversación no cuentan."
@@ -550,7 +540,7 @@ msgid "Examples"
 msgstr "Ejemplos"
 
 #: lib/jido_codemode_web/components/site_chrome.ex:57
-#: lib/jido_codemode_web/live/landing_live.ex:463
+#: lib/jido_codemode_web/live/landing_live.ex:432
 #, elixir-autogen, elixir-format
 msgid "Exploratory call"
 msgstr "Llamada exploratoria"
@@ -561,7 +551,7 @@ msgid "Explore Agentic BI"
 msgstr "Explora Agentic BI"
 
 #: lib/jido_codemode_web/components/site_chrome.ex:42
-#: lib/jido_codemode_web/live/landing_live.ex:506
+#: lib/jido_codemode_web/live/landing_live.ex:475
 #, elixir-autogen, elixir-format
 msgid "FAQ"
 msgstr "Preguntas"
@@ -581,12 +571,12 @@ msgstr "Datos ficticios. Todavía no es tu operación."
 msgid "For IT"
 msgstr "Para TI"
 
-#: lib/jido_codemode_web/live/landing_live.ex:677
+#: lib/jido_codemode_web/live/landing_live.ex:646
 #, elixir-autogen, elixir-format
 msgid "For now, access is by invitation. Book your exploratory call and we'll send you one."
 msgstr "Por ahora el acceso es por invitación. Agenda tu llamada exploratoria y te enviamos una."
 
-#: lib/jido_codemode_web/live/landing_live.ex:417
+#: lib/jido_codemode_web/live/landing_live.ex:386
 #, elixir-autogen, elixir-format
 msgid "For partners"
 msgstr "Para socios"
@@ -601,15 +591,10 @@ msgstr "Para tu equipo de TI"
 msgid "France"
 msgstr "Francia"
 
-#: lib/jido_codemode_web/live/landing_live.ex:683
+#: lib/jido_codemode_web/live/landing_live.ex:652
 #, elixir-autogen, elixir-format
 msgid "Free. We email you a link to come back from another device."
 msgstr "Gratis. Te enviamos un enlace para volver a entrar desde otro dispositivo."
-
-#: lib/jido_codemode_web/live/landing_live.ex:406
-#, elixir-autogen, elixir-format
-msgid "From delivery drivers to the CEO, they query business data in plain language, from their phones too. The full project included governance and training. Source ERP: Dynamics 365."
-msgstr "De repartidores al director general, consultan los datos del negocio en lenguaje natural, también desde el celular. El proyecto completo incluyó gobernanza y capacitación. ERP fuente: Dynamics 365."
 
 #: lib/jido_codemode_web/landing_examples.ex:205
 #, elixir-autogen, elixir-format
@@ -631,32 +616,32 @@ msgstr "¿Cómo cambió el ticket promedio por año?"
 msgid "How is revenue split by shipper?"
 msgstr "¿Cómo se reparten los ingresos por paquetería?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:738
+#: lib/jido_codemode_web/live/landing_live.ex:707
 #, elixir-autogen, elixir-format
 msgid "How much does it cost?"
 msgstr "¿Cuánto cuesta?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:457
+#: lib/jido_codemode_web/live/landing_live.ex:426
 #, elixir-autogen, elixir-format
 msgid "How we work"
 msgstr "Cómo trabajamos"
 
-#: lib/jido_codemode_web/live/landing_live.ex:477
+#: lib/jido_codemode_web/live/landing_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Implementation"
 msgstr "Implementación"
 
-#: lib/jido_codemode_web/live/landing_live.ex:658
+#: lib/jido_codemode_web/live/landing_live.ex:627
 #, elixir-autogen, elixir-format
 msgid "Invitation unavailable"
 msgstr "Invitación no disponible"
 
-#: lib/jido_codemode_web/live/landing_live.ex:737
+#: lib/jido_codemode_web/live/landing_live.ex:706
 #, elixir-autogen, elixir-format
 msgid "Is the demo data from a client?"
 msgstr "¿Los datos de la demo son de un cliente?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:458
+#: lib/jido_codemode_web/live/landing_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "It all starts with a 30-minute call."
 msgstr "Todo empieza con una llamada de 30 minutos."
@@ -676,7 +661,7 @@ msgstr "No puede modificar ni borrar información. Solo ejecuta consultas de lec
 msgid "It connects to Dynamics 365, Odoo, SAP Business One or Airtable. We don't replace your ERP or copy your operation into another tool."
 msgstr "Se conecta a Dynamics 365, Odoo, SAP Business One o Airtable. No reemplazamos tu ERP ni copiamos tu operación a otra herramienta."
 
-#: lib/jido_codemode_web/live/landing_live.ex:661
+#: lib/jido_codemode_web/live/landing_live.ex:630
 #, elixir-autogen, elixir-format
 msgid "It expired or its conversations are used up. Ask for a new one and we'll send it."
 msgstr "Venció o ya usaste tus conversaciones. Pide una nueva y te la enviamos."
@@ -686,7 +671,7 @@ msgstr "Venció o ya usaste tus conversaciones. Pide una nueva y te la enviamos.
 msgid "It rose every year: 19% from 2012 to 2014."
 msgstr "Subió cada año: 19% de 2012 a 2014."
 
-#: lib/jido_codemode_web/live/landing_live.ex:739
+#: lib/jido_codemode_web/live/landing_live.ex:708
 #, elixir-autogen, elixir-format
 msgid "It's quoted in a formal proposal after the AI Diagnostic, based on your sources and scope."
 msgstr "Se cotiza en una propuesta formal, después del Diagnóstico IA, según tus fuentes y el alcance."
@@ -701,7 +686,7 @@ msgstr "Indicador"
 msgid "List the top 5 customers by revenue."
 msgstr "Enlista los 5 clientes con más ingresos."
 
-#: lib/jido_codemode_web/live/landing_live.ex:669
+#: lib/jido_codemode_web/live/landing_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "Live agent · by invitation"
 msgstr "Agente en vivo · por invitación"
@@ -711,7 +696,7 @@ msgstr "Agente en vivo · por invitación"
 msgid "Main"
 msgstr "Principal"
 
-#: lib/jido_codemode_web/live/landing_live.ex:486
+#: lib/jido_codemode_web/live/landing_live.ex:455
 #, elixir-autogen, elixir-format
 msgid "Measurement"
 msgstr "Medición"
@@ -721,17 +706,17 @@ msgstr "Medición"
 msgid "Mix"
 msgstr "Mezcla"
 
-#: lib/jido_codemode_web/live/landing_live.ex:737
+#: lib/jido_codemode_web/live/landing_live.ex:706
 #, elixir-autogen, elixir-format
 msgid "No. It's a fictitious distributor."
 msgstr "No. Son de una distribuidora ficticia. Las cifras en pesos se convirtieron de dólares con el tipo de cambio que indica la nota al pie."
 
-#: lib/jido_codemode_web/live/landing_live.ex:724
+#: lib/jido_codemode_web/live/landing_live.ex:693
 #, elixir-autogen, elixir-format
 msgid "No. The agent only reads, and every query is checked before it runs."
 msgstr "No. El agente solo lee, y cada consulta se revisa antes de ejecutarse."
 
-#: lib/jido_codemode_web/live/landing_live.ex:720
+#: lib/jido_codemode_web/live/landing_live.ex:689
 #, elixir-autogen, elixir-format
 msgid "No. We connect to the ERP and spreadsheets you already use. Moving data is a separate project and is rarely needed to start."
 msgstr "No. Nos conectamos al ERP y a las hojas que ya usas. Mudar los datos es un proyecto aparte y casi nunca hace falta para empezar."
@@ -741,7 +726,7 @@ msgstr "No. Nos conectamos al ERP y a las hojas que ya usas. Mudar los datos es 
 msgid "Nobody trusts the number"
 msgstr "Nadie confía en el número"
 
-#: lib/jido_codemode_web/live/landing_live.ex:418
+#: lib/jido_codemode_web/live/landing_live.ex:387
 #, elixir-autogen, elixir-format
 msgid "Offer it under your brand."
 msgstr "Ofrécelo con tu marca."
@@ -751,17 +736,17 @@ msgstr "Ofrécelo con tu marca."
 msgid "One number"
 msgstr "Un solo número"
 
-#: lib/jido_codemode_web/live/landing_live.ex:491
+#: lib/jido_codemode_web/live/landing_live.ex:460
 #, elixir-autogen, elixir-format
 msgid "Ongoing support"
 msgstr "Acompañamiento"
 
-#: lib/jido_codemode_web/live/landing_live.ex:690
+#: lib/jido_codemode_web/live/landing_live.ex:659
 #, elixir-autogen, elixir-format
 msgid "Open the full demo"
 msgstr "Abrir la demo completa"
 
-#: lib/jido_codemode_web/live/landing_live.ex:649
+#: lib/jido_codemode_web/live/landing_live.ex:618
 #, elixir-autogen, elixir-format
 msgid "Open the live agent"
 msgstr "Abrir el agente en vivo"
@@ -807,12 +792,12 @@ msgstr "Reporte_FINAL_v7"
 msgid "Request access"
 msgstr "Pide acceso"
 
-#: lib/jido_codemode_web/live/landing_live.ex:703
+#: lib/jido_codemode_web/live/landing_live.ex:672
 #, elixir-autogen, elixir-format
 msgid "Request access to the live agent"
 msgstr "Pide acceso al agente en vivo"
 
-#: lib/jido_codemode_web/live/landing_live.ex:672
+#: lib/jido_codemode_web/live/landing_live.ex:641
 #, elixir-autogen, elixir-format
 msgid "Request access with your details and you're in right away: three trial conversations over 7 days with the sample distributor."
 msgstr "Pide acceso con tus datos y entras al momento: tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo."
@@ -857,11 +842,6 @@ msgstr "Datos de ejemplo de una distribuidora ficticia."
 msgid "See it before you believe us."
 msgstr "Compruébalo antes de creernos."
 
-#: lib/jido_codemode_web/live/landing_live.ex:410
-#, elixir-autogen, elixir-format
-msgid "See the case"
-msgstr "Ver el caso"
-
 #: lib/jido_codemode_web/live/landing_live.ex:110
 #, elixir-autogen, elixir-format
 msgid "See the live demo"
@@ -882,13 +862,13 @@ msgstr "Alguien lo arma a mano"
 msgid "Sound familiar?"
 msgstr "¿Te suena?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:497
-#: lib/jido_codemode_web/live/landing_live.ex:535
+#: lib/jido_codemode_web/live/landing_live.ex:466
+#: lib/jido_codemode_web/live/landing_live.ex:504
 #, elixir-autogen, elixir-format
 msgid "Take the preliminary assessment"
 msgstr "Haz la evaluación preliminar"
 
-#: lib/jido_codemode_web/live/landing_live.ex:734
+#: lib/jido_codemode_web/live/landing_live.ex:703
 #, elixir-autogen, elixir-format
 msgid "That's normal. The AI Diagnostic shows how usable it is today and what to clean first."
 msgstr "Es lo normal. El Diagnóstico IA dice qué tan utilizables están hoy y qué hay que limpiar primero."
@@ -903,7 +883,7 @@ msgstr "Estados Unidos y Alemania suman más de un tercio de los ingresos."
 msgid "The agent only reads. Every query goes through checks before it runs, and every number has a definition and an owner."
 msgstr "El agente solo lee. Cada consulta pasa por controles antes de ejecutarse, y cada número tiene una definición y un dueño."
 
-#: lib/jido_codemode_web/live/landing_live.ex:726
+#: lib/jido_codemode_web/live/landing_live.ex:695
 #, elixir-autogen, elixir-format
 msgid "The agent states its assumption or asks you. If the data doesn't exist, it says so instead of making it up."
 msgstr "El agente dice qué supuso o te pregunta. Si un dato no existe, lo dice en lugar de inventarlo."
@@ -943,7 +923,7 @@ msgstr "Las 3 categorías principales por ingresos son %{first} (%{first_amount}
 msgid "The way you'd ask someone on your team, from your phone too."
 msgstr "Como se lo preguntarías a una persona de tu equipo, también desde el celular."
 
-#: lib/jido_codemode_web/live/landing_live.ex:659
+#: lib/jido_codemode_web/live/landing_live.ex:628
 #, elixir-autogen, elixir-format
 msgid "This invitation is no longer available."
 msgstr "Esta invitación ya no está disponible."
@@ -979,17 +959,17 @@ msgstr "Estados Unidos"
 msgid "United Package carries 42% of revenue."
 msgstr "United Package mueve el 42% de los ingresos."
 
-#: lib/jido_codemode_web/live/landing_live.ex:479
+#: lib/jido_codemode_web/live/landing_live.ex:448
 #, elixir-autogen, elixir-format
 msgid "We build what the diagnostic prioritizes, deliverable by deliverable. Reference timeline: 16 weeks."
 msgstr "Construimos lo que el diagnóstico prioriza, por entregables. Cronograma de referencia: 16 semanas."
 
-#: lib/jido_codemode_web/live/landing_live.ex:487
+#: lib/jido_codemode_web/live/landing_live.ex:456
 #, elixir-autogen, elixir-format
 msgid "We compare against the baseline set in the diagnostic."
 msgstr "Comparamos contra la línea base que fijamos en el diagnóstico."
 
-#: lib/jido_codemode_web/live/landing_live.ex:433
+#: lib/jido_codemode_web/live/landing_live.ex:402
 #, elixir-autogen, elixir-format
 msgid "We connect each client's data, set up the agent, and support it after launch."
 msgstr "Conectamos los datos de cada cliente, configuramos el agente y le damos soporte después del lanzamiento."
@@ -1004,7 +984,7 @@ msgstr "Conectamos tus fuentes una vez."
 msgid "We couldn't check your invitation. Reload the page and try again."
 msgstr "No pudimos revisar tu invitación. Recarga la página e intenta de nuevo."
 
-#: lib/jido_codemode_web/live/landing_live.ex:431
+#: lib/jido_codemode_web/live/landing_live.ex:400
 #, elixir-autogen, elixir-format
 msgid "We do the build"
 msgstr "Nosotros lo construimos"
@@ -1014,7 +994,7 @@ msgstr "Nosotros lo construimos"
 msgid "We start where you are, usually descriptive, and build the path up. The agent covers the first two stages today."
 msgstr "Empezamos donde estás, casi siempre en descriptivo, y construimos la ruta hacia arriba. El agente cubre hoy las dos primeras etapas."
 
-#: lib/jido_codemode_web/live/landing_live.ex:464
+#: lib/jido_codemode_web/live/landing_live.ex:433
 #, elixir-autogen, elixir-format
 msgid "We understand your operation and check the fit. Free."
 msgstr "Entendemos tu operación y vemos si hay un buen fit. Gratis."
@@ -1029,22 +1009,22 @@ msgstr "¿Cuáles son las 3 categorías principales por ingresos?"
 msgid "What happened?"
 msgstr "¿Qué pasó?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:725
+#: lib/jido_codemode_web/live/landing_live.ex:694
 #, elixir-autogen, elixir-format
 msgid "What if my question is ambiguous?"
 msgstr "¿Qué pasa si la pregunta es ambigua?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:733
+#: lib/jido_codemode_web/live/landing_live.ex:702
 #, elixir-autogen, elixir-format
 msgid "What if our data is messy?"
 msgstr "¿Y si nuestros datos están sucios?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:523
+#: lib/jido_codemode_web/live/landing_live.ex:492
 #, elixir-autogen, elixir-format
 msgid "What if your next report took seconds?"
 msgstr "¿Y si tu próximo reporte tardara segundos?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:507
+#: lib/jido_codemode_web/live/landing_live.ex:476
 #, elixir-autogen, elixir-format
 msgid "What people ask before we start."
 msgstr "Lo que nos preguntan antes de empezar."
@@ -1080,12 +1060,12 @@ msgstr "¿Cuáles son las 3 categorías que más venden?"
 msgid "Which countries do we sell the most in?"
 msgstr "¿En qué países vendemos más?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:729
+#: lib/jido_codemode_web/live/landing_live.ex:698
 #, elixir-autogen, elixir-format
 msgid "Which systems does it work with?"
 msgstr "¿Con qué sistemas funciona?"
 
-#: lib/jido_codemode_web/live/landing_live.ex:742
+#: lib/jido_codemode_web/live/landing_live.ex:711
 #, elixir-autogen, elixir-format
 msgid "Who maintains it afterwards?"
 msgstr "¿Quién lo mantiene después?"
@@ -1110,7 +1090,7 @@ msgstr "Con Agentic BI"
 msgid "With a chart and a table"
 msgstr "Con gráfica y tabla"
 
-#: lib/jido_codemode_web/live/landing_live.ex:470
+#: lib/jido_codemode_web/live/landing_live.ex:439
 #, elixir-autogen, elixir-format
 msgid "With access to your systems: a report with your starting point and a prioritized plan."
 msgstr "Con acceso a tus sistemas: un reporte con tu punto de partida y un plan priorizado."
@@ -1135,7 +1115,7 @@ msgstr "Decides con datos del mes pasado, o con intuición."
 msgid "You decide with the answer."
 msgstr "Decides con la respuesta."
 
-#: lib/jido_codemode_web/live/landing_live.ex:640
+#: lib/jido_codemode_web/live/landing_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "You have access to the live agent. You have 1 conversation left."
 msgid_plural "You have access to the live agent. You have %{count} conversations left."
@@ -1147,7 +1127,7 @@ msgstr[1] "Tienes acceso al agente en vivo. Te quedan %{count} conversaciones."
 msgid "You have the data, but every report takes days and depends on one person. We connect your sources (Dynamics 365, Odoo, SAP Business One, Airtable) so anyone can ask and decide on the spot."
 msgstr "Tienes los datos, pero cada reporte tarda días y depende de una persona. Conectamos tus fuentes (Dynamics 365, Odoo, SAP Business One, Airtable) para que cualquiera pregunte y decida al instante."
 
-#: lib/jido_codemode_web/live/landing_live.ex:441
+#: lib/jido_codemode_web/live/landing_live.ex:410
 #, elixir-autogen, elixir-format
 msgid "You own the relationship and the pricing to your clients. We stay behind the scenes."
 msgstr "La relación y el precio a tus clientes son tuyos. Nosotros nos quedamos detrás."
@@ -1167,12 +1147,12 @@ msgstr "Esperas"
 msgid "Your ERP, spreadsheets and billing. Your data doesn't move: it gets connected."
 msgstr "El ERP, tus hojas de cálculo y la facturación. Tus datos no se mudan: se conectan."
 
-#: lib/jido_codemode_web/live/landing_live.ex:427
+#: lib/jido_codemode_web/live/landing_live.ex:396
 #, elixir-autogen, elixir-format
 msgid "Your brand"
 msgstr "Tu marca"
 
-#: lib/jido_codemode_web/live/landing_live.ex:439
+#: lib/jido_codemode_web/live/landing_live.ex:408
 #, elixir-autogen, elixir-format
 msgid "Your client, your call"
 msgstr "Tu cliente, tu decisión"
@@ -1204,7 +1184,7 @@ msgstr "Tu invitación ya no tiene conversaciones."
 msgid "Your invitation is no longer available."
 msgstr "Tu invitación ya no está disponible."
 
-#: lib/jido_codemode_web/live/landing_live.ex:428
+#: lib/jido_codemode_web/live/landing_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Your name, logo, and colors on the agent your clients use."
 msgstr "Tu nombre, logo y colores en el agente que usan tus clientes."
@@ -1214,7 +1194,7 @@ msgstr "Tu nombre, logo y colores en el agente que usan tus clientes."
 msgid "Your next report,"
 msgstr "Tu próximo reporte,"
 
-#: lib/jido_codemode_web/live/landing_live.ex:743
+#: lib/jido_codemode_web/live/landing_live.ex:712
 #, elixir-autogen, elixir-format
 msgid "Your team. We close with documentation and training, so it doesn't depend only on us."
 msgstr "Tu equipo. Cerramos con documentación y capacitación, para que no dependa solo de nosotros."
@@ -1223,11 +1203,6 @@ msgstr "Tu equipo. Cerramos con documentación y capacitación, para que no depe
 #, elixir-autogen, elixir-format
 msgid "by SuperDev"
 msgstr "por SuperDev"
-
-#: lib/jido_codemode_web/live/landing_live.ex:397
-#, elixir-autogen, elixir-format
-msgid "months to get the agent live"
-msgstr "meses para tener el agente en vivo"
 
 #: lib/jido_codemode_web/live/landing_live.ex:99
 #, elixir-autogen, elixir-format
@@ -1243,16 +1218,6 @@ msgstr "aviso de privacidad"
 #, elixir-autogen, elixir-format
 msgid "sample data"
 msgstr "datos de ejemplo"
-
-#: lib/jido_codemode_web/live/landing_live.ex:393
-#, elixir-autogen, elixir-format
-msgid "users in plain language"
-msgstr "usuarios en lenguaje natural"
-
-#: lib/jido_codemode_web/live/landing_live.ex:401
-#, elixir-autogen, elixir-format
-msgid "weeks and 12 deliverables, the full project"
-msgstr "semanas y 12 entregables, el proyecto completo"
 
 #: lib/jido_codemode_web/live/sandbox_live.ex:364
 #, elixir-autogen, elixir-format
@@ -1279,7 +1244,7 @@ msgstr "Nueva conversación"
 msgid "Pick an example or describe the decision you want to support."
 msgstr "Elige un ejemplo o describe la decisión que quieres respaldar."
 
-#: lib/jido_codemode_web/live/sandbox_live.ex:357
+#: lib/jido_codemode_web/live/sandbox_live.ex:358
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr "Equipo"

@@ -29,9 +29,6 @@ defmodule JidoCodemodeWeb.Links do
   @spec business_intelligence() :: String.t()
   def business_intelligence, do: "https://superdev.mx/business-intelligence/"
 
-  @spec case_study() :: String.t()
-  def case_study, do: "https://superdev.mx/projects/agente-de-datos"
-
   @doc """
   The invitation service's self-serve request form, served by its Worker on this
   host. `nil` until the service is connected: the page then offers the call.

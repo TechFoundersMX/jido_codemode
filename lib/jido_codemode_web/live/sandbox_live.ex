@@ -349,13 +349,13 @@ defmodule JidoCodemodeWeb.SandboxLive do
           <header class="grid max-w-3xl gap-2">
             <p class="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">
               {gettext("Live agent · sample data")}
-              <span
-                :if={@unlocked_by == :staff}
-                id="staff-badge"
-                class="ml-2 rounded-full bg-primary/10 px-2 py-0.5 normal-case tracking-normal"
-              >
-                {gettext("Team")} · {@staff_email}
-              </span>
+            </p>
+            <p
+              :if={@unlocked_by == :staff}
+              id="staff-badge"
+              class="w-fit max-w-full truncate rounded-full bg-primary/10 px-2.5 py-0.5 font-mono text-xs font-semibold text-primary"
+            >
+              {gettext("Team")} · {@staff_email}
             </p>
             <h1 class="text-3xl font-bold tracking-tight text-balance text-base-content sm:text-4xl">
               {gettext("Ask the sample distributor.")}
@@ -623,7 +623,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
                   <div
                     :if={not show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
-                    class="flex h-full min-h-48 items-center justify-center text-center"
+                    class="flex min-h-full items-center justify-center py-4 text-center"
                   >
                     <div class="max-w-xs space-y-2">
                       <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />

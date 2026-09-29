@@ -37,6 +37,17 @@ defmodule JidoCodemodeWeb.LandingLiveTest do
     refute has_element?(view, "#landing-footnote")
   end
 
+  test "the landing makes no client-case claim, in either language", %{conn: conn} do
+    for lang <- ["es", "en"] do
+      html = conn |> get("/?lang=#{lang}") |> html_response(200)
+      refute html =~ ~s(id="caso")
+      refute html =~ "Agente de Datos"
+      refute html =~ "Data Agent"
+      refute html =~ "Dynamics 365."
+      refute html =~ "projects/agente-de-datos"
+    end
+  end
+
   test "every exploratory-call link carries the landing's attribution", %{conn: conn} do
     {:ok, _view, html} = live(conn, ~p"/")
 

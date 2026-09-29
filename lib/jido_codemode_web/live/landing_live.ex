@@ -381,37 +381,6 @@ defmodule JidoCodemodeWeb.LandingLive do
                 </p>
               </div>
 
-              <div class="panel" id="caso">
-                <div class="case">
-                  <div class="sec-head">
-                    <p class="eyebrow">{gettext("Case")}</p>
-                    <h2>{gettext("Data Agent.")}</h2>
-                  </div>
-                  <div class="body">
-                    <dl class="case-stats">
-                      <div>
-                        <dt>{gettext("users in plain language")}</dt>
-                        <dd>42</dd>
-                      </div>
-                      <div>
-                        <dt>{gettext("months to get the agent live")}</dt>
-                        <dd>&lt; 2</dd>
-                      </div>
-                      <div>
-                        <dt>{gettext("weeks and 12 deliverables, the full project")}</dt>
-                        <dd>16</dd>
-                      </div>
-                    </dl>
-                    <p class="lede">
-                      {gettext(
-                        "From delivery drivers to the CEO, they query business data in plain language, from their phones too. The full project included governance and training. Source ERP: Dynamics 365."
-                      )}
-                    </p>
-                    <p><a class="textlink" href={Links.case_study()}>{gettext("See the case")}</a></p>
-                  </div>
-                </div>
-              </div>
-
               <div :if={loc == "en"} class="panel" id="partners">
                 <div class="sec-head">
                   <p class="eyebrow">{gettext("For partners")}</p>
