@@ -418,8 +418,8 @@ footer.site { padding-block: 18px; }
 :root[data-theme="dark"][data-bg="tinta"]   { --paper: #151311; --sheet: #1f1c19; --well: #292520; --band-bg: #292520; --rule: rgba(245, 238, 228, .12); --ink: #f3eee6; --ink-soft: #b8afa3; --ink-faint: #958b7f; }
 .review button i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid rgba(127, 127, 127, .6); }
 </style>
-<script>/* Chosen look: Hoja de cálculo palette on the Niebla background (Alex, 29 Sep). Dark mode still follows the device. */
-document.documentElement.dataset.palette = "hoja"; document.documentElement.dataset.bg = "niebla";</script>
+<script>/* Chosen look: Hoja de cálculo palette on the Hielo background (Alex, 29 Sep). Dark mode still follows the device. */
+document.documentElement.dataset.palette = "hoja"; document.documentElement.dataset.bg = "hielo";</script>
 
 <div class="review" role="region" aria-label="Controles del borrador">
   <div class="container">
@@ -444,9 +444,9 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
       <button type="button" data-set-bg="" aria-pressed="false">Según paleta</button>
       <button type="button" data-set-bg="blanco" aria-pressed="false"><i style="background:#ffffff"></i>Blanco</button>
       <button type="button" data-set-bg="crema" aria-pressed="false"><i style="background:#f8f4ea"></i>Crema</button>
-      <button type="button" data-set-bg="niebla" aria-pressed="true"><i style="background:#eef1f5"></i>Niebla ✓</button>
+      <button type="button" data-set-bg="niebla" aria-pressed="false"><i style="background:#eef1f5"></i>Niebla</button>
       <button type="button" data-set-bg="salvia" aria-pressed="false"><i style="background:#eef3ee"></i>Salvia</button>
-      <button type="button" data-set-bg="hielo" aria-pressed="false"><i style="background:#eef3fc"></i>Hielo</button>
+      <button type="button" data-set-bg="hielo" aria-pressed="true"><i style="background:#eef3fc"></i>Hielo ✓</button>
       <button type="button" data-set-bg="arena" aria-pressed="false"><i style="background:#ebe4d6"></i>Arena</button>
       <button type="button" data-set-bg="grafito" data-dark aria-pressed="false"><i style="background:#121417"></i>Grafito</button>
       <button type="button" data-set-bg="noche" data-dark aria-pressed="false"><i style="background:#0b1220"></i>Azul noche</button>
@@ -463,6 +463,7 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
         <a class="link" href="#pruebalo" data-i18n="nav_try">Pruébalo</a>
         <a class="link" href="#como-funciona" data-i18n="nav_how">Cómo funciona</a>
         <a class="link" href="#ti" data-i18n="nav_it">Para TI</a>
+        <a class="link" href="#partners" data-i18n="nav_partners" data-only-lang="en" hidden>Partners</a>
         <a class="link" href="#preguntas" data-i18n="nav_faq">Preguntas</a>
       </div>
       <div class="lang" role="group" aria-label="Idioma">
@@ -564,14 +565,14 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
           <div class="state" data-when="public">
             <p class="status"><i></i><span data-i18n="a_pub_status">Agente en vivo · por invitación</span></p>
             <h3 data-i18n="a_pub_h">Hazle tus propias preguntas.</h3>
-            <p data-i18n="a_pub_body">Pide acceso con tus datos y entras al momento: tres conversaciones de prueba con la distribuidora de ejemplo.</p>
+            <p data-i18n="a_pub_body">Pide acceso con tus datos y entras al momento: tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo.</p>
             <div><button type="button" class="btn btn-secondary" data-set-mode="request" data-i18n="a_pub_cta">Pide acceso al agente en vivo</button></div>
             <p class="fineprint" data-i18n="a_pub_fine">Gratis. Te enviamos un enlace para volver a entrar desde otro dispositivo.</p>
           </div>
           <div class="state" data-when="request" hidden>
             <p class="status"><i></i><span data-i18n="a_req_status">Acceso al agente en vivo</span></p>
             <h3 data-i18n="a_req_h">Prueba el agente en vivo.</h3>
-            <p data-i18n="a_req_body">Tienes tres conversaciones de prueba con la distribuidora de ejemplo, y entras en cuanto envías tus datos.</p>
+            <p data-i18n="a_req_body">Tienes tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo, y entras en cuanto envías tus datos.</p>
             <form class="reqform" id="req-form" novalidate>
               <label class="field" for="req-name" data-i18n="a_req_name">Tu nombre</label>
               <input id="req-name" name="name" type="text" autocomplete="name" required>
@@ -590,7 +591,7 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
             <p class="fineprint"><span data-i18n="a_req_call">¿Prefieres verlo con los datos de tu empresa?</span> <a class="textlink" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a></p>
           </div>
           <div class="state" data-when="invited" hidden>
-            <p class="status"><i></i><span data-i18n="a_inv_status">Tienes acceso al agente en vivo. Te quedan 3 conversaciones.</span></p>
+            <p class="status"><i></i><span data-i18n="a_inv_status">Tienes acceso al agente en vivo. Te quedan 3 conversaciones y 7 días.</span></p>
             <h3 data-i18n="a_inv_h">Pregúntale a la distribuidora de ejemplo.</h3>
             <div class="ask">
               <label for="ask-q" class="fineprint" data-i18n="a_inv_label">Tu pregunta</label>
@@ -687,6 +688,24 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
       </div>
     </div>
         </div>
+        <div class="panel" id="partners" data-only-lang="en" hidden>
+
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="w_eyebrow">For partners</p>
+        <h2 id="partners-h" data-i18n="w_h2">Offer it under your brand.</h2>
+        <p class="lede" data-i18n="w_lede">Agencies, consultancies, and software resellers can offer Agentic BI to their clients as their own. We build and run the agent. You keep the client relationship.</p>
+      </div>
+      <dl class="it">
+        <div><dt data-i18n="w_1t">Your brand</dt><dd data-i18n="w_1b">Your name, logo, and colors on the agent your clients use.</dd></div>
+        <div><dt data-i18n="w_2t">We do the build</dt><dd data-i18n="w_2b">We connect each client's data, set up the agent, and support it after launch.</dd></div>
+        <div><dt data-i18n="w_3t">Your client, your call</dt><dd data-i18n="w_3b">You own the relationship and the pricing to your clients. We stay behind the scenes.</dd></div>
+      </dl>
+      <div class="process-cta cta-row">
+        <a class="btn btn-primary" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a>
+        <span class="cta-note" data-i18n="cta_note">30 min · gratis · sin compromiso</span>
+      </div>
+
+        </div>
         <div class="panel" id="proceso">
 
       <div class="sec-head">
@@ -773,6 +792,13 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
     by: ["por SuperDev", "by SuperDev"],
     nav_try: ["Pruébalo", "Try it"], nav_how: ["Cómo funciona", "How it works"], nav_it: ["Para TI", "For IT"], nav_faq: ["Preguntas", "FAQ"],
     nav_cta: ["Llamada exploratoria", "Exploratory call"],
+    nav_partners: ["Socios", "Partners"],
+    w_eyebrow: ["Para socios", "For partners"],
+    w_h2: ["Ofrécelo con tu marca.", "Offer it under your brand."],
+    w_lede: ["Agencias, consultoras y revendedores de software pueden ofrecer Agentic BI a sus clientes como propio. Nosotros construimos y operamos el agente. Tú conservas la relación con el cliente.", "Agencies, consultancies, and software resellers can offer Agentic BI to their clients as their own. We build and run the agent. You keep the client relationship."],
+    w_1t: ["Tu marca", "Your brand"], w_1b: ["Tu nombre, logo y colores en el agente que usan tus clientes.", "Your name, logo, and colors on the agent your clients use."],
+    w_2t: ["Nosotros lo construimos", "We do the build"], w_2b: ["Conectamos los datos de cada cliente, configuramos el agente y le damos soporte después del lanzamiento.", "We connect each client's data, set up the agent, and support it after launch."],
+    w_3t: ["Tu cliente, tu decisión", "Your client, your call"], w_3b: ["La relación y el precio a tus clientes son tuyos. Nosotros nos quedamos detrás.", "You own the relationship and the pricing to your clients. We stay behind the scenes."],
     hero_eyebrow: ["Agentic BI · IA sobre los datos de tu empresa", "Agentic BI · AI on your company's data"],
     hero_h1: ["Tu próximo reporte, <span class=\"hl\">en una pregunta.</span>", "Your next report, <span class=\"hl\">one question away.</span>"],
     g_eyebrow: ["Lo que puedes preguntarle", "What you can ask"],
@@ -811,12 +837,12 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
     r_note: ["Datos ficticios. Todavía no es tu operación.", "Fictitious data. Not your operation yet."],
     a_pub_status: ["Agente en vivo · por invitación", "Live agent · by invitation"],
     a_pub_h: ["Hazle tus propias preguntas.", "Ask it your own questions."],
-    a_pub_body: ["Pide acceso con tus datos y entras al momento: tres conversaciones de prueba con la distribuidora de ejemplo.", "Request access with your details and you're in right away: three trial conversations with the sample distributor."],
+    a_pub_body: ["Pide acceso con tus datos y entras al momento: tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo.", "Request access with your details and you're in right away: three trial conversations over 7 days with the sample distributor."],
     a_pub_cta: ["Pide acceso al agente en vivo", "Request access to the live agent"],
     a_pub_fine: ["Gratis. Te enviamos un enlace para volver a entrar desde otro dispositivo.", "Free. We email you a link to come back from another device."],
     a_req_status: ["Acceso al agente en vivo", "Live agent access"],
     a_req_h: ["Prueba el agente en vivo.", "Try the live agent."],
-    a_req_body: ["Tienes tres conversaciones de prueba con la distribuidora de ejemplo, y entras en cuanto envías tus datos.", "You get three trial conversations with the sample distributor, and you're in as soon as you send your details."],
+    a_req_body: ["Tienes tres conversaciones de prueba durante 7 días con la distribuidora de ejemplo, y entras en cuanto envías tus datos.", "You get three trial conversations over 7 days with the sample distributor, and you're in as soon as you send your details."],
     a_req_name: ["Tu nombre", "Your name"],
     a_req_email: ["Tu correo de trabajo", "Your work email"],
     a_req_email_hint: ["Te enviamos ahí un enlace para volver a entrar desde otro dispositivo.", "We'll send a link there so you can come back from another device."],
@@ -828,7 +854,7 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
     a_req_followup: ["Estoy de acuerdo con que SuperDev guarde mis datos y me contacte sobre este servicio.", "I agree that SuperDev may keep my details and contact me about this service."],
     a_req_submit: ["Entrar a la demo", "Enter the demo"],
     a_req_call: ["¿Prefieres verlo con los datos de tu empresa?", "Rather see it with your company's data?"],
-    a_inv_status: ["Tienes acceso al agente en vivo. Te quedan 3 conversaciones.", "You have access to the live agent. You have 3 conversations left."],
+    a_inv_status: ["Tienes acceso al agente en vivo. Te quedan 3 conversaciones y 7 días.", "You have access to the live agent. You have 3 conversations and 7 days left."],
     a_inv_h: ["Pregúntale a la distribuidora de ejemplo.", "Ask the sample distributor."],
     a_inv_label: ["Tu pregunta", "Your question"],
     a_inv_ph: ["Pregunta sobre ingresos, clientes, productos o tendencias", "Ask about revenue, customers, products, or trends"],
@@ -1041,6 +1067,7 @@ document.documentElement.dataset.palette = "hoja"; document.documentElement.data
     document.querySelectorAll("[data-i18n]").forEach(el => { const t = T[el.dataset.i18n]; if (t) el.textContent = t[i]; });
     document.querySelectorAll("[data-i18n-html]").forEach(el => { const t = T[el.dataset.i18nHtml]; if (t) el.innerHTML = t[i]; });
     document.querySelectorAll("[data-i18n-ph]").forEach(el => { const t = T[el.dataset.i18nPh]; if (t) el.placeholder = t[i]; });
+    document.querySelectorAll("[data-only-lang]").forEach(el => { el.hidden = el.dataset.onlyLang !== lang; });
     document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang)));
     const acc = document.querySelector(".access");
     acc.dataset.mode = mode;
