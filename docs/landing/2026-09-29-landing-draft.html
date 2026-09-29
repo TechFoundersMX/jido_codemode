@@ -100,12 +100,45 @@ section.band { padding-block: 88px; border-top: 1px solid var(--rule); }
 section.band.tint { background: var(--sheet); }
 
 /* Hero */
-.hero { padding-block: 64px 88px; position: relative; isolation: isolate; overflow: hidden; }
-.hero::before { content: ""; position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(60% 70% at 88% 18%, var(--hero-tint-a), transparent 70%),
-              radial-gradient(45% 60% at 70% 95%, var(--hero-tint-b), transparent 70%),
-              radial-gradient(var(--dot) 1px, transparent 1.2px) 0 0 / 22px 22px; }
-h1 .hl { color: var(--accent); }
+/* Spreadsheet hero: the report being replaced is the stage. */
+.hero { padding-block: 40px 72px; }
+.book { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(20,22,27,.05), 0 24px 48px -28px rgba(20,22,27,.28); }
+:root[data-theme="dark"] .book { box-shadow: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .book { box-shadow: none; } }
+.fbar { display: grid; grid-template-columns: 64px 40px 1fr; align-items: stretch; border-bottom: 1px solid var(--rule); font-family: var(--font-mono); font-size: 14px; min-height: 44px; }
+.fbar > * { display: flex; align-items: center; padding-inline: 12px; min-width: 0; }
+.fbar .namebox { border-right: 1px solid var(--rule); color: var(--ink-soft); justify-content: center; }
+.fbar .fx { border-right: 1px solid var(--rule); color: var(--ink-faint); font-style: italic; justify-content: center; }
+.fbar .formula { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fbar .formula .eq { color: var(--accent); margin-right: 6px; }
+.colhead { display: grid; grid-template-columns: 44px repeat(12, 120px); border-bottom: 1px solid var(--rule); background: var(--well); font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); overflow: hidden; }
+.colhead span { height: 26px; display: grid; place-items: center; border-right: 1px solid var(--rule); }
+.colhead span.on { color: var(--accent); background: var(--accent-wash); }
+.canvas { display: grid; grid-template-columns: 44px 1fr; }
+.rows { margin: 0; padding: 0; list-style: none; background: var(--well); border-right: 1px solid var(--rule); font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); overflow: hidden; }
+.rows li { height: 36px; display: grid; place-items: center; border-bottom: 1px solid var(--rule); }
+.rows li.on { color: var(--accent); background: var(--accent-wash); }
+.cells { --cell: color-mix(in srgb, var(--ink) 6%, transparent);
+  background-image: linear-gradient(var(--cell) 1px, transparent 1px), linear-gradient(90deg, var(--cell) 1px, transparent 1px);
+  background-size: 120px 36px; background-position: -1px -1px;
+  display: grid; grid-template-columns: 13fr 10fr; gap: 36px 48px; align-items: start; padding: 36px 36px 36px 40px; min-width: 0; }
+.cells .copy { display: grid; gap: 20px; min-width: 0; }
+.cells .copy .lede, .cells .copy .cta-note { background: color-mix(in srgb, var(--sheet) 86%, transparent); }
+h1 .hl { position: relative; color: var(--ink); background: var(--accent-wash); outline: 2px solid var(--accent); outline-offset: 2px; padding-inline: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+h1 .hl::after { content: ""; position: absolute; right: -7px; bottom: -7px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--sheet); }
+.obj { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; display: grid; gap: 12px; padding: 14px; min-width: 0; position: relative; }
+.obj::before { content: ""; position: absolute; inset: -4px; border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 6px; pointer-events: none; }
+.obj .objhead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); }
+.obj .objhead b { color: var(--ink); font-weight: 500; }
+.obj .answer { font-size: 15px; }
+.obj .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tabs { display: flex; gap: 0; border-top: 1px solid var(--rule); background: var(--well); font-family: var(--font-mono); font-size: 12px; overflow-x: auto; }
+.tabs span { padding: 8px 14px; border-right: 1px solid var(--rule); color: var(--ink-faint); white-space: nowrap; }
+.tabs .old { text-decoration: line-through; text-decoration-color: var(--data-4); }
+.tabs .now { background: var(--sheet); color: var(--accent); box-shadow: inset 0 2px 0 var(--accent); font-weight: 500; }
+@media (max-width: 900px) { .cells { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .colhead { display: none; } .canvas { grid-template-columns: 1fr; } .rows { display: none; } .cells { padding: 24px 18px; } .fbar { grid-template-columns: 48px 34px 1fr; font-size: 13px; } }
+h1 .hl-plain { color: var(--accent); }
 .dots { display: flex; gap: 6px; }
 .dots button { width: 22px; height: 6px; border-radius: 999px; border: 0; padding: 0; background: var(--rule); cursor: pointer; }
 .dots button[aria-current="true"] { background: var(--accent); }
@@ -162,9 +195,6 @@ svg.chart .pt { fill: var(--sheet); stroke: var(--accent); stroke-width: 2; }
 .ex .prompt { background: var(--accent-wash); color: var(--ink); border-radius: 12px 12px 12px 4px; padding: 10px 12px; font-size: 15px; font-weight: 500; }
 .ex .say { font-size: 14px; color: var(--ink-soft); }
 .ex .viz { min-height: 150px; display: grid; align-content: center; }
-.hero .grid { display: grid; grid-template-columns: 11fr 9fr; gap: 48px; align-items: center; }
-.hero .copy { display: grid; gap: 22px; min-width: 0; }
-@media (max-width: 900px) { .hero .grid { grid-template-columns: 1fr; } }
 
 .query { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: 18px; display: grid; gap: 14px; box-shadow: 0 1px 2px rgba(20,22,27,.04), 0 12px 32px -12px rgba(20,22,27,.18); min-width: 0; }
 :root[data-theme="dark"] .query { box-shadow: none; }
@@ -349,25 +379,38 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
 </header>
 
 <main id="top">
-  <section class="hero">
-    <div class="container grid">
-      <div class="copy">
-        <p class="eyebrow" data-i18n="hero_eyebrow">Agentic BI · IA sobre los datos de tu empresa</p>
-        <h1 data-i18n-html="hero_h1">Tu próximo reporte, <span class="hl">en una pregunta.</span></h1>
-        <p class="lede" data-i18n="hero_lede">Tienes los datos, pero cada reporte tarda días y depende de una persona. Conectamos tus fuentes (Dynamics 365, Odoo, SAP Business One, Airtable) para que cualquiera pregunte y decida al instante.</p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a>
-          <a class="textlink" href="#pruebalo" data-i18n="cta_demo">Ver demo en vivo</a>
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="container">
+      <div class="book">
+        <div class="fbar">
+          <span class="namebox">B4</span>
+          <span class="fx" aria-hidden="true">fx</span>
+          <span class="formula" aria-live="polite"><span class="eq" aria-hidden="true">=</span><span data-hero-q>¿Cuáles son las 3 categorías que más venden?</span></span>
         </div>
-        <p class="cta-note" data-i18n="cta_note">30 min · gratis · sin compromiso</p>
+        <div class="colhead" aria-hidden="true"><span></span><span>A</span><span class="on">B</span><span class="on">C</span><span class="on">D</span><span class="on">E</span><span>F</span><span>G</span><span>H</span><span>I</span><span>J</span><span>K</span><span>L</span></div>
+        <div class="canvas">
+          <ol class="rows" aria-hidden="true"><li>1</li><li>2</li><li>3</li><li class="on">4</li><li class="on">5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li></ol>
+          <div class="cells">
+            <div class="copy">
+              <p class="eyebrow" data-i18n="hero_eyebrow">Agentic BI · IA sobre los datos de tu empresa</p>
+              <h1 id="hero-h" data-i18n-html="hero_h1">Tu próximo reporte, <span class="hl">en una pregunta.</span></h1>
+              <p class="lede" data-i18n="hero_lede">Tienes los datos, pero cada reporte tarda días y depende de una persona. Conectamos tus fuentes (Dynamics 365, Odoo, SAP Business One, Airtable) para que cualquiera pregunte y decida al instante.</p>
+              <div class="cta-row">
+                <a class="btn btn-primary" href="https://superdev.mx/calendar/" data-i18n="cta_primary">Agenda tu llamada exploratoria</a>
+                <a class="textlink" href="#pruebalo" data-i18n="cta_demo">Ver demo en vivo</a>
+              </div>
+              <p class="cta-note" data-i18n="cta_note">30 min · gratis · sin compromiso</p>
+            </div>
+            <figure class="query obj" aria-label="Ejemplo de consulta">
+              <div class="objhead"><b data-hero-kind>Comparación</b><span><span class="num" data-i18n="q_time">4 s</span> · <span data-i18n="q_sample">datos de ejemplo</span></span></div>
+              <p class="answer" data-hero-a></p>
+              <div class="q-chart" data-hero-chart></div>
+              <div class="foot"><figcaption class="caption" data-i18n="q_caption">Datos de ejemplo de una distribuidora ficticia.</figcaption><div class="dots" data-hero-dots role="group" aria-label="Ejemplos"></div></div>
+            </figure>
+          </div>
+        </div>
+        <div class="tabs" aria-hidden="true"><span data-i18n="tab_1">Ventas_sept</span><span data-i18n="tab_2">Ventas_sept (2)</span><span class="old" data-i18n="tab_3">Reporte_FINAL_v7</span><span class="now" data-i18n="tab_4">Pregunta</span><span>+</span></div>
       </div>
-      <figure class="query" aria-label="Ejemplo de consulta">
-        <div class="top"><span><span class="dot"></span><span data-i18n="q_top">Agente de análisis · datos de ejemplo</span></span><span class="num" data-i18n="q_time">4 s</span></div>
-        <p class="bubble" data-hero-q>¿Cuáles son las 3 categorías que más venden?</p>
-        <p class="answer" data-hero-a></p>
-        <div class="q-chart" data-hero-chart></div>
-        <div class="top"><figcaption class="caption" data-i18n="q_caption">Datos de ejemplo de una distribuidora ficticia.</figcaption><div class="dots" data-hero-dots role="group" aria-label="Ejemplos"></div></div>
-      </figure>
     </div>
   </section>
 
@@ -642,6 +685,8 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     cta_secondary: ["Haz la evaluación preliminar", "Take the preliminary assessment"],
     cta_secondary_note: ["3 min · 14 preguntas · resultado al instante", "3 min · 14 questions · instant result"],
     q_top: ["Agente de análisis · datos de ejemplo", "Analysis agent · sample data"], q_time: ["4 s", "4 s"],
+    q_sample: ["datos de ejemplo", "sample data"],
+    tab_1: ["Ventas_sept", "Sales_Sept"], tab_2: ["Ventas_sept (2)", "Sales_Sept (2)"], tab_3: ["Reporte_FINAL_v7", "Report_FINAL_v7"], tab_4: ["Pregunta", "Question"],
     q_question: ["¿Cuáles son las 3 categorías que más venden?", "Which 3 categories sell the most?"],
     q_answer: ["Bebidas lidera con $4,779,116.56 MXN, seguida de Lácteos y Dulces y postres.", "Beverages leads with $267,868.18, followed by Dairy Products and Confections."],
     q_caption: ["Datos de ejemplo de una distribuidora ficticia.", "Sample data from a fictitious distributor."],
@@ -852,6 +897,7 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
     heroIdx = i;
     const ex = EX.find(e => e.id === HERO[i]);
     const q = document.querySelector("[data-hero-q]"), a = document.querySelector("[data-hero-a]"), ch = document.querySelector("[data-hero-chart]");
+    const kind = document.querySelector("[data-hero-kind]"); if (kind) kind.textContent = L(ex.kind);
     document.querySelectorAll("[data-hero-dots] button").forEach((b, j) => b.setAttribute("aria-current", String(j === i)));
     clearInterval(typing);
     const text = L(ex.q);
