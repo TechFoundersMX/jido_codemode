@@ -37,6 +37,13 @@
   --accent: #1d3f94; --accent-wash: #e6ecfa; --hl: #ffe066; --data-2: #0f8b8d; --data-3: #e0a100; --data-4: #e0524a; --data-5: #7a5af8; --well: #ecebe4; --band-bg: #101a2c; --band-fg: #f5f4ef; }
 :root[data-palette="superdev"] { --paper: #faf7f1; --sheet: #fffdf9; --ink: #1c1917; --ink-soft: #57534e; --ink-faint: #6e645b; --rule: rgba(28, 25, 23, .10);
   --accent: #b4452a; --accent-wash: #f3e4dc; --data-2: #2f6f73; --data-3: #c28a2c; --data-4: #7d5ba6; --data-5: #4a6fa5; --well: #f4eee3; --band-bg: #1c1917; --band-fg: #faf7f1; }
+/* Background shades for review. Light shades sit before the dark block so dark mode still wins. */
+:root[data-bg="blanco"] { --paper: #ffffff; --sheet: #ffffff; --well: #f3f4f6; }
+:root[data-bg="crema"]  { --paper: #f8f4ea; --sheet: #fffdf7; --well: #eee7d6; }
+:root[data-bg="niebla"] { --paper: #eef1f5; --sheet: #ffffff; --well: #e1e6ee; }
+:root[data-bg="salvia"] { --paper: #eef3ee; --sheet: #fbfdfb; --well: #dfe9e0; }
+:root[data-bg="hielo"]  { --paper: #eef3fc; --sheet: #ffffff; --well: #dee7f6; }
+:root[data-bg="arena"]  { --paper: #ebe4d6; --sheet: #faf7ef; --well: #dfd6c3; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0e1014; --sheet: #161920; --ink: #eef0f4; --ink-soft: #aab0bd; --ink-faint: #8a91a0;
@@ -405,6 +412,11 @@ footer.site { padding-block: 18px; }
 :root[data-theme="dark"][data-palette="hoja"] { --accent: #37c98e; --accent-wash: #0f2a1f; --hl: #0f2a1f; --data-2: #7aa2ff; --data-3: #f5c542; --data-4: #ff7a70; }
 :root[data-theme="dark"][data-palette="resaltador"] { --accent: #8fb0ff; --accent-wash: #18223b; --hl: #4d4200; --data-2: #3cc3c5; --data-3: #f5c542; --data-4: #ff7a70; }
 :root[data-theme="dark"][data-palette="superdev"] { --accent: #e0785f; --accent-wash: #3a2019; --hl: #3a2019; --data-2: #5fb3b8; --data-3: #e0b25c; --data-4: #b294dd; }
+/* Dark background shades (set data-theme="dark" too) */
+:root[data-theme="dark"][data-bg="grafito"] { --paper: #121417; --sheet: #1b1e23; --well: #23272e; --band-bg: #23272e; }
+:root[data-theme="dark"][data-bg="noche"]   { --paper: #0b1220; --sheet: #121b2e; --well: #1a2439; --band-bg: #1a2439; --rule: rgba(214, 226, 255, .12); }
+:root[data-theme="dark"][data-bg="tinta"]   { --paper: #151311; --sheet: #1f1c19; --well: #292520; --band-bg: #292520; --rule: rgba(245, 238, 228, .12); --ink: #f3eee6; --ink-soft: #b8afa3; --ink-faint: #958b7f; }
+.review button i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 1px solid rgba(127, 127, 127, .6); }
 </style>
 
 <div class="review" role="region" aria-label="Controles del borrador">
@@ -425,6 +437,18 @@ footer.site { padding-block: 18px; }
       <button type="button" data-set-palette="hoja" aria-pressed="false">Hoja de cálculo</button>
       <button type="button" data-set-palette="resaltador" aria-pressed="false">Tinta y resaltador</button>
       <button type="button" data-set-palette="superdev" aria-pressed="false">Marca SuperDev</button>
+    </span>
+    <span class="grp">Fondo
+      <button type="button" data-set-bg="" aria-pressed="true">Según paleta</button>
+      <button type="button" data-set-bg="blanco" aria-pressed="false"><i style="background:#ffffff"></i>Blanco</button>
+      <button type="button" data-set-bg="crema" aria-pressed="false"><i style="background:#f8f4ea"></i>Crema</button>
+      <button type="button" data-set-bg="niebla" aria-pressed="false"><i style="background:#eef1f5"></i>Niebla</button>
+      <button type="button" data-set-bg="salvia" aria-pressed="false"><i style="background:#eef3ee"></i>Salvia</button>
+      <button type="button" data-set-bg="hielo" aria-pressed="false"><i style="background:#eef3fc"></i>Hielo</button>
+      <button type="button" data-set-bg="arena" aria-pressed="false"><i style="background:#ebe4d6"></i>Arena</button>
+      <button type="button" data-set-bg="grafito" data-dark aria-pressed="false"><i style="background:#121417"></i>Grafito</button>
+      <button type="button" data-set-bg="noche" data-dark aria-pressed="false"><i style="background:#0b1220"></i>Azul noche</button>
+      <button type="button" data-set-bg="tinta" data-dark aria-pressed="false"><i style="background:#151311"></i>Tinta cálida</button>
     </span>
   </div>
 </div>
@@ -1033,6 +1057,14 @@ footer.site { padding-block: 18px; }
       const v = pal.dataset.setPalette;
       if (v) document.documentElement.dataset.palette = v; else delete document.documentElement.dataset.palette;
       document.querySelectorAll("[data-set-palette]").forEach(b => b.setAttribute("aria-pressed", String(b === pal)));
+      return;
+    }
+    const bg = e.target.closest("[data-set-bg]");
+    if (bg) {
+      const root = document.documentElement, v = bg.dataset.setBg;
+      if (v) { root.dataset.bg = v; root.dataset.theme = bg.hasAttribute("data-dark") ? "dark" : "light"; }
+      else { delete root.dataset.bg; delete root.dataset.theme; }
+      document.querySelectorAll("[data-set-bg]").forEach(b => b.setAttribute("aria-pressed", String(b === bg)));
       return;
     }
     const m = e.target.closest("[data-set-mode]");
