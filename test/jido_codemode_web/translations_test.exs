@@ -33,19 +33,19 @@ defmodule JidoCodemodeWeb.TranslationsTest do
     {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/demo")
 
     for spanish <- [
-          "Convierte preguntas de negocio en análisis claros",
+          "Pregúntale a la distribuidora de ejemplo.",
           "Aquí aparecerá tu análisis",
           "Agente de análisis",
-          "Tendencia mensual de ingresos",
+          "¿Cuáles son las 3 categorías que más venden?",
           "Contraseña de la demo"
         ] do
       assert html =~ spanish
     end
 
     for english <- [
-          "Turn business questions into clear analysis",
+          "Ask the sample distributor.",
           "Your analysis will appear here",
-          "Monthly revenue trend",
+          "Which 3 categories sell the most?",
           "Demo password",
           "How it works"
         ] do

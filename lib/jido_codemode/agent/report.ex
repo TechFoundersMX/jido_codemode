@@ -330,15 +330,16 @@ defmodule JidoCodemode.Agent.Report do
     |> Vl.config(
       background: "transparent",
       font: "Geist",
-      mark: [color: "#2563EB"],
+      # The landing's palette (Hoja de cálculo): green first, then blue, amber, red, violet.
+      mark: [color: "#0B7A53"],
       view: [stroke: nil],
-      range: [category: ["#2563EB", "#0F8B8D", "#D97706", "#0891B2", "#71717A"]],
+      range: [category: ["#0B7A53", "#2F5FD0", "#E0A100", "#D14A3C", "#7A5AF8"]],
       legend: [title: nil, orient: :bottom, label_font: "Geist", label_font_size: 11],
       axis: [
-        grid_color: "#DCE1E8",
+        grid_color: "#D6E0EF",
         domain: false,
-        tick_color: "#DCE1E8",
-        label_color: "#52525B",
+        tick_color: "#D6E0EF",
+        label_color: "#66706A",
         label_font: "Geist",
         title_font: "Geist"
       ]
