@@ -397,6 +397,37 @@ section.band.explore { padding-block: 20px 32px; }
 @media (max-width: 820px) { .final .container { grid-template-columns: 1fr; } .final .cta-row { justify-content: flex-start; } .final .cta-note { grid-column: 1; text-align: left; } }
 footer.site { padding-block: 18px; }
 
+/* Banner hero: short and wide (about 340px tall on desktop). */
+.hero { padding-block: 12px 20px; }
+.fbar { min-height: 34px; font-size: 13px; }
+.colhead span { height: 20px; font-size: 11px; }
+.rows li { height: 30px; font-size: 11px; }
+.cells { background-size: 120px 30px; padding: 14px 22px; gap: 14px clamp(24px, 3cqi, 40px); align-items: center; }
+.cells .copy { gap: 10px; }
+.cells .eyebrow { display: none; }
+.cells h1 { font-size: clamp(1.6rem, 1.1rem + 1.5cqi, 2.4rem); max-width: 22ch; }
+.cells .lede { font-size: .95rem; max-width: 62ch; }
+.cells .cta-row { gap: 10px 16px; }
+.cells .btn { padding: 9px 14px; font-size: 15px; }
+.cells .cta-note { margin-top: -4px !important; font-size: 13px; }
+.obj { gap: 6px; padding: 10px 12px; }
+.obj .objhead { font-size: 11px; }
+.obj .answer { font-size: 13px; line-height: 1.4; }
+.obj .q-chart { min-height: 104px; }
+.obj svg.chart { max-height: 104px; }
+.obj .bar .track { height: 18px; }
+.obj .bars { gap: 6px; }
+.obj .bar { font-size: 12px; }
+.obj .donut { grid-template-columns: 96px 1fr; }
+.obj .donut svg { width: 96px; height: 96px; }
+.obj .legend { font-size: 12px; gap: 4px; }
+.obj .mini-table { font-size: 12px; }
+.obj .mini-table td { padding: 2px 0; }
+.obj .caption { font-size: 11px; }
+.tabs span { padding: 5px 12px; font-size: 11px; }
+@container hero (min-width: 700px) { .cells { grid-template-columns: minmax(0, 13fr) minmax(0, 10fr); } }
+@container hero (max-width: 699px) { .obj { max-width: 560px; } }
+
 /* Palette accents in dark mode */
 @media (prefers-color-scheme: dark) {
   :root[data-palette="hoja"]:not([data-theme="light"]) { --accent: #37c98e; --accent-wash: #0f2a1f; --hl: #0f2a1f; --data-2: #7aa2ff; --data-3: #f5c542; --data-4: #ff7a70; }
@@ -979,7 +1010,8 @@ footer.site { padding-block: 18px; }
     document.querySelectorAll("[data-hero-dots] button").forEach((b, j) => b.setAttribute("aria-current", String(j === i)));
     clearInterval(typing);
     const text = L(ex.q);
-    const finish = () => { q.textContent = text; a.textContent = L(ex.a); a.classList.remove("fade-in"); void a.offsetWidth; a.classList.add("fade-in"); ch.innerHTML = viz(ex); if (animate) play(ch); };
+    const heroEx = ex.type === "table" ? Object.assign({}, ex, { rows: ex.rows.slice(0, 4) }) : ex;
+    const finish = () => { q.textContent = text; a.textContent = L(ex.a); a.classList.remove("fade-in"); void a.offsetWidth; a.classList.add("fade-in"); ch.innerHTML = viz(heroEx); if (animate) play(ch); };
     if (!animate) { finish(); return; }
     let n = 0; a.textContent = ""; ch.innerHTML = ""; q.innerHTML = '<span class="caret"></span>';
     typing = setInterval(() => { n += 2; q.innerHTML = text.slice(0, n) + '<span class="caret"></span>'; if (n >= text.length) { clearInterval(typing); setTimeout(finish, 350); } }, 28);
