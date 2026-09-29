@@ -11,6 +11,7 @@ defmodule JidoCodemode.Application do
 
     children = [
       JidoCodemode.Agent.ReportStore,
+      JidoCodemode.DemoAccess.Tokens,
       {Task.Supervisor, name: JidoCodemode.Agent.TaskSupervisor},
       JidoCodemode.Jido,
       {Phoenix.PubSub, name: JidoCodemode.PubSub},

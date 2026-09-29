@@ -1,9 +1,16 @@
 defmodule JidoCodemode.Agent.ReportStore do
-  @moduledoc false
+  @moduledoc """
+  In-memory store of generated reports, keyed by the conversation's session id.
+
+  Nothing is written to disk. Reports older than `@ttl_seconds` (24 hours) are
+  deleted every `@prune_every`, and a restart clears everything.
+  """
 
   use GenServer
 
   @table __MODULE__
+  @ttl_seconds 24 * 60 * 60
+  @prune_every :timer.minutes(15)
 
   def start_link(_opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -41,6 +48,20 @@ defmodule JidoCodemode.Agent.ReportStore do
 
   def latest_for_session(_session_id), do: :error
 
+  @doc "Deletes reports stored more than 24 hours before `now`; returns how many."
+  @spec prune(DateTime.t()) :: non_neg_integer()
+  def prune(now \\ DateTime.utc_now()) do
+    cutoff = DateTime.add(now, -@ttl_seconds, :second)
+
+    @table
+    |> :ets.tab2list()
+    |> Enum.filter(fn {_key, stored} -> DateTime.before?(stored.inserted_at, cutoff) end)
+    |> Enum.reduce(0, fn {key, _stored}, deleted ->
+      :ets.delete(@table, key)
+      deleted + 1
+    end)
+  end
+
   @impl true
   def init(:ok) do
     case :ets.whereis(@table) do
@@ -54,10 +75,20 @@ defmodule JidoCodemode.Agent.ReportStore do
             {:write_concurrency, true}
           ])
 
-        {:ok, %{}}
-
       _table ->
-        {:ok, %{}}
+        :ok
     end
+
+    schedule_prune()
+    {:ok, %{}}
   end
+
+  @impl true
+  def handle_info(:prune, state) do
+    prune()
+    schedule_prune()
+    {:noreply, state}
+  end
+
+  defp schedule_prune, do: Process.send_after(self(), :prune, @prune_every)
 end

@@ -4,29 +4,55 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Agentic BI" suffix={" · " <> gettext("Decision-ready analysis")}>
+    <.live_title default="Agentic BI">
       {assigns[:page_title]}
     </.live_title>
 
     <meta
       name="description"
-      content="Turn business questions into clear, decision-ready analysis with Agentic BI."
+      content={
+        gettext(
+          "Ask your business data in plain language and get the answer with a chart and a table. Agentic BI by SuperDev connects to Dynamics 365, Odoo, SAP Business One and Airtable."
+        )
+      }
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Agentic BI" />
+    <meta property="og:site_name" content="Agentic BI" />
+    <meta
+      property="og:locale"
+      content={if assigns[:locale] == "es_MX", do: "es_MX", else: "en_US"}
+    />
+    <meta
+      property="og:title"
+      content={gettext("Agentic BI · Your next report, one question away")}
+    />
     <meta
       property="og:description"
-      content="Turn business questions into clear, decision-ready analysis."
+      content={
+        gettext(
+          "Ask your business data in plain language. The answer comes with a chart and a table."
+        )
+      }
     />
     <meta property="og:image" content={url(~p"/images/agentic-bi-og.png")} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Agentic BI — data signals converging into action." />
+    <meta
+      property="og:image:alt"
+      content={gettext("Agentic BI: data signals converging into action.")}
+    />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Agentic BI" />
+    <meta
+      name="twitter:title"
+      content={gettext("Agentic BI · Your next report, one question away")}
+    />
     <meta
       name="twitter:description"
-      content="Turn business questions into clear, decision-ready analysis."
+      content={
+        gettext(
+          "Ask your business data in plain language. The answer comes with a chart and a table."
+        )
+      }
     />
     <meta name="twitter:image" content={url(~p"/images/agentic-bi-og.png")} />
     <link rel="icon" href={~p"/images/agentic-bi-mark.svg"} type="image/svg+xml" />

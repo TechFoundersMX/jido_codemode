@@ -39,9 +39,35 @@ The app runs at `http://localhost:4000`.
 - `OPENCODE_API_KEY` enables live model calls for the chat demo
 - `OPENCODE_BASE_URL` defaults to `https://opencode.ai/zen/go/v1`
 - `OPENCODE_MODEL` defaults to `gpt-5.6-luna` (Responses API)
-- `DEMO_PASSWORD` locks the analysis agent behind a password while leaving the public page and OG image accessible
+- `DEMO_PASSWORD` locks the analysis agent at `/demo` behind a team password while the invitation service is not connected
+- `AGENTIC_BI_SERVICE_TOKEN` connects the invitation service (see below). Alex sets it, with the same value as in the Worker
+- `AGENTIC_BI_HUB_URL` is where the partner endpoints live, default `https://agentic-bi.superdev.mx`
 
 If `OPENCODE_API_KEY` is unset, the app still boots and the static demo remains available, but live chat requests will fail.
+
+### Pages and invitation access
+
+- `/` is the public landing: the pitch, six examples on the sample data, a saved
+  agent answer, and the way into the live agent. Copy and design decisions are in
+  `docs/landing/`.
+- `/demo` is the live agent.
+
+The live agent is by invitation, through SuperDev's demo invitation service (a
+Cloudflare Worker that owns `/invite/*` and `/api/invite/*` on this host; contract
+of 29 Sep 2026, TechFoundersMX/ellingwood-demo#246):
+
+- The Worker's self-serve form (`/invite/solicitar`) and invitation links set the
+  host-only `demo_invitation` cookie and land on `/demo`. The app treats that value
+  as opaque: it never logs it, never renders it, and only posts it to the partner
+  endpoints. The session keeps a server-side reference, not the token.
+- One conversation spends one use, charged before its first answer. A conversation
+  whose first turn fails gets its use back once.
+- With `AGENTIC_BI_SERVICE_TOKEN` unset, nobody is invited: `/demo` falls back to
+  `DEMO_PASSWORD` and the landing offers the exploratory call instead of the form.
+  With it set, `/demo` sends anyone without an active invitation to the form.
+
+Generated reports live only in memory and are deleted after 24 hours. No
+conversation is stored or sent anywhere.
 
 ### Spanish demo and exchange rate
 
