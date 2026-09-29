@@ -22,6 +22,7 @@
   --hero-tint-a: rgba(37, 99, 235, .14);
   --hero-tint-b: rgba(15, 139, 141, .12);
   --dot: rgba(20, 22, 27, .07);
+  --hl: var(--accent-wash);
   --well: #eeeeea;
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -29,6 +30,13 @@
   --band-bg: #14161b;
   --band-fg: #f6f6f3;
 }
+/* Palettes for review. Light values here; dark accents at the end of the sheet. */
+:root[data-palette="hoja"] { --paper: #f3f5f1; --sheet: #ffffff; --ink: #121714; --ink-soft: #46514a; --ink-faint: #66706a; --rule: rgba(18, 23, 20, .10);
+  --accent: #0b7a53; --accent-wash: #e1f1e8; --data-2: #2f5fd0; --data-3: #e0a100; --data-4: #d14a3c; --data-5: #7a5af8; --well: #e9ede7; --band-bg: #10231a; --band-fg: #f3f5f1; }
+:root[data-palette="resaltador"] { --paper: #f5f4ef; --sheet: #ffffff; --ink: #101a2c; --ink-soft: #414b5e; --ink-faint: #626b7c; --rule: rgba(16, 26, 44, .10);
+  --accent: #1d3f94; --accent-wash: #e6ecfa; --hl: #ffe066; --data-2: #0f8b8d; --data-3: #e0a100; --data-4: #e0524a; --data-5: #7a5af8; --well: #ecebe4; --band-bg: #101a2c; --band-fg: #f5f4ef; }
+:root[data-palette="superdev"] { --paper: #faf7f1; --sheet: #fffdf9; --ink: #1c1917; --ink-soft: #57534e; --ink-faint: #6e645b; --rule: rgba(28, 25, 23, .10);
+  --accent: #b4452a; --accent-wash: #f3e4dc; --data-2: #2f6f73; --data-3: #c28a2c; --data-4: #7d5ba6; --data-5: #4a6fa5; --well: #f4eee3; --band-bg: #1c1917; --band-fg: #faf7f1; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0e1014; --sheet: #161920; --ink: #eef0f4; --ink-soft: #aab0bd; --ink-faint: #8a91a0;
@@ -124,7 +132,7 @@ section.band.tint { background: var(--sheet); }
   display: grid; grid-template-columns: 13fr 10fr; gap: 36px 48px; align-items: start; padding: 36px 36px 36px 40px; min-width: 0; }
 .cells .copy { display: grid; gap: 20px; min-width: 0; }
 .cells .copy .lede, .cells .copy .cta-note { background: color-mix(in srgb, var(--sheet) 86%, transparent); }
-h1 .hl { position: relative; color: var(--ink); background: var(--accent-wash); outline: 2px solid var(--accent); outline-offset: 2px; padding-inline: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+h1 .hl { position: relative; color: var(--ink); background: var(--hl); outline: 2px solid var(--accent); outline-offset: 2px; padding-inline: 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 h1 .hl::after { content: ""; position: absolute; right: -7px; bottom: -7px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--sheet); }
 .obj { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; display: grid; gap: 12px; padding: 14px; min-width: 0; position: relative; }
 .obj::before { content: ""; position: absolute; inset: -4px; border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 6px; pointer-events: none; }
@@ -341,6 +349,16 @@ footer.site .links { display: flex; gap: 18px; flex-wrap: wrap; }
 footer.site a { text-decoration: none; font-weight: 400; color: var(--ink-soft); }
 footer.site a:hover { color: var(--ink); }
 footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
+
+/* Palette accents in dark mode */
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="hoja"]:not([data-theme="light"]) { --accent: #37c98e; --accent-wash: #0f2a1f; --hl: #0f2a1f; --data-2: #7aa2ff; --data-3: #f5c542; --data-4: #ff7a70; }
+  :root[data-palette="resaltador"]:not([data-theme="light"]) { --accent: #8fb0ff; --accent-wash: #18223b; --hl: #4d4200; --data-2: #3cc3c5; --data-3: #f5c542; --data-4: #ff7a70; }
+  :root[data-palette="superdev"]:not([data-theme="light"]) { --accent: #e0785f; --accent-wash: #3a2019; --hl: #3a2019; --data-2: #5fb3b8; --data-3: #e0b25c; --data-4: #b294dd; }
+}
+:root[data-theme="dark"][data-palette="hoja"] { --accent: #37c98e; --accent-wash: #0f2a1f; --hl: #0f2a1f; --data-2: #7aa2ff; --data-3: #f5c542; --data-4: #ff7a70; }
+:root[data-theme="dark"][data-palette="resaltador"] { --accent: #8fb0ff; --accent-wash: #18223b; --hl: #4d4200; --data-2: #3cc3c5; --data-3: #f5c542; --data-4: #ff7a70; }
+:root[data-theme="dark"][data-palette="superdev"] { --accent: #e0785f; --accent-wash: #3a2019; --hl: #3a2019; --data-2: #5fb3b8; --data-3: #e0b25c; --data-4: #b294dd; }
 </style>
 
 <div class="review" role="region" aria-label="Controles del borrador">
@@ -355,6 +373,12 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
       <button type="button" data-set-mode="invited" aria-pressed="false">Invitado</button>
       <button type="button" data-set-mode="request" aria-pressed="false">Formulario</button>
       <button type="button" data-set-mode="expired" aria-pressed="false">Invitación vencida</button>
+    </span>
+    <span class="grp">Paleta
+      <button type="button" data-set-palette="" aria-pressed="true">Azul reporte</button>
+      <button type="button" data-set-palette="hoja" aria-pressed="false">Hoja de cálculo</button>
+      <button type="button" data-set-palette="resaltador" aria-pressed="false">Tinta y resaltador</button>
+      <button type="button" data-set-palette="superdev" aria-pressed="false">Marca SuperDev</button>
     </span>
   </div>
 </div>
@@ -951,6 +975,13 @@ footer.site .fx { font-size: 13px; color: var(--ink-faint); max-width: 90ch; }
   document.addEventListener("click", e => {
     const l = e.target.closest("[data-set-lang]");
     if (l) { lang = l.dataset.setLang; apply(); return; }
+    const pal = e.target.closest("[data-set-palette]");
+    if (pal) {
+      const v = pal.dataset.setPalette;
+      if (v) document.documentElement.dataset.palette = v; else delete document.documentElement.dataset.palette;
+      document.querySelectorAll("[data-set-palette]").forEach(b => b.setAttribute("aria-pressed", String(b === pal)));
+      return;
+    }
     const m = e.target.closest("[data-set-mode]");
     if (m) { mode = m.dataset.setMode; apply(); }
   });
