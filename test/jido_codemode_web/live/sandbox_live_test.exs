@@ -257,4 +257,63 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
 
     render_async(view, 10_000)
   end
+
+  test "switching language in place keeps the demo unlocked and starts a new conversation", %{
+    conn: conn
+  } do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
+    assert has_element?(view, "#chat-form")
+
+    html = view |> element("#locale-es_MX") |> render_click()
+
+    assert html =~ "Convierte preguntas de negocio en análisis claros"
+    assert has_element?(view, "#chat-form")
+    refute has_element?(view, "#unlock-form")
+
+    assert has_element?(
+             view,
+             "#locale-notice",
+             "Cambiaste a español. Las cifras ahora están en MXN."
+           )
+
+    assert_push_event(view, "locale-changed", %{locale: "es_MX", html_lang: "es-MX"})
+  end
+
+  test "the Spanish page shows the MXN footnote with the rate", %{conn: conn} do
+    {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
+
+    assert html =~ "Cifras en pesos mexicanos (MXN)"
+    assert html =~ "1 USD = 17.8413 MXN"
+    assert html =~ "28/09/2026"
+  end
+
+  test "the English page has no currency footnote", %{conn: conn} do
+    {:ok, _view, html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+    refute html =~ "Cifras en"
+    refute html =~ "Figures in"
+  end
+
+  test "Spanish sample charts use translated labels, MXN amounts, and a Spanish chart locale", %{
+    conn: conn
+  } do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
+
+    spec = view |> element("#sample-chart-category-revenue") |> render()
+    assert spec =~ "Bebidas"
+    assert spec =~ ~s(data-locale="es-MX")
+    # 267_900 USD sample value times 17.8413
+    assert spec =~ "4779684"
+  end
+
+  test "agent requests carry the page locale in the tool context" do
+    socket = %Phoenix.LiveView.Socket{
+      assigns: %{__changed__: %{}, agent_id: "sandbox-1", locale: "es_MX"}
+    }
+
+    assert JidoCodemodeWeb.SandboxLive.tool_context(socket) == %{
+             session_id: "sandbox-1",
+             locale: "es_MX"
+           }
+  end
 end
