@@ -236,8 +236,8 @@ defmodule JidoCodemodeWeb.SandboxLive do
       main_class="min-h-dvh isolate"
       content_class="mx-auto max-w-[96rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-5"
     >
-      <%!-- Iterating over [@locale] re-renders the page copy in full on a language switch: gettext text has no assigns, so LiveView change tracking would otherwise skip it. --%>
-      <section :for={_locale <- [@locale]} class="space-y-5">
+      <%!-- Keyed iteration over [@locale] re-renders the page copy in full only when the locale changes: gettext text has no assigns, so change tracking would otherwise skip it. Without the :key, every assign change would re-send the whole section. --%>
+      <section :for={loc <- [@locale]} :key={loc} class="space-y-5">
         <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
           <div class="grid min-w-0 gap-4">
             <a href={~p"/"} aria-label={gettext("Homepage")} class="flex w-fit items-center gap-3">
@@ -398,7 +398,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
                                     :for={column <- block.columns}
                                     class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
                                   >
-                                    {format_table_value(Map.get(row, column))}
+                                    {format_table_value(Map.get(row, column), column)}
                                   </td>
                                 </tr>
                               </tbody>
@@ -761,8 +761,11 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
             const options = {actions: false, renderer: "svg"}
 
+            // vega-embed sets its locale globally and never resets it, so always
+            // pass one: otherwise Spanish labels leak into English charts.
+            options.formatLocale = {decimal: ".", thousands: ",", grouping: [3], currency: ["$", ""]}
+
             if (esMX) {
-              options.formatLocale = {decimal: ".", thousands: ",", grouping: [3], currency: ["$", ""]}
               options.timeFormatLocale = {
                 dateTime: "%A, %e de %B de %Y, %X",
                 date: "%d/%m/%Y",
@@ -772,6 +775,17 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 shortDays: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
                 months: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
                 shortMonths: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
+              }
+            } else {
+              options.timeFormatLocale = {
+                dateTime: "%x, %X",
+                date: "%-m/%-d/%Y",
+                time: "%-I:%M:%S %p",
+                periods: ["AM", "PM"],
+                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+                months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
               }
             }
 
@@ -1099,9 +1113,24 @@ defmodule JidoCodemodeWeb.SandboxLive do
 
   defp format_metric_value(value, _format, _currency), do: to_string(value)
 
-  defp format_table_value(nil), do: "-"
-  defp format_table_value(value) when is_number(value), do: Format.number(value)
-  defp format_table_value(value), do: to_string(value)
+  @doc false
+  def format_table_value(nil, _column), do: "-"
+
+  def format_table_value(value, column) when is_integer(value) do
+    if identifier_column?(column), do: Integer.to_string(value), else: Format.number(value)
+  end
+
+  def format_table_value(value, _column) when is_number(value), do: Format.number(value)
+  def format_table_value(value, _column), do: to_string(value)
+
+  # Ids and years are labels, not quantities: they stay ungrouped.
+  defp identifier_column?(column) do
+    name = to_string(column)
+    lowered = String.downcase(name)
+
+    name == "Id" or String.ends_with?(name, ["Id", "ID"]) or
+      String.contains?(lowered, ["year", "año"])
+  end
 
   defp clear_pending_chat(socket) do
     socket

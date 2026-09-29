@@ -316,4 +316,58 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
              locale: "es_MX"
            }
   end
+
+  test "ordinary events do not re-send the page copy, but a language switch does", %{conn: conn} do
+    {:ok, view, _html} = conn |> put_req_header("accept-language", "en-US") |> live(~p"/")
+
+    :erlang.trace(view.pid, true, [:send])
+
+    view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
+    unlock_diffs = collect_diffs()
+    assert Enum.any?(unlock_diffs, &(&1 =~ "chat-form"))
+    refute Enum.any?(unlock_diffs, &(&1 =~ "Turn business questions"))
+
+    view |> element("#locale-es_MX") |> render_click()
+    switch_diffs = collect_diffs()
+    assert Enum.any?(switch_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+
+    view |> element("button[phx-click=reset_chat]") |> render_click()
+    reset_diffs = collect_diffs()
+    refute Enum.any?(reset_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+
+    :erlang.trace(view.pid, false, [:send])
+  end
+
+  test "table ids and years stay ungrouped while quantities and amounts are grouped" do
+    format = &JidoCodemodeWeb.SandboxLive.format_table_value/2
+
+    assert format.(10_248, "OrderId") == "10248"
+    assert format.(10_248, "Id") == "10248"
+    assert format.(10_248, "customerID") == "10248"
+    assert format.(1997, "Year") == "1997"
+    assert format.(1997, "order_year") == "1997"
+    assert format.(2016, "Año") == "2016"
+    assert format.(4_779_116.559, "revenue") == "4,779,116.56"
+    assert format.(1234, "Quantity") == "1,234"
+    assert format.(nil, "Quantity") == "-"
+    assert format.("Beverages", "Category") == "Beverages"
+  end
+
+  defp collect_diffs(acc \\ []) do
+    receive do
+      {:trace, _pid, :send, %Phoenix.Socket.Message{event: "diff", payload: payload}, _to} ->
+        collect_diffs([inspect_payload(payload) | acc])
+
+      {:trace, _pid, :send, %Phoenix.Socket.Reply{payload: %{diff: diff}}, _to} ->
+        collect_diffs([inspect_payload(diff) | acc])
+
+      {:trace, _pid, :send, _other, _to} ->
+        collect_diffs(acc)
+    after
+      300 -> Enum.reverse(acc)
+    end
+  end
+
+  defp inspect_payload(payload),
+    do: inspect(payload, limit: :infinity, printable_limit: :infinity)
 end
