@@ -59,9 +59,7 @@ a { color: inherit; }
 .num, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
 /* Review toolbar (not part of the landing) */
-.review { position: fixed; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 50;
-  width: min(calc(100% - 24px), 1100px); background: var(--ink); color: var(--paper); font-size: 13px; border-radius: 12px; box-shadow: 0 12px 32px -12px rgba(0,0,0,.45); }
-body { padding-bottom: 96px; }
+.review { background: var(--ink); color: var(--paper); font-size: 13px; }
 .review .container { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding-block: 8px; }
 .review b { font-weight: 600; }
 .review .grp { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
