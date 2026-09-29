@@ -16,17 +16,18 @@
 }
 
 :root {
-  --brand-canvas: #f7f8fa;
+  /* Hoja de cálculo palette on the Hielo background: the same as the landing
+     (assets/css/landing.css). base-100 is the card, base-200 the page. */
+  --brand-canvas: #eef3fc;
   --brand-surface: #ffffff;
-  --brand-recessed: #eef1f5;
-  --brand-divider: #dce1e8;
-  --brand-ink: #18181b;
-  --brand-muted: #71717a;
-  --brand-blue: #2563eb;
-  --brand-teal: #0f8b8d;
-  --brand-amber: #d97706;
-  --brand-green: #16a34a;
-  --brand-coral: #dc5a5a;
+  --brand-recessed: #eef3fc;
+  --brand-divider: #d6e0ef;
+  --brand-ink: #121714;
+  --brand-muted: #66706a;
+  --brand-green: #0b7a53;
+  --brand-blue: #2f5fd0;
+  --brand-amber: #e0a100;
+  --brand-coral: #d14a3c;
 }
 
 @plugin "../vendor/daisyui-theme" {
@@ -34,26 +35,26 @@
   default: false;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: #0b1020;
-  --color-base-200: #121a2b;
-  --color-base-300: #243149;
-  --color-base-content: #f4f7fb;
-  --color-primary: #60a5fa;
-  --color-primary-content: #07101f;
-  --color-secondary: #2dd4bf;
-  --color-secondary-content: #06241f;
-  --color-accent: #f59e0b;
-  --color-accent-content: #241402;
-  --color-neutral: #8b95a7;
-  --color-neutral-content: #0b1020;
-  --color-info: #38bdf8;
-  --color-info-content: #061923;
-  --color-success: #4ade80;
-  --color-success-content: #071b0e;
-  --color-warning: #f59e0b;
-  --color-warning-content: #241402;
-  --color-error: #fb7185;
-  --color-error-content: #2b080d;
+  --color-base-100: #161920;
+  --color-base-200: #0e1014;
+  --color-base-300: #2a303b;
+  --color-base-content: #eef0f4;
+  --color-primary: #37c98e;
+  --color-primary-content: #0b1020;
+  --color-secondary: #7aa2ff;
+  --color-secondary-content: #0b1020;
+  --color-accent: #f5c542;
+  --color-accent-content: #0b1020;
+  --color-neutral: #8a91a0;
+  --color-neutral-content: #0e1014;
+  --color-info: #7aa2ff;
+  --color-info-content: #0b1020;
+  --color-success: #37c98e;
+  --color-success-content: #0b1020;
+  --color-warning: #f5c542;
+  --color-warning-content: #0b1020;
+  --color-error: #ff7a70;
+  --color-error-content: #0b1020;
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 0.75rem;
@@ -69,24 +70,24 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: var(--brand-canvas);
+  --color-base-100: var(--brand-surface);
   --color-base-200: var(--brand-recessed);
   --color-base-300: var(--brand-divider);
   --color-base-content: var(--brand-ink);
-  --color-primary: var(--brand-blue);
+  --color-primary: var(--brand-green);
   --color-primary-content: #ffffff;
-  --color-secondary: var(--brand-teal);
+  --color-secondary: var(--brand-blue);
   --color-secondary-content: #ffffff;
   --color-accent: var(--brand-amber);
-  --color-accent-content: #ffffff;
+  --color-accent-content: var(--brand-ink);
   --color-neutral: var(--brand-muted);
   --color-neutral-content: #ffffff;
-  --color-info: #0891b2;
+  --color-info: var(--brand-blue);
   --color-info-content: #ffffff;
-  --color-success: var(--brand-green);
+  --color-success: #22a06b;
   --color-success-content: #ffffff;
   --color-warning: var(--brand-amber);
-  --color-warning-content: #ffffff;
+  --color-warning-content: var(--brand-ink);
   --color-error: var(--brand-coral);
   --color-error-content: #ffffff;
   --radius-selector: 0.5rem;

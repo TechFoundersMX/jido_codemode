@@ -11,7 +11,9 @@ defmodule JidoCodemodeWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket,
+  # Not at the default "/live": that path is the co-founders' page, behind Cloudflare
+  # Access, and every visitor's LiveView connection must stay outside it.
+  socket "/lv", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 

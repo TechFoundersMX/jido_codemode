@@ -12,7 +12,7 @@ defmodule JidoCodemodeWeb.LandingLive do
 
   alias JidoCodemode.Locale
   alias JidoCodemode.Locale.Dataset
-  alias JidoCodemodeWeb.{CurrencyNote, LandingCharts, LandingExamples, Links}
+  alias JidoCodemodeWeb.{CurrencyNote, LandingCharts, LandingExamples, Links, SiteChrome}
 
   @impl true
   def mount(_params, session, socket) do
@@ -67,37 +67,7 @@ defmodule JidoCodemodeWeb.LandingLive do
     <Layouts.app flash={@flash} locale={@locale} app_chrome={false} full_width={true}>
       <%!-- Keyed on the locale: gettext copy has no assigns, so only a new key re-renders it in the other language. --%>
       <div :for={loc <- [@locale]} :key={loc} class="lp" id={"landing-#{loc}"}>
-        <header class="site-header">
-          <div class="wrap">
-            <a class="brand" href="#top" aria-label={gettext("Agentic BI, home")}>
-              <span class="name">Agentic BI</span><span class="by">{gettext("by SuperDev")}</span>
-            </a>
-            <nav class="nav" aria-label={gettext("Main")}>
-              <div class="links">
-                <a class="nav-link" href="#pruebalo">{gettext("Try it")}</a>
-                <a class="nav-link" href="#como-funciona">{gettext("How it works")}</a>
-                <a class="nav-link" href="#ti">{gettext("For IT")}</a>
-                <a :if={loc == "en"} class="nav-link" href="#partners">{gettext("Partners")}</a>
-                <a class="nav-link" href="#preguntas">{gettext("FAQ")}</a>
-              </div>
-              <div class="lang" role="group" aria-label={gettext("Language")}>
-                <button
-                  :for={{code, label} <- [{"es_MX", "ES"}, {"en", "EN"}]}
-                  id={"lp-locale-#{code}"}
-                  type="button"
-                  phx-click="set_locale"
-                  phx-value-locale={code}
-                  aria-pressed={to_string(loc == code)}
-                >
-                  {label}
-                </button>
-              </div>
-              <a class="lp-btn lp-btn-secondary lp-btn-sm" href={Links.calendar(:landing)}>
-                {gettext("Exploratory call")}
-              </a>
-            </nav>
-          </div>
-        </header>
+        <SiteChrome.site_header locale={loc} call_url={Links.calendar(:landing)} />
 
         <div id="top">
           <section class="lp-hero" aria-labelledby="hero-h">
@@ -570,21 +540,7 @@ defmodule JidoCodemodeWeb.LandingLive do
           </section>
         </div>
 
-        <footer class="site">
-          <div class="wrap">
-            <p>
-              {gettext(
-                "Agentic BI is part of SuperDev's Business Intelligence service. AI and business operations consulting."
-              )}
-            </p>
-            <div class="links">
-              <a href={Links.superdev()}>superdev.mx</a>
-              <a href={Links.business_intelligence()}>Business Intelligence</a>
-              <a href={Links.privacy()}>{gettext("Privacy notice")}</a>
-            </div>
-            <p :if={@footnote} class="fx" id="landing-footnote">{@footnote}</p>
-          </div>
-        </footer>
+        <SiteChrome.site_footer footnote={@footnote} />
       </div>
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".LandingHero">

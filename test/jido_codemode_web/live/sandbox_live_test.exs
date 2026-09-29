@@ -94,37 +94,39 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     :ok
   end
 
-  test "renders the sandbox demo", %{conn: conn} do
+  test "renders the demo with the landing's header, examples and footer", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/demo")
 
-    assert has_element?(view, "#chart-card-revenue-trend")
-    assert has_element?(view, "#chart-card-category-revenue")
-    assert has_element?(view, "#chart-card-channel-mix")
-    assert has_element?(view, "#chart-card-customer-shape")
+    assert has_element?(view, ".site-header a[href='/#pruebalo']")
+    assert has_element?(view, "#locale-es_MX")
+    assert has_element?(view, "h1", "Ask the sample distributor.")
+    assert has_element?(view, "footer.site")
+
+    for id <- ~w(trend categories shippers customers order-value countries) do
+      assert has_element?(view, "#ex-#{id}")
+    end
+
+    # Locked: the example buttons can't ask yet.
+    assert has_element?(view, "#ex-categories button.ask[disabled]")
     assert has_element?(view, "#unlock-form")
     refute has_element?(view, "#chat-form")
     refute has_element?(view, "#agent-report")
-    assert render(view) =~ "Turn business questions into clear analysis"
+    refute has_element?(view, "#new-conversation")
+  end
+
+  test "once unlocked, an example asks its question and a new conversation can start",
+       %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/demo")
+    view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
+
+    refute has_element?(view, "#ex-categories button.ask[disabled]")
 
     assert has_element?(
              view,
-             "#sample-chart-revenue-trend[phx-hook='JidoCodemodeWeb.SandboxLive.VegaChart']"
+             "#ex-categories button.ask[phx-value-prompt='Which 3 categories sell the most?']"
            )
 
-    assert has_element?(
-             view,
-             "#sample-chart-category-revenue[phx-hook='JidoCodemodeWeb.SandboxLive.VegaChart']"
-           )
-
-    assert has_element?(
-             view,
-             "#sample-chart-channel-mix[phx-hook='JidoCodemodeWeb.SandboxLive.VegaChart']"
-           )
-
-    assert has_element?(
-             view,
-             "#sample-chart-customer-shape[phx-hook='JidoCodemodeWeb.SandboxLive.VegaChart']"
-           )
+    assert has_element?(view, "#new-conversation")
   end
 
   test "unlocks chat with the configured password", %{conn: conn} do
@@ -267,7 +269,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
 
     html = view |> element("#locale-es_MX") |> render_click()
 
-    assert html =~ "Convierte preguntas de negocio en análisis claros"
+    assert html =~ "Pregúntale a la distribuidora de ejemplo."
     assert has_element?(view, "#chat-form")
     refute has_element?(view, "#unlock-form")
 
@@ -303,8 +305,8 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
       |> put_req_header("accept-language", "es-MX")
       |> live(~p"/demo?lang=en")
 
-    assert html =~ "Turn business questions into clear analysis"
-    refute html =~ "Convierte preguntas de negocio"
+    assert html =~ "Ask the sample distributor."
+    refute html =~ "Pregúntale a la distribuidora"
   end
 
   test "the wrong-password error follows the page language", %{conn: conn} do
@@ -335,16 +337,13 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     refute html =~ "Figures in"
   end
 
-  test "Spanish sample charts use translated labels, MXN amounts, and a Spanish chart locale", %{
-    conn: conn
-  } do
+  test "Spanish examples use translated labels and MXN amounts", %{conn: conn} do
     {:ok, view, _html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/demo")
 
-    spec = view |> element("#sample-chart-category-revenue") |> render()
-    assert spec =~ "Bebidas"
-    assert spec =~ ~s(data-locale="es-MX")
-    # 267_900 USD sample value times 17.8413
-    assert spec =~ "4779684"
+    card = view |> element("#ex-categories") |> render()
+    assert card =~ "Bebidas"
+    # 267,868.18 USD × 17.8413
+    assert card =~ "$4.78 M"
   end
 
   test "agent requests carry the page locale in the tool context" do
@@ -366,17 +365,17 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     view |> form("#unlock-form", unlock: %{password: "test-password"}) |> render_submit()
     unlock_diffs = collect_diffs()
     assert Enum.any?(unlock_diffs, &(&1 =~ "chat-form"))
-    refute Enum.any?(unlock_diffs, &(&1 =~ "Turn business questions"))
+    refute Enum.any?(unlock_diffs, &(&1 =~ "Ask the sample distributor"))
     refute Enum.any?(unlock_diffs, &(&1 =~ "find the internet"))
 
     view |> element("#locale-es_MX") |> render_click()
     switch_diffs = collect_diffs()
-    assert Enum.any?(switch_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+    assert Enum.any?(switch_diffs, &(&1 =~ "Pregúntale a la distribuidora"))
     assert Enum.any?(switch_diffs, &(&1 =~ "No encontramos conexión a internet"))
 
     view |> element("button[phx-click=reset_chat]") |> render_click()
     reset_diffs = collect_diffs()
-    refute Enum.any?(reset_diffs, &(&1 =~ "Convierte preguntas de negocio"))
+    refute Enum.any?(reset_diffs, &(&1 =~ "Pregúntale a la distribuidora"))
     refute Enum.any?(reset_diffs, &(&1 =~ "No encontramos conexión a internet"))
 
     :erlang.trace(view.pid, false, [:send])

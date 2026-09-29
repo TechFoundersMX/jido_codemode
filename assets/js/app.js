@@ -26,7 +26,8 @@ import {hooks as colocatedHooks} from "phoenix-colocated/jido_codemode"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-const liveSocket = new LiveSocket("/live", Socket, {
+// "/lv", not "/live": see the socket in endpoint.ex.
+const liveSocket = new LiveSocket("/lv", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
   hooks: {...colocatedHooks},

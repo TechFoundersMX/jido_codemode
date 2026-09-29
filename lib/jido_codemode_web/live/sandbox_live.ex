@@ -8,8 +8,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   alias JidoCodemode.Locale
   alias JidoCodemode.Locale.{Dataset, Format}
   alias JidoCodemode.SidebarAgent
-  alias JidoCodemodeWeb.Links
-  alias VegaLite, as: Vl
+  alias JidoCodemodeWeb.{LandingCharts, LandingExamples, Links, SiteChrome}
 
   @markdown_options [
     auto_close: true,
@@ -19,6 +18,12 @@ defmodule JidoCodemodeWeb.SandboxLive do
   ]
 
   @impl true
+  def mount(_params, _session, %{assigns: %{live_action: :staff}} = socket) do
+    # /live: StaffHook already checked the co-founder's Access session. No invitation,
+    # no password, no uses spent.
+    mount_demo(socket, %{state: :staff})
+  end
+
   def mount(_params, session, socket) do
     access = access(session["demo_access"])
 
@@ -34,6 +39,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
   defp mount_demo(socket, access) do
     unlocked_by =
       cond do
+        access.state == :staff -> :staff
         access.state == :invited -> :invite
         access.state == :exhausted -> nil
         is_nil(demo_password()) -> :open
@@ -50,7 +56,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
       |> assign(:conversation_id, nil)
       |> assign(:conversation_paid, false)
       |> assign(:currency, Dataset.currency(socket.assigns.locale))
-      |> assign(:charts, build_charts(socket.assigns.locale))
+      |> assign(:examples, LandingExamples.all(socket.assigns.locale))
       |> assign(:locale_notice, nil)
       |> assign(:agent_id, nil)
       |> assign(:agent_pid, nil)
@@ -139,7 +145,7 @@ defmodule JidoCodemodeWeb.SandboxLive do
           |> assign(:locale, locale)
           |> assign(:page_title, page_title())
           |> assign(:currency, Dataset.currency(locale))
-          |> assign(:charts, build_charts(locale))
+          |> assign(:examples, LandingExamples.all(locale))
 
         socket =
           if socket.assigns.chat_unlocked do
@@ -157,12 +163,19 @@ defmodule JidoCodemodeWeb.SandboxLive do
            html_lang: Locale.html_lang(locale),
            title: socket.assigns.page_title
          })
-         |> push_patch(to: ~p"/demo?lang=#{lang_param(locale)}")}
+         |> push_patch(to: "#{page_path(socket)}?lang=#{lang_param(locale)}")}
     end
   end
 
   @impl true
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
+  # Invitees are demo testers in Odoo (source 73); everyone else is the landing's funnel.
+  defp call_url(:invite), do: Links.calendar(:demo_invitee)
+  defp call_url(_unlocked_by), do: Links.calendar(:landing)
+
+  defp page_path(%{assigns: %{live_action: :staff}}), do: "/live"
+  defp page_path(_socket), do: "/demo"
 
   defp page_title, do: "Agentic BI · " <> gettext("Decision-ready analysis")
 
@@ -318,431 +331,466 @@ defmodule JidoCodemodeWeb.SandboxLive do
       locale={@locale}
       app_chrome={false}
       full_width={true}
-      main_class="min-h-dvh isolate"
-      content_class="mx-auto max-w-[96rem] px-4 py-4 sm:px-6 lg:px-8 lg:py-5"
+      main_class="min-h-dvh isolate bg-base-200"
+      content_class=""
     >
       <%!-- Keyed iteration over [@locale] re-renders the page copy in full only when the locale changes: gettext text has no assigns, so change tracking would otherwise skip it. Without the :key, every assign change would re-send the whole section. --%>
-      <section :for={loc <- [@locale]} :key={loc} class="space-y-5">
-        <header class="grid gap-5 border-b border-base-300/70 pb-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-          <div class="grid min-w-0 gap-4">
-            <a href={~p"/"} aria-label={gettext("Homepage")} class="flex w-fit items-center gap-3">
-              <img
-                src={~p"/images/agentic-bi-mark.svg"}
-                alt=""
-                class="size-10 shrink-0 rounded-xl"
-              />
-              <div class="min-w-0">
-                <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                  {gettext("Decision intelligence")}
-                </p>
-                <p class="font-semibold tracking-tight text-base-content">Agentic BI</p>
-              </div>
-            </a>
+      <div :for={loc <- [@locale]} :key={loc}>
+        <div class="lp lp-chrome">
+          <SiteChrome.site_header
+            locale={loc}
+            base="/"
+            id_prefix="locale-"
+            call_url={call_url(@unlocked_by)}
+          />
+        </div>
 
-            <div class="grid gap-2">
-              <h1 class="max-w-[35ch] text-3xl font-semibold tracking-tight text-balance text-base-content sm:text-4xl">
-                {gettext("Turn business questions into clear analysis")}
-              </h1>
-              <p class="max-w-[56ch] text-base leading-7 text-pretty text-base-content/65">
-                {gettext(
-                  "Explore your data with an agent that can query, compare, visualize, and explain its findings."
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2 md:max-w-lg md:justify-end">
-            <div
-              role="group"
-              aria-label={gettext("Language")}
-              class="inline-flex items-center rounded-full p-0.5 ring-1 ring-base-300/70"
-            >
-              <button
-                :for={
-                  {code, label, aria} <- [
-                    {"es_MX", "ES", gettext("Switch to Spanish")},
-                    {"en", "EN", gettext("Switch to English")}
-                  ]
-                }
-                id={"locale-#{code}"}
-                type="button"
-                phx-click="set_locale"
-                phx-value-locale={code}
-                aria-label={aria}
-                aria-pressed={to_string(@locale == code)}
-                class={[
-                  "rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                  @locale == code && "bg-base-content text-base-100",
-                  @locale != code && "text-base-content/65 hover:text-base-content"
-                ]}
+        <section class="mx-auto max-w-[96rem] space-y-5 px-4 py-5 sm:px-6 lg:px-8">
+          <header class="grid max-w-3xl gap-2">
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+              {gettext("Live agent · sample data")}
+              <span
+                :if={@unlocked_by == :staff}
+                id="staff-badge"
+                class="ml-2 rounded-full bg-primary/10 px-2 py-0.5 normal-case tracking-normal"
               >
-                {label}
-              </button>
-            </div>
+                {gettext("Team")} · {@staff_email}
+              </span>
+            </p>
+            <h1 class="text-3xl font-bold tracking-tight text-balance text-base-content sm:text-4xl">
+              {gettext("Ask the sample distributor.")}
+            </h1>
+            <p class="max-w-[62ch] text-base leading-7 text-pretty text-base-content/70">
+              {gettext(
+                "A fictitious distributor with orders from 2012 to 2014. Ask in plain language: the agent reads the data without changing it, and every answer comes with the number, a chart and a table."
+              )}
+            </p>
+          </header>
 
-            <Layouts.theme_toggle />
+          <section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start 2xl:grid-cols-[minmax(0,1fr)_26rem]">
+            <div class="order-2 min-w-0 space-y-5 lg:order-1">
+              <section
+                :if={@agent_report}
+                id="agent-report"
+                class="@container/report space-y-6 rounded-2xl bg-base-100 p-5 ring-1 ring-base-300/70 sm:p-6"
+              >
+                <div class="space-y-2">
+                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
+                    {gettext("Generated analysis")}
+                  </p>
+                  <h2 class="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
+                    {@agent_report.title}
+                  </h2>
+                  <p
+                    :if={@agent_report.summary}
+                    class="max-w-3xl text-base leading-7 text-base-content/65"
+                  >
+                    {@agent_report.summary}
+                  </p>
+                </div>
 
-            <details class="group open:w-full sm:relative sm:open:w-auto">
-              <summary class="inline-flex w-fit cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                {gettext("How it works")}
-              </summary>
-              <div class="mt-2 w-full rounded-2xl bg-base-100 p-4 text-base leading-7 text-base-content/70 shadow-lg ring-1 ring-base-300 sm:absolute sm:right-0 sm:z-20 sm:w-88 sm:text-sm sm:leading-6 [[data-theme=dark]_&]:shadow-none">
-                <ol class="list-decimal space-y-2 pl-5">
-                  <li>
-                    {gettext("The agent reads a compact schema through a read-only connection.")}
-                  </li>
-                  <li>
-                    {gettext("It runs bounded queries and builds the needed metrics and visuals.")}
-                  </li>
-                  <li>{gettext("Every result is validated before it appears in your analysis.")}</li>
-                </ol>
-              </div>
-            </details>
-          </div>
-        </header>
-
-        <section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start 2xl:grid-cols-[minmax(0,1fr)_26rem]">
-          <div class="order-2 min-w-0 space-y-5 lg:order-1">
-            <section
-              :if={@agent_report}
-              id="agent-report"
-              class="@container/report space-y-6 rounded-2xl bg-base-100 p-5 ring-1 ring-base-300/70 sm:p-6"
-            >
-              <div class="space-y-2">
-                <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                  {gettext("Generated analysis")}
-                </p>
-                <h2 class="text-2xl font-semibold tracking-tight text-base-content sm:text-3xl">
-                  {@agent_report.title}
-                </h2>
-                <p
-                  :if={@agent_report.summary}
-                  class="max-w-3xl text-base leading-7 text-base-content/65"
-                >
-                  {@agent_report.summary}
-                </p>
-              </div>
-
-              <div class="grid grid-cols-1 gap-6 @4xl/report:grid-cols-2">
-                <div :for={block <- @agent_report.blocks} class={report_block_classes(block)}>
-                  <%= case block do %>
-                    <% %Report.TextBlock{} -> %>
-                      <div class={assistant_markdown_classes()}>{render_markdown(block.body)}</div>
-                    <% %Report.MetricBlock{} -> %>
-                      <div class="space-y-2">
-                        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
-                          {gettext("Metric")}
-                        </p>
-                        <p class="truncate text-sm text-base-content/60" title={block.label}>
-                          {block.label}
-                        </p>
-                        <p class="text-4xl font-semibold tracking-tight tabular-nums text-base-content">
-                          {format_metric_value(block.value, block.format, @currency)}
-                        </p>
-                      </div>
-                    <% %Report.TableBlock{} -> %>
-                      <div class="space-y-4">
-                        <div class="space-y-1">
-                          <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                            {block.title}
-                          </h3>
-                          <p
-                            :if={block.summary}
-                            class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
-                          >
-                            {block.summary}
+                <div class="grid grid-cols-1 gap-6 @4xl/report:grid-cols-2">
+                  <div :for={block <- @agent_report.blocks} class={report_block_classes(block)}>
+                    <%= case block do %>
+                      <% %Report.TextBlock{} -> %>
+                        <div class={assistant_markdown_classes()}>{render_markdown(block.body)}</div>
+                      <% %Report.MetricBlock{} -> %>
+                        <div class="space-y-2">
+                          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
+                            {gettext("Metric")}
+                          </p>
+                          <p class="truncate text-sm text-base-content/60" title={block.label}>
+                            {block.label}
+                          </p>
+                          <p class="text-4xl font-semibold tracking-tight tabular-nums text-base-content">
+                            {format_metric_value(block.value, block.format, @currency)}
                           </p>
                         </div>
+                      <% %Report.TableBlock{} -> %>
+                        <div class="space-y-4">
+                          <div class="space-y-1">
+                            <h3 class="text-xl font-semibold tracking-tight text-base-content">
+                              {block.title}
+                            </h3>
+                            <p
+                              :if={block.summary}
+                              class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
+                            >
+                              {block.summary}
+                            </p>
+                          </div>
 
-                        <div
-                          :if={Enum.empty?(block.rows)}
-                          class="py-8 text-base text-base-content/45 sm:text-sm"
-                        >
-                          {gettext("No rows to show for this table.")}
+                          <div
+                            :if={Enum.empty?(block.rows)}
+                            class="py-8 text-base text-base-content/45 sm:text-sm"
+                          >
+                            {gettext("No rows to show for this table.")}
+                          </div>
+
+                          <div
+                            :if={not Enum.empty?(block.rows)}
+                            class="-mx-5 -my-2 overflow-x-auto whitespace-nowrap sm:-mx-6"
+                          >
+                            <div class="inline-block min-w-full px-5 py-2 align-middle sm:px-6">
+                              <table class="w-full border-separate border-spacing-0 text-base sm:text-sm">
+                                <thead>
+                                  <tr>
+                                    <th
+                                      :for={column <- block.columns}
+                                      class="whitespace-nowrap border-b border-base-300/70 px-0 py-3 pr-6 text-left text-base font-semibold text-base-content/60 sm:text-sm"
+                                    >
+                                      {column}
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr :for={row <- block.rows}>
+                                    <td
+                                      :for={column <- block.columns}
+                                      class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
+                                    >
+                                      {format_table_value(Map.get(row, column), column)}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
                         </div>
+                      <% %Report.ChartBlock{} -> %>
+                        <div class="space-y-4">
+                          <div class="space-y-1">
+                            <h3 class="text-xl font-semibold tracking-tight text-base-content">
+                              {block.title}
+                            </h3>
+                            <p
+                              :if={block.summary}
+                              class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
+                            >
+                              {block.summary}
+                            </p>
+                          </div>
 
-                        <div
-                          :if={not Enum.empty?(block.rows)}
-                          class="-mx-5 -my-2 overflow-x-auto whitespace-nowrap sm:-mx-6"
+                          <div
+                            :if={not chart_block_has_rows?(block)}
+                            class="py-8 text-base text-base-content/45 sm:text-sm"
+                          >
+                            {gettext("No rows to show for this chart.")}
+                          </div>
+
+                          <div :if={chart_block_has_rows?(block)} class="overflow-hidden">
+                            <div
+                              id={"report-chart-#{block.id}"}
+                              phx-hook=".VegaChart"
+                              data-spec={block.spec_json}
+                              data-locale={Locale.html_lang(@locale)}
+                              class="min-h-72 w-full"
+                            />
+                          </div>
+                        </div>
+                    <% end %>
+                  </div>
+                </div>
+              </section>
+
+              <section
+                :if={is_nil(@agent_report)}
+                class="flex min-h-72 items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-100/40 px-6 py-12 text-center"
+              >
+                <div class="max-w-md space-y-3">
+                  <.icon name="hero-chart-bar-square-micro" class="mx-auto size-4 text-primary" />
+                  <h2 class="text-xl font-semibold tracking-tight text-base-content">
+                    {gettext("Your analysis will appear here")}
+                  </h2>
+                  <p class="text-base leading-7 text-base-content/60">
+                    {gettext("Ask the analysis agent for a chart, table, metric, or complete report.")}
+                  </p>
+                </div>
+              </section>
+
+              <div class="lp lp-chrome">
+                <div class="panel" id="ejemplos">
+                  <div class="sec-head">
+                    <p class="eyebrow">{gettext("What you can ask")}</p>
+                    <h2>{gettext("Ask it what you ask someone on your team today.")}</h2>
+                  </div>
+                  <div class="gallery" id={"demo-gallery-#{loc}"}>
+                    <article :for={example <- @examples} class="ex" id={"ex-#{example.id}"}>
+                      <div class="kind"><span class={"t#{example.tone}"}>{example.kind}</span></div>
+                      <p class="prompt">{example.question}</p>
+                      <p class="say">{example.answer}</p>
+                      <div class="viz"><LandingCharts.viz example={example} /></div>
+                      <button
+                        type="button"
+                        class="ask lp-btn lp-btn-secondary lp-btn-sm"
+                        phx-click="use_suggestion"
+                        phx-value-prompt={example.question}
+                        disabled={not @chat_unlocked or @chat_pending}
+                      >
+                        {gettext("Ask this")}
+                      </button>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="order-1 min-w-0 lg:order-2 lg:sticky lg:top-20">
+              <section class="flex h-120 min-h-120 flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70 lg:h-[clamp(34rem,calc(100dvh-14rem),44rem)] lg:min-h-0">
+                <header class="shrink-0 border-b border-base-300/70 px-5 py-4">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
+                        {gettext("Analysis agent")}
+                      </p>
+                      <h2 class="mt-1 text-xl font-semibold tracking-tight text-base-content">
+                        {gettext("Ask about Northwind")}
+                      </h2>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
+                      <span
+                        class={[
+                          "size-2 rounded-full",
+                          @chat_unlocked && "bg-success",
+                          not @chat_unlocked && "bg-warning"
+                        ]}
+                        aria-hidden="true"
+                      >
+                      </span>
+                      {if @chat_unlocked, do: gettext("Ready"), else: gettext("Locked")}
+                    </span>
+                    <button
+                      :if={@chat_unlocked}
+                      id="new-conversation"
+                      type="button"
+                      phx-click="reset_chat"
+                      disabled={@chat_pending}
+                      class="rounded-full px-3 py-1.5 text-xs font-medium text-base-content/70 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
+                    >
+                      {gettext("New conversation")}
+                    </button>
+                  </div>
+                  <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
+                    {gettext("Ask a business question or request a complete analysis.")}
+                  </p>
+                </header>
+
+                <div class="shrink-0 border-b border-base-300/70 px-5 py-3">
+                  <div class="flex items-center gap-2">
+                    <button
+                      :for={suggestion <- Enum.take(suggestion_prompts(), 2)}
+                      type="button"
+                      phx-click="use_suggestion"
+                      phx-value-prompt={suggestion.prompt}
+                      title={suggestion.prompt}
+                      disabled={not @chat_unlocked}
+                      class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-base-200 py-2 pr-3 pl-2 text-sm font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
+                      <span class="truncate">{suggestion.label}</span>
+                    </button>
+
+                    <details class="group relative shrink-0">
+                      <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        {gettext("More")}
+                      </summary>
+                      <div class="absolute right-0 z-20 mt-2 w-72 space-y-1 rounded-xl bg-base-100 p-2 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
+                        <button
+                          :for={suggestion <- Enum.drop(suggestion_prompts(), 2)}
+                          type="button"
+                          phx-click="use_suggestion"
+                          phx-value-prompt={suggestion.prompt}
+                          title={suggestion.prompt}
+                          disabled={not @chat_unlocked}
+                          class="flex w-full items-center gap-2 rounded-lg py-2 pr-3 pl-2 text-left text-sm font-medium text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-primary"
                         >
-                          <div class="inline-block min-w-full px-5 py-2 align-middle sm:px-6">
-                            <table class="w-full border-separate border-spacing-0 text-base sm:text-sm">
-                              <thead>
-                                <tr>
-                                  <th
-                                    :for={column <- block.columns}
-                                    class="whitespace-nowrap border-b border-base-300/70 px-0 py-3 pr-6 text-left text-base font-semibold text-base-content/60 sm:text-sm"
-                                  >
-                                    {column}
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr :for={row <- block.rows}>
-                                  <td
-                                    :for={column <- block.columns}
-                                    class="whitespace-nowrap border-b border-base-300/55 px-0 py-3 pr-6 text-base-content/75 last:pr-0"
-                                  >
-                                    {format_table_value(Map.get(row, column), column)}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
+                          <span class="min-w-0">{suggestion.label}</span>
+                        </button>
+                      </div>
+                    </details>
+                  </div>
+                </div>
+
+                <div class="min-h-0 flex-1 overflow-y-auto bg-base-200/40 px-4 py-4">
+                  <p
+                    :if={@locale_notice}
+                    id="locale-notice"
+                    class="mb-4 rounded-lg bg-base-200/70 px-3 py-2 text-sm text-base-content/75"
+                  >
+                    {@locale_notice}
+                  </p>
+
+                  <div
+                    :if={not show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
+                    class="flex h-full min-h-48 items-center justify-center text-center"
+                  >
+                    <div class="max-w-xs space-y-2">
+                      <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
+                      <p class="font-medium text-base-content">{gettext("Start with a prompt")}</p>
+                      <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
+                        {gettext("Pick an example or describe the decision you want to support.")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    :if={show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
+                    class="space-y-4"
+                  >
+                    <div class="space-y-4">
+                      <div :for={message <- @chat_messages} class={chat_row_classes(message.role)}>
+                        <div class={message_classes(message.role)}>
+                          <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
+                            {role_label(message.role)}
+                          </p>
+                          <div :if={message.role == :assistant} class={assistant_markdown_classes()}>
+                            {render_markdown(message.content)}
+                          </div>
+                          <p
+                            :if={message.role == :user}
+                            class="text-base leading-7 sm:text-sm sm:leading-6"
+                          >
+                            {message.content}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div :if={@pending_prompt} class="flex justify-end">
+                        <div class={message_classes(:user)}>
+                          <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
+                            {gettext("You")}
+                          </p>
+                          <p class="text-base leading-7 sm:text-sm sm:leading-6">{@pending_prompt}</p>
+                        </div>
+                      </div>
+
+                      <div :if={@chat_pending and @pending_reply_content} class="flex justify-start">
+                        <div class={message_classes(:assistant)}>
+                          <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
+                            {gettext("Agent")}
+                          </p>
+                          <div class={assistant_markdown_classes()}>
+                            {render_markdown(@pending_reply_content)}
                           </div>
                         </div>
                       </div>
-                    <% %Report.ChartBlock{} -> %>
-                      <div class="space-y-4">
-                        <div class="space-y-1">
-                          <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                            {block.title}
-                          </h3>
-                          <p
-                            :if={block.summary}
-                            class="text-base leading-7 text-base-content/60 sm:text-sm sm:leading-6"
-                          >
-                            {block.summary}
-                          </p>
-                        </div>
-
-                        <div
-                          :if={not chart_block_has_rows?(block)}
-                          class="py-8 text-base text-base-content/45 sm:text-sm"
-                        >
-                          {gettext("No rows to show for this chart.")}
-                        </div>
-
-                        <div :if={chart_block_has_rows?(block)} class="overflow-hidden">
-                          <div
-                            id={"report-chart-#{block.id}"}
-                            phx-hook=".VegaChart"
-                            data-spec={block.spec_json}
-                            data-locale={Locale.html_lang(@locale)}
-                            class="min-h-72 w-full"
-                          />
-                        </div>
-                      </div>
-                  <% end %>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </section>
 
-            <section
-              :if={is_nil(@agent_report)}
-              class="flex min-h-72 items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-100/40 px-6 py-12 text-center"
-            >
-              <div class="max-w-md space-y-3">
-                <.icon name="hero-chart-bar-square-micro" class="mx-auto size-4 text-primary" />
-                <h2 class="text-xl font-semibold tracking-tight text-base-content">
-                  {gettext("Your analysis will appear here")}
-                </h2>
-                <p class="text-base leading-7 text-base-content/60">
-                  {gettext("Ask the analysis agent for a chart, table, metric, or complete report.")}
-                </p>
-              </div>
-            </section>
-
-            <details class="group rounded-2xl bg-base-100 ring-1 ring-base-300/70">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6">
-                <div>
-                  <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                    {gettext("Example analyses")}
+                <div
+                  :if={not @chat_unlocked and DemoAccess.enabled?()}
+                  id="access-ended"
+                  class="shrink-0 space-y-2 border-t border-base-300/70 px-4 py-4 text-sm leading-5"
+                >
+                  <p class="font-medium text-base-content">
+                    {gettext("Your invitation has no conversations left.")}
                   </p>
-                  <h2 class="mt-1 text-lg font-semibold tracking-tight text-base-content">
-                    {gettext("See what Agentic BI can build")}
-                  </h2>
-                </div>
-                <.icon
-                  name="hero-chevron-down"
-                  class="size-4 shrink-0 text-base-content/50 group-open:rotate-180"
-                />
-              </summary>
-
-              <div class="space-y-5 border-t border-base-300/70 p-5 sm:p-6">
-                <div class="flex justify-end">
-                  <button
-                    type="button"
-                    phx-click="reset_chat"
-                    class="rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    {gettext("Restart session")}
-                  </button>
+                  <p class="text-base-content/70">
+                    {gettext("Rather see it with your company's data?")}
+                    <a href={Links.calendar(:demo_invitee)} class="font-medium text-primary underline">
+                      {gettext("Book your exploratory call")}
+                    </a>
+                  </p>
                 </div>
 
-                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                  <article :for={chart <- @charts} id={"chart-card-#{chart.id}"} class="space-y-4">
-                    <div class="space-y-1">
-                      <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-base-content/45">
-                        {chart.kicker}
-                      </p>
-                      <h3 class="text-xl font-semibold tracking-tight text-base-content">
-                        {chart.title}
-                      </h3>
-                      <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
-                        {chart.description}
-                      </p>
-                    </div>
+                <.form
+                  :if={not @chat_unlocked and not DemoAccess.enabled?()}
+                  id="unlock-form"
+                  for={@unlock_form}
+                  phx-submit="unlock_chat"
+                  class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
+                >
+                  <p id="access-notice" class="text-sm leading-5 text-base-content/75">
+                    {if @access.state == :expired,
+                      do: gettext("Your invitation is no longer available."),
+                      else: gettext("The live agent is by invitation.")}
+                    <a href={~p"/" <> "#pruebalo"} class="font-medium text-primary underline">
+                      {gettext("Request access")}
+                    </a>
+                  </p>
 
-                    <div class="overflow-hidden border-t border-base-300/70 pt-3">
-                      <div
-                        id={"sample-chart-#{chart.id}"}
-                        phx-hook=".VegaChart"
-                        data-spec={chart.spec_json}
-                        data-locale={Locale.html_lang(@locale)}
-                        class="min-h-72 w-full"
-                      />
-                    </div>
-                  </article>
-                </div>
-              </div>
-            </details>
-          </div>
-
-          <aside class="order-1 min-w-0 lg:order-2 lg:sticky lg:top-5">
-            <section class="flex h-120 min-h-120 flex-col overflow-hidden rounded-2xl bg-base-100 ring-1 ring-base-300/70 lg:h-[clamp(34rem,calc(100dvh-14rem),44rem)] lg:min-h-0">
-              <header class="shrink-0 border-b border-base-300/70 px-5 py-4">
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <p class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                      {gettext("Analysis agent")}
-                    </p>
-                    <h2 class="mt-1 text-xl font-semibold tracking-tight text-base-content">
-                      {gettext("Ask about Northwind")}
-                    </h2>
-                  </div>
-                  <span class="inline-flex items-center gap-1.5 text-xs text-base-content/50">
-                    <span
-                      class={[
-                        "size-2 rounded-full",
-                        @chat_unlocked && "bg-success",
-                        not @chat_unlocked && "bg-warning"
-                      ]}
-                      aria-hidden="true"
+                  <div class="space-y-1">
+                    <label
+                      for={@unlock_form[:password].id}
+                      class="text-sm font-medium text-base-content"
                     >
-                    </span>
-                    {if @chat_unlocked, do: gettext("Ready"), else: gettext("Locked")}
-                  </span>
-                </div>
-                <p class="mt-2 text-base leading-7 text-pretty text-base-content/60 sm:text-sm sm:leading-6">
-                  {gettext("Ask a business question or request a complete analysis.")}
-                </p>
-              </header>
-
-              <div class="shrink-0 border-b border-base-300/70 px-5 py-3">
-                <div class="flex items-center gap-2">
-                  <button
-                    :for={suggestion <- Enum.take(suggestion_prompts(), 2)}
-                    type="button"
-                    phx-click="use_suggestion"
-                    phx-value-prompt={suggestion.prompt}
-                    title={suggestion.prompt}
-                    disabled={not @chat_unlocked}
-                    class="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-base-200 py-2 pr-3 pl-2 text-sm font-medium text-base-content ring-1 ring-base-300/70 hover:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
-                    <span class="truncate">{suggestion.label}</span>
-                  </button>
-
-                  <details class="group relative shrink-0">
-                    <summary class="cursor-pointer list-none rounded-full px-3 py-2 text-sm font-medium text-base-content/65 ring-1 ring-base-300/70 hover:bg-base-200 hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                      {gettext("More")}
-                    </summary>
-                    <div class="absolute right-0 z-20 mt-2 w-72 space-y-1 rounded-xl bg-base-100 p-2 shadow-lg ring-1 ring-base-300 [[data-theme=dark]_&]:shadow-none">
-                      <button
-                        :for={suggestion <- Enum.drop(suggestion_prompts(), 2)}
-                        type="button"
-                        phx-click="use_suggestion"
-                        phx-value-prompt={suggestion.prompt}
-                        title={suggestion.prompt}
-                        disabled={not @chat_unlocked}
-                        class="flex w-full items-center gap-2 rounded-lg py-2 pr-3 pl-2 text-left text-sm font-medium text-base-content hover:bg-base-200 focus-visible:outline-2 focus-visible:outline-primary"
-                      >
-                        <.icon name={suggestion.icon} class="size-4 shrink-0 text-primary" />
-                        <span class="min-w-0">{suggestion.label}</span>
-                      </button>
-                    </div>
-                  </details>
-                </div>
-              </div>
-
-              <div class="min-h-0 flex-1 overflow-y-auto bg-base-200/40 px-4 py-4">
-                <p
-                  :if={@locale_notice}
-                  id="locale-notice"
-                  class="mb-4 rounded-lg bg-base-200/70 px-3 py-2 text-sm text-base-content/75"
-                >
-                  {@locale_notice}
-                </p>
-
-                <div
-                  :if={not show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
-                  class="flex h-full min-h-48 items-center justify-center text-center"
-                >
-                  <div class="max-w-xs space-y-2">
-                    <.icon name="hero-sparkles-micro" class="mx-auto size-4 text-primary" />
-                    <p class="font-medium text-base-content">{gettext("Start with a prompt")}</p>
-                    <p class="text-base leading-7 text-pretty text-base-content/55 sm:text-sm sm:leading-6">
-                      {gettext(
-                        "Select an example above or describe the decision you want to support."
-                      )}
+                      {gettext("Demo password")}
+                    </label>
+                    <p class="text-sm leading-5 text-base-content/55">
+                      {gettext("Enter the password to unlock the analysis agent.")}
                     </p>
                   </div>
-                </div>
 
-                <div
-                  :if={show_chat_conversation?(@chat_messages, @pending_prompt, @chat_pending)}
-                  class="space-y-4"
-                >
-                  <div class="space-y-4">
-                    <div :for={message <- @chat_messages} class={chat_row_classes(message.role)}>
-                      <div class={message_classes(message.role)}>
-                        <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
-                          {role_label(message.role)}
-                        </p>
-                        <div :if={message.role == :assistant} class={assistant_markdown_classes()}>
-                          {render_markdown(message.content)}
-                        </div>
-                        <p
-                          :if={message.role == :user}
-                          class="text-base leading-7 sm:text-sm sm:leading-6"
-                        >
-                          {message.content}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div :if={@pending_prompt} class="flex justify-end">
-                      <div class={message_classes(:user)}>
-                        <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
-                          {gettext("You")}
-                        </p>
-                        <p class="text-base leading-7 sm:text-sm sm:leading-6">{@pending_prompt}</p>
-                      </div>
-                    </div>
-
-                    <div :if={@chat_pending and @pending_reply_content} class="flex justify-start">
-                      <div class={message_classes(:assistant)}>
-                        <p class="mb-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-60">
-                          {gettext("Agent")}
-                        </p>
-                        <div class={assistant_markdown_classes()}>
-                          {render_markdown(@pending_reply_content)}
-                        </div>
-                      </div>
-                    </div>
+                  <div class="flex gap-2">
+                    <.input
+                      field={@unlock_form[:password]}
+                      type="password"
+                      autocomplete="current-password"
+                      placeholder={gettext("Password")}
+                      aria-invalid={not is_nil(@unlock_error)}
+                      aria-describedby={@unlock_error && "unlock-error"}
+                      class="min-w-0 flex-1 rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0"
+                    />
+                    <button
+                      type="submit"
+                      class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {gettext("Unlock")}
+                    </button>
                   </div>
-                </div>
-              </div>
+
+                  <p :if={@unlock_error} id="unlock-error" class="text-sm text-error" role="alert">
+                    {unlock_error_text(@unlock_error)}
+                  </p>
+                </.form>
+
+                <.form
+                  :if={@chat_unlocked}
+                  id="chat-form"
+                  for={@chat_form}
+                  phx-submit="submit_chat"
+                  class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
+                >
+                  <.input
+                    field={@chat_form[:prompt]}
+                    type="textarea"
+                    placeholder={gettext("Ask about revenue, customers, products, or trends")}
+                    rows="2"
+                    disabled={@chat_pending}
+                    class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-sm leading-5 text-base-content/50">
+                      {gettext("Connected with read-only access")}
+                    </p>
+
+                    <button
+                      type="submit"
+                      class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={@chat_pending}
+                    >
+                      {if @chat_pending, do: gettext("Analyzing..."), else: gettext("Send")}
+                    </button>
+                  </div>
+                </.form>
+              </section>
 
               <div
-                :if={not @chat_unlocked and DemoAccess.enabled?()}
-                id="access-ended"
-                class="shrink-0 space-y-2 border-t border-base-300/70 px-4 py-4 text-sm leading-5"
+                :if={@unlocked_by == :invite}
+                id="invite-status"
+                class="mt-3 space-y-1 px-1 text-xs leading-5 text-pretty text-base-content/65"
               >
-                <p class="font-medium text-base-content">
-                  {gettext("Your invitation has no conversations left.")}
+                <p>
+                  {ngettext(
+                    "1 conversation left on your invitation. Each new conversation uses one.",
+                    "%{count} conversations left on your invitation. Each new conversation uses one.",
+                    @access.remaining
+                  )}
                 </p>
-                <p class="text-base-content/70">
+                <p>
                   {gettext("Rather see it with your company's data?")}
                   <a href={Links.calendar(:demo_invitee)} class="font-medium text-primary underline">
                     {gettext("Book your exploratory call")}
@@ -750,120 +798,22 @@ defmodule JidoCodemodeWeb.SandboxLive do
                 </p>
               </div>
 
-              <.form
-                :if={not @chat_unlocked and not DemoAccess.enabled?()}
-                id="unlock-form"
-                for={@unlock_form}
-                phx-submit="unlock_chat"
-                class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
+              <%!-- Outside the fixed-height card so it never takes space from the conversation. --%>
+              <p
+                :if={footnote = JidoCodemodeWeb.CurrencyNote.footnote(@locale, @currency)}
+                id="currency-footnote"
+                class="mt-3 px-1 text-xs leading-5 text-pretty text-base-content/55"
               >
-                <p id="access-notice" class="text-sm leading-5 text-base-content/75">
-                  {if @access.state == :expired,
-                    do: gettext("Your invitation is no longer available."),
-                    else: gettext("The live agent is by invitation.")}
-                  <a href={~p"/" <> "#pruebalo"} class="font-medium text-primary underline">
-                    {gettext("Request access")}
-                  </a>
-                </p>
-
-                <div class="space-y-1">
-                  <label
-                    for={@unlock_form[:password].id}
-                    class="text-sm font-medium text-base-content"
-                  >
-                    {gettext("Demo password")}
-                  </label>
-                  <p class="text-sm leading-5 text-base-content/55">
-                    {gettext("Enter the password to unlock the analysis agent.")}
-                  </p>
-                </div>
-
-                <div class="flex gap-2">
-                  <.input
-                    field={@unlock_form[:password]}
-                    type="password"
-                    autocomplete="current-password"
-                    placeholder={gettext("Password")}
-                    aria-invalid={not is_nil(@unlock_error)}
-                    aria-describedby={@unlock_error && "unlock-error"}
-                    class="min-w-0 flex-1 rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0"
-                  />
-                  <button
-                    type="submit"
-                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    {gettext("Unlock")}
-                  </button>
-                </div>
-
-                <p :if={@unlock_error} id="unlock-error" class="text-sm text-error" role="alert">
-                  {unlock_error_text(@unlock_error)}
-                </p>
-              </.form>
-
-              <.form
-                :if={@chat_unlocked}
-                id="chat-form"
-                for={@chat_form}
-                phx-submit="submit_chat"
-                class="shrink-0 space-y-3 border-t border-base-300/70 px-4 py-4"
-              >
-                <.input
-                  field={@chat_form[:prompt]}
-                  type="textarea"
-                  placeholder={gettext("Ask about revenue, customers, products, or trends")}
-                  rows="2"
-                  disabled={@chat_pending}
-                  class="w-full resize-none rounded-xl border border-base-300 bg-base-100 px-3 py-2.5 text-base text-base-content shadow-none outline-none focus:border-primary focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
-                />
-
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-sm leading-5 text-base-content/50">
-                    {gettext("Connected with read-only access")}
-                  </p>
-
-                  <button
-                    type="submit"
-                    class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-content hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={@chat_pending}
-                  >
-                    {if @chat_pending, do: gettext("Analyzing..."), else: gettext("Send")}
-                  </button>
-                </div>
-              </.form>
-            </section>
-
-            <div
-              :if={@unlocked_by == :invite}
-              id="invite-status"
-              class="mt-3 space-y-1 px-1 text-xs leading-5 text-pretty text-base-content/65"
-            >
-              <p>
-                {ngettext(
-                  "1 conversation left on your invitation. Each new conversation uses one.",
-                  "%{count} conversations left on your invitation. Each new conversation uses one.",
-                  @access.remaining
-                )}
+                {footnote}
               </p>
-              <p>
-                {gettext("Rather see it with your company's data?")}
-                <a href={Links.calendar(:demo_invitee)} class="font-medium text-primary underline">
-                  {gettext("Book your exploratory call")}
-                </a>
-              </p>
-            </div>
-
-            <%!-- Outside the fixed-height card so it never takes space from the conversation. --%>
-            <p
-              :if={footnote = JidoCodemodeWeb.CurrencyNote.footnote(@locale, @currency)}
-              id="currency-footnote"
-              class="mt-3 px-1 text-xs leading-5 text-pretty text-base-content/55"
-            >
-              {footnote}
-            </p>
-          </aside>
+            </aside>
+          </section>
         </section>
-      </section>
+
+        <div class="lp lp-chrome">
+          <SiteChrome.site_footer />
+        </div>
+      </div>
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".VegaChart">
         import vegaEmbed from "vega-embed"
@@ -1006,41 +956,6 @@ defmodule JidoCodemodeWeb.SandboxLive do
   end
 
   defp billing(_socket), do: nil
-
-  defp build_charts(locale) do
-    rate = Dataset.rate(locale)
-
-    [
-      %{
-        id: "revenue-trend",
-        kicker: gettext("Line"),
-        title: gettext("Monthly revenue trend"),
-        description: gettext("A simple time-series anchor for the conversation."),
-        spec_json: revenue_trend_spec(rate)
-      },
-      %{
-        id: "category-revenue",
-        kicker: gettext("Bar"),
-        title: gettext("Revenue by category"),
-        description: gettext("A ranked comparison of the biggest drivers."),
-        spec_json: category_revenue_spec(rate)
-      },
-      %{
-        id: "channel-mix",
-        kicker: gettext("Donut"),
-        title: gettext("Channel mix"),
-        description: gettext("A quick composition view for share of revenue."),
-        spec_json: channel_mix_spec(rate)
-      },
-      %{
-        id: "customer-shape",
-        kicker: gettext("Scatter"),
-        title: gettext("Customer value vs. order volume"),
-        description: gettext("A compact way to spot high-value segments."),
-        spec_json: customer_shape_spec(rate)
-      }
-    ]
-  end
 
   defp chat_form(prompt \\ "") do
     to_form(%{"prompt" => prompt}, as: :chat)
@@ -1326,189 +1241,5 @@ defmodule JidoCodemodeWeb.SandboxLive do
     |> assign(:chat_request_id, nil)
     |> assign(:pending_prompt, nil)
     |> assign(:pending_reply_content, nil)
-  end
-
-  defp revenue_trend_spec(rate) do
-    monthly_revenue_data(rate)
-    |> Tucan.lineplot("month", "revenue",
-      height: 260,
-      width: :container,
-      points: true,
-      tooltip: :data,
-      x: [type: :temporal, axis: [title: nil, format: "%b"]],
-      y: [axis: [title: nil, format: "$,.0f"]]
-    )
-    |> style_spec()
-    |> encode_spec()
-  end
-
-  defp category_revenue_spec(rate) do
-    category_revenue_data(rate)
-    |> Tucan.bar("category", "revenue",
-      height: 260,
-      width: :container,
-      tooltip: :data,
-      orient: :horizontal,
-      x: [axis: [title: nil, format: "$,.0f"]],
-      y: [axis: [title: nil], sort: "-x"]
-    )
-    |> style_spec()
-    |> encode_spec()
-  end
-
-  defp channel_mix_spec(rate) do
-    channel_mix_data(rate)
-    |> Tucan.donut("revenue", "channel",
-      height: 260,
-      width: :container,
-      tooltip: :data
-    )
-    |> style_spec()
-    |> encode_spec()
-  end
-
-  defp customer_shape_spec(rate) do
-    customer_shape_data(rate)
-    |> Tucan.scatter("avg_order_value", "orders",
-      height: 260,
-      width: :container,
-      tooltip: :data,
-      color_by: "segment",
-      x: [axis: [title: gettext("Average order value"), format: "$,.0f"]],
-      y: [axis: [title: gettext("Orders")]]
-    )
-    |> Tucan.size_by("revenue", legend: [format: "$,.2s"])
-    |> style_spec()
-    |> encode_spec()
-  end
-
-  defp style_spec(vl) do
-    vl
-    |> Tucan.set_theme(:latimes)
-    |> Vl.config(
-      background: "transparent",
-      font: "Geist",
-      mark: [color: "#2563EB"],
-      view: [stroke: nil],
-      range: [category: ["#2563EB", "#0F8B8D", "#D97706", "#0891B2", "#71717A"]],
-      legend: [title: nil, orient: :bottom, label_font: "Geist", label_font_size: 11],
-      axis: [
-        grid_color: "#DCE1E8",
-        domain: false,
-        tick_color: "#DCE1E8",
-        label_color: "#52525B",
-        label_font: "Geist",
-        title_font: "Geist"
-      ]
-    )
-  end
-
-  defp encode_spec(vl) do
-    vl
-    |> Vl.to_spec()
-    |> Jason.encode!()
-  end
-
-  defp monthly_revenue_data(rate) do
-    [
-      %{month: ~D[2024-01-01], revenue: 48_200},
-      %{month: ~D[2024-02-01], revenue: 52_800},
-      %{month: ~D[2024-03-01], revenue: 57_600},
-      %{month: ~D[2024-04-01], revenue: 61_400},
-      %{month: ~D[2024-05-01], revenue: 66_900},
-      %{month: ~D[2024-06-01], revenue: 64_100},
-      %{month: ~D[2024-07-01], revenue: 72_300},
-      %{month: ~D[2024-08-01], revenue: 76_800}
-    ]
-    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
-  end
-
-  defp category_revenue_data(rate) do
-    [
-      %{category: gettext("Beverages"), revenue: 267_900},
-      %{category: gettext("Dairy"), revenue: 234_500},
-      %{category: gettext("Confections"), revenue: 167_400},
-      %{category: gettext("Meat"), revenue: 163_000},
-      %{category: gettext("Seafood"), revenue: 131_300}
-    ]
-    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
-  end
-
-  defp channel_mix_data(rate) do
-    [
-      %{channel: gettext("Direct"), revenue: 228_000},
-      %{channel: gettext("Partners"), revenue: 154_000},
-      %{channel: gettext("Inbound"), revenue: 96_000},
-      %{channel: gettext("Expansion"), revenue: 72_000}
-    ]
-    |> Enum.map(&%{&1 | revenue: round(&1.revenue * rate)})
-  end
-
-  defp customer_shape_data(rate) do
-    [
-      %{
-        customer: "QuickStop",
-        orders: 26,
-        avg_order_value: 4_240,
-        revenue: 110_200,
-        segment: gettext("Enterprise")
-      },
-      %{
-        customer: "Ernst Handel",
-        orders: 24,
-        avg_order_value: 4_360,
-        revenue: 104_900,
-        segment: gettext("Enterprise")
-      },
-      %{
-        customer: "Save-a-lot",
-        orders: 23,
-        avg_order_value: 4_100,
-        revenue: 104_400,
-        segment: gettext("Enterprise")
-      },
-      %{
-        customer: "Hungry Owl",
-        orders: 14,
-        avg_order_value: 3_570,
-        revenue: 50_000,
-        segment: gettext("Growth")
-      },
-      %{
-        customer: "Rattlesnake",
-        orders: 13,
-        avg_order_value: 3_930,
-        revenue: 51_100,
-        segment: gettext("Growth")
-      },
-      %{
-        customer: "Hanari",
-        orders: 9,
-        avg_order_value: 3_650,
-        revenue: 32_800,
-        segment: gettext("Mid-market")
-      },
-      %{
-        customer: "White Clover",
-        orders: 8,
-        avg_order_value: 3_420,
-        revenue: 27_400,
-        segment: gettext("Mid-market")
-      },
-      %{
-        customer: "Folk och fa HB",
-        orders: 7,
-        avg_order_value: 4_220,
-        revenue: 29_600,
-        segment: gettext("Mid-market")
-      }
-    ]
-    |> Enum.map(
-      &%{
-        &1
-        | revenue: round(&1.revenue * rate),
-          avg_order_value: round(&1.avg_order_value * rate)
-      }
-    )
   end
 end

@@ -66,6 +66,13 @@ of 29 Sep 2026, TechFoundersMX/ellingwood-demo#246):
   `DEMO_PASSWORD` and the landing offers the exploratory call instead of the form.
   With it set, `/demo` sends anyone without an active invitation to the form.
 
+`/live` is the same agent for the co-founders, with no invitation or password and
+no uses spent. Cloudflare Access (the "Co-founders" policy) guards
+`agentic-bi.superdev.mx/live*`, and the app verifies the Access token itself
+(RS256 against the team's keys, `aud`, `iss`, `exp`): anything else is a 404.
+Set `CF_ACCESS_TEAM_DOMAIN` and `CF_ACCESS_LIVE_AUD`; unset, `/live` stays closed.
+Because Access covers everything under `/live`, the LiveView socket lives at `/lv`.
+
 Generated reports live only in memory and are deleted after 24 hours. No
 conversation is stored or sent anywhere.
 

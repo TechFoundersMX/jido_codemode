@@ -383,3 +383,10 @@
 @media (prefers-reduced-motion: reduce) {
   .lp *, .lp *::before, .lp *::after { animation: none !important; transition: none !important; }
 }
+
+/* On /demo, the shared header and footer (and the examples) sit in .lp.lp-chrome
+   wrappers: landing styles apply inside them, without the page background. */
+.lp.lp-chrome { min-height: 0; background: transparent; }
+.lp.lp-chrome .gallery { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.lp .ex .ask { justify-self: start; }
+.lp .ex .ask[disabled] { opacity: 0.5; cursor: not-allowed; }
