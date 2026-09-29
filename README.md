@@ -43,6 +43,24 @@ The app runs at `http://localhost:4000`.
 
 If `OPENCODE_API_KEY` is unset, the app still boots and the static demo remains available, but live chat requests will fail.
 
+### Spanish demo and exchange rate
+
+The page is available in English and Mexican Spanish. The language comes from
+`?lang=es|en`, then the `agentic_bi_locale` cookie, then the browser. The ES/EN
+switch in the header changes language in place and starts a new conversation.
+
+In Spanish, amounts are in Mexican pesos. At startup the app builds a
+read-only copy of `northwind.sqlite` with the three money columns converted and
+category and country names translated.
+
+- `FX_USD_MXN`: MXN per 1 USD, for example `17.8413`
+- `FX_USD_MXN_DATE`: the rate's date, `YYYY-MM-DD`
+- `FX_USD_MXN_SOURCE`: shown in the footnote, for example `Banxico FIX (SuperDev ERP)`
+
+Without a valid `FX_USD_MXN`, the Spanish page shows USD. To update the rate,
+change the variables and restart the app. SuperDev ERP records the Banxico FIX
+daily (Odoo `res_currency_rate`, company currency MXN, stored as USD per MXN).
+
 ### SuperDev AI Gateway mode
 
 Instead of holding an OpenCode key, the app can call OpenCode through the
