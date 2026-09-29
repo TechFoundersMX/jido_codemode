@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang={JidoCodemode.Locale.html_lang(assigns[:locale] || "en")}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Agentic BI" suffix=" · Decision-ready analysis">
+    <.live_title default="Agentic BI" suffix={" · " <> gettext("Decision-ready analysis")}>
       {assigns[:page_title]}
     </.live_title>
 
