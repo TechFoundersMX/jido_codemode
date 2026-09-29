@@ -987,12 +987,12 @@ footer.site { padding-block: 18px; }
     const finish = () => { q.textContent = text; a.textContent = L(ex.a); a.classList.remove("fade-in"); void a.offsetWidth; a.classList.add("fade-in"); ch.innerHTML = viz(heroEx); if (animate) play(ch); };
     if (!animate) { finish(); return; }
     let n = 0; a.textContent = ""; ch.innerHTML = ""; q.innerHTML = '<span class="caret"></span>';
-    typing = setInterval(() => { n += 2; q.innerHTML = text.slice(0, n) + '<span class="caret"></span>'; if (n >= text.length) { clearInterval(typing); setTimeout(finish, 350); } }, 28);
+    typing = setInterval(() => { n += 3; q.innerHTML = text.slice(0, n) + '<span class="caret"></span>'; if (n >= text.length) { clearInterval(typing); setTimeout(finish, 150); } }, 18);
   }
   function startCycle() {
     clearInterval(heroTimer);
     if (reduce) return;
-    heroTimer = setInterval(() => showHero((heroIdx + 1) % HERO.length, true), 7000);
+    heroTimer = setInterval(() => showHero((heroIdx + 1) % HERO.length, true), 4000);
   }
   function buildDots() {
     const d = document.querySelector("[data-hero-dots]");
