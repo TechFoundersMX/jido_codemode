@@ -133,15 +133,20 @@ defmodule JidoCodemode.Agent.BuildReportTest do
     assert {:ok, %Report{blocks: [vertical, horizontal]}} =
              Report.latest_for_session(session_id)
 
-    assert %{"encoding" => %{"x" => %{"field" => "category", "sort" => nil} = x}} =
-             Jason.decode!(vertical.spec_json)
+    # `"sort" => nil` in a map pattern also requires the key to be present.
+    assert %{
+             "encoding" => %{
+               "x" => %{"field" => "category", "type" => "nominal", "sort" => nil},
+               "y" => %{"field" => "product_count", "type" => "quantitative"}
+             }
+           } = Jason.decode!(vertical.spec_json)
 
-    assert Map.has_key?(x, "sort")
-
-    assert %{"encoding" => %{"y" => %{"field" => "category"} = y}} =
-             Jason.decode!(horizontal.spec_json)
-
-    assert Map.has_key?(y, "sort") and y["sort"] == nil
+    assert %{
+             "encoding" => %{
+               "y" => %{"field" => "category", "type" => "nominal", "sort" => nil},
+               "x" => %{"field" => "product_count", "type" => "quantitative"}
+             }
+           } = Jason.decode!(horizontal.spec_json)
   end
 
   test "build_report helpers can build a donut chart" do
