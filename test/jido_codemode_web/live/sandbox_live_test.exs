@@ -367,7 +367,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     unlock_diffs = collect_diffs()
     assert Enum.any?(unlock_diffs, &(&1 =~ "chat-form"))
     refute Enum.any?(unlock_diffs, &(&1 =~ "Turn business questions"))
-    refute Enum.any?(unlock_diffs, &(&1 =~ "We can't find the internet"))
+    refute Enum.any?(unlock_diffs, &(&1 =~ "find the internet"))
 
     view |> element("#locale-es_MX") |> render_click()
     switch_diffs = collect_diffs()
