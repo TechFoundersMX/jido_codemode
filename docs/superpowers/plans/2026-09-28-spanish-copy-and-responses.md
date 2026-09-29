@@ -15,7 +15,7 @@
 - Supported locales: `"en"` and `"es_MX"`. Default: `"en"`. Any `es*` value resolves to `"es_MX"`.
 - Resolution order: `?lang=` parameter, then cookie `agentic_bi_locale`, then `Accept-Language`, then `"en"`.
 - Session key: `"locale"`. `<html lang>`: `"es-MX"` for `es_MX`, `"en"` otherwise.
-- Exchange-rate environment variables: `FX_USD_MXN`, `FX_USD_MXN_DATE`, `FX_USD_MXN_SOURCE`. Initial values: `17.8413`, `2026-09-28`, `Banxico FIX (SuperDev ERP)`.
+- Exchange-rate environment variables: `FX_USD_MXN`, `FX_USD_MXN_DATE`, `FX_USD_MXN_SOURCE`. Initial values: `17.8413`, `2026-09-28`, `FIX de Banxico`.
 - Money columns (the only ones converted): `OrderDetail.UnitPrice`, `Product.UnitPrice`, `Order.Freight`. `OrderDetail.Discount` never changes.
 - Country columns translated: `Customer.Country`, `Supplier.Country`, `Employee.Country`, `Order.ShipCountry`. Category column: `Category.CategoryName`.
 - Money display: Spanish `$4,779,116.56 MXN`; English `$267,868.18`. Chart axes use `$` with no suffix in both languages.
@@ -1908,7 +1908,7 @@ python3 - <<'PY'
 import json, os, urllib.request
 tok = open(os.path.expanduser("~/.config/superdev/coolify-api-token")).read().strip()
 url = "https://coolify.linguavid.net/api/v1/applications/cq42xyjofqcw8uhcoiuh4qsc/envs"
-for key, value in [("FX_USD_MXN", "17.8413"), ("FX_USD_MXN_DATE", "2026-09-28"), ("FX_USD_MXN_SOURCE", "Banxico FIX (SuperDev ERP)")]:
+for key, value in [("FX_USD_MXN", "17.8413"), ("FX_USD_MXN_DATE", "2026-09-28"), ("FX_USD_MXN_SOURCE", "FIX de Banxico")]:
     body = {"key": key, "value": value, "is_preview": False, "is_buildtime": False, "is_runtime": True, "is_literal": True}
     req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers={"Authorization": "Bearer " + tok, "Content-Type": "application/json", "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=30) as r:

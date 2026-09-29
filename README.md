@@ -55,7 +55,7 @@ category and country names translated.
 
 - `FX_USD_MXN`: MXN per 1 USD, for example `17.8413`
 - `FX_USD_MXN_DATE`: the rate's date, `YYYY-MM-DD`
-- `FX_USD_MXN_SOURCE`: shown in the footnote, for example `Banxico FIX (SuperDev ERP)`
+- `FX_USD_MXN_SOURCE`: shown in the footnote, for example `FIX de Banxico`
 
 Without a valid `FX_USD_MXN`, the Spanish page shows USD. To update the rate,
 change the variables and restart the app. SuperDev ERP records the Banxico FIX

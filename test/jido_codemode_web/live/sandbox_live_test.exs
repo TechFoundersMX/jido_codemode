@@ -324,6 +324,7 @@ defmodule JidoCodemodeWeb.SandboxLiveTest do
     {:ok, _view, html} = conn |> put_req_header("accept-language", "es-MX") |> live(~p"/")
 
     assert html =~ "Cifras en pesos mexicanos (MXN)"
+    assert html =~ "con el tipo de cambio FIX de Banxico del 28/09/2026: 1 USD = 17.8413 MXN."
     assert html =~ "1 USD = 17.8413 MXN"
     assert html =~ "28/09/2026"
   end
