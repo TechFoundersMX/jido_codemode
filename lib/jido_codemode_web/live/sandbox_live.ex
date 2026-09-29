@@ -1138,14 +1138,14 @@ defmodule JidoCodemodeWeb.SandboxLive do
   def format_table_value(value, _column) when is_number(value), do: Format.number(value)
   def format_table_value(value, _column), do: to_string(value)
 
-  # Ids, folios, and years are labels, not quantities: they stay ungrouped.
+  # Ids, folios (names starting with "folio", not "Portafolio"), and years are labels, not quantities: they stay ungrouped.
   defp identifier_column?(column) do
     name = to_string(column)
     lowered = String.downcase(name)
 
     name == "Id" or String.ends_with?(name, ["Id", "ID"]) or lowered == "id" or
       String.starts_with?(lowered, ["id ", "id_"]) or
-      String.contains?(lowered, ["year", "año", "folio"])
+      String.contains?(lowered, ["year", "año"]) or String.starts_with?(lowered, "folio")
   end
 
   defp clear_pending_chat(socket) do
